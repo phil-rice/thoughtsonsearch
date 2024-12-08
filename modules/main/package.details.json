@@ -1,0 +1,22 @@
+{
+  "template": "react",
+  "name": "@enterprise_search/recoil_main",
+  "description": "Exploring recoil",
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "scripts": {"start": "react-scripts start"},
+    "links": [
+    ],
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}
