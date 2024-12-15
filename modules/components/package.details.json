@@ -1,0 +1,24 @@
+{
+  "template": "react",
+  "name": "@enterprise_search/recoil_components",
+  "description": "Exploring recoil. This is a package of components used to edit/view recoil atoms.",
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "scripts": {"start": "react-scripts start"},
+    "links": [
+      "@enterprise_search/recoil_utils",
+      "@enterprise_search/recoil_translation"
+    ],
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

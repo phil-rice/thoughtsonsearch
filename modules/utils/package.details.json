@@ -1,0 +1,21 @@
+{
+  "template": "typescript",
+  "name": "@enterprise_search/recoil_utils",
+  "description": "Exploring recoil. This is a package of simple utilities",
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "links": [
+    ],
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

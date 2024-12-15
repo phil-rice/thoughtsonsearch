@@ -1,0 +1,21 @@
+{
+  "template": "typescript",
+  "name": "@enterprise_search/search_domain",
+  "description": "The domain model for search",
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "links": [
+    ],
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}
