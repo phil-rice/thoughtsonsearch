@@ -1,5 +1,5 @@
-import {NameAnd} from "@laoban/utils";
 import {ErrorsOr} from "@enterprise_search/errors";
+import {NameAnd} from "@enterprise_search/recoil_utils";
 
 export type SearchState = {
     queryString: string
@@ -23,16 +23,15 @@ export type SearchQuery = {
     count: number
     //The query string after it has gone through the parser. 'Praveen in people' would result in Praveen. Most strings result in themselves
     keywords: string
-    //The time filter such as 'last 3 days'
-    timeInfo: SearchTimeInfo
-    //Which 'places'. Usually these only make sense within one data source. For example in confluence we would be searching just 'these spaces'
-    spaces: string[]
-    languages: string[]
+    //The name of the filter and the value. For example 'space' and ['me8', 'infra'] or 'time': 'last 3 hours'
+    //Note that each of the type classes has a list of filters they accept, and they should ignore the others
+    filters: NameAnd<any>
 }
+
 export type QueryDatasourceAndPaging<Paging> = {
     query: SearchQuery
     datasourceName: string
-    paging: Paging
+    paging?: Paging // if not specified will be page 1
 }
 
 export type SinceTimeInfo = {

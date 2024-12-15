@@ -1,13 +1,16 @@
-import {SearchTypeClass} from "@enterprise_search/search_domain";
+import {SearchByApiContext, SearchByApiTypeClass} from "@enterprise_search/search_api/src/search.api";
 
-type FileData = any
-type ElasticSearchQuery = {
-    body: any
-}
-type ElasticSearchResponse = {
-    hits: { hits: FileData }
-}
-type ElasticSearchPage = undefined | {
-    item: string//can't remember details. it's basically some data from the query
-}
+export type ElasticSearchContext = SearchByApiContext
 
+type ElasticSearchPaging = {}
+const elasticSearchTC: SearchByApiTypeClass<ElasticSearchContext, any, ElasticSearchPaging> = {
+    type: 'api',
+    page1: () => ({}),
+    url: (context, from) => ``,
+    body: (context, from) => JSON.stringify({}),
+    method: () => `Post`,
+    headers: async () => ({}),
+    findAggregates: (context, from) => ({}),
+    findData: (context, from) => ([]),
+    findPaging: (context, from) => ({}),
+}

@@ -17,6 +17,7 @@
     ]
   },
   "dependencies": {
+    "@enterprise_search/debug": "0.0.1",
     "debug": "^4.3.4"
   },
   "devDependencies": {
@@ -59,7 +60,6 @@
     "indexing"
   ],
   "license": "MIT",
-  "links": [],
   "repository": "git@github.com:intellimaintain/intellimaintain.git",
   "scripts": {
     "test": "jest --config jest.config.json --env node",

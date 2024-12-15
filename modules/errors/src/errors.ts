@@ -44,3 +44,4 @@ export function mapErrorsOr<T, T1>(e: ErrorsOr<T>, f: (t: T) => T1): ErrorsOr<T1
 }
 
 export type AsyncErrorCall<From, To> = (from: From) => Promise<ErrorsOr<To>>
+export type AsyncErrorCall2<From1, From2, To> = (from1: From1, from2: From2) => Promise<ErrorsOr<To>>

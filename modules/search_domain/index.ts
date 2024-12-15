@@ -1,9 +1,6 @@
 export * from './src/search.domain'
 export * from './src/search.context'
-export * from './src/search.full'
+export * from './src/search.all'
 export * from './src/search.parser'
 export * from './src/search.typeclass'
-export {ServiceCaller} from "../service_caller/src/serviceCaller";
-export {Header} from "../service_caller/src/serviceCaller";
-export {ServiceResponseTC} from "../service_caller/src/serviceCaller";
-export {ServiceRequestTC} from "../service_caller/src/serviceCaller";
+

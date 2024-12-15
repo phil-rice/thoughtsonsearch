@@ -1,6 +1,7 @@
-import {DomainRequestCaller, ResultMaker, serviceCall, ServiceCallDebug, ServiceCaller} from "./serviceCaller";
+import {DomainRequestCaller, ResultMaker, serviceCall, ServiceCaller} from "./serviceCaller";
 import {ServiceRequest, ServiceRequestTcForServiceRequest, ServiceResponse, ServiceResponseTcForServiceResponse} from "./service.request.response";
 import {errorsOrThrow, valueOrThrow} from "@enterprise_search/errors";
+import {DebugContext} from "@enterprise_search/debug";
 
 
 type DomainRequest = {
@@ -9,14 +10,13 @@ type DomainRequest = {
 type DomainResponse = {
     resp: string
 }
-type DomainContext = {
+type DomainContext = DebugContext & {
     language: string
-    debug?: ServiceCallDebug
 }
 const domainCaller: DomainRequestCaller<DomainContext, DomainRequest> = {
     url: (c, from) => `${c.language}/${from.msg}`,
     body: (c, from) => `lang:${c.language} msg:${from.msg}`,
-    headers: (c, from) => ({lang: c.language, msg: from.msg}),
+    headers: async (c, from) => ({lang: c.language, msg: from.msg}),
     method: () => 'Post',
 }
 const domainCallerWithValidator: DomainRequestCaller<DomainContext, DomainRequest> = {
@@ -54,7 +54,7 @@ describe("service caller", () => {
         fetch.mockResolvedValueOnce(serviceResponse);
         const serviceCaller: ServiceCaller<ServiceRequest, ServiceResponse> = {fetch, reqTC: ServiceRequestTcForServiceRequest, resTC: ServiceResponseTcForServiceResponse}
 
-        const domainResponse = await serviceCall(serviceCaller)(domainCaller, context, defaultResultMaker)(domainRequest)
+        const domainResponse = await serviceCall(serviceCaller)(domainCaller,  defaultResultMaker)(context,domainRequest)
 
         expect(domainResponse).toEqual({
             "errors": ["Unexpected error parsing json returned from de/hello. Unexpected token 'o', \"not json\" is not valid JSON\nnot json"]

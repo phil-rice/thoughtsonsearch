@@ -2,6 +2,9 @@
   "template": "react_library",
   "name": "@enterprise_search/recoil_translation",
   "description": "Exploring recoil. This is how we handle translations.",
+  "links": [
+    "@enterprise_search/recoil_utils"
+  ],
   "packageJson": {
     "files": ["build/"],
     "dependencies": {
@@ -10,9 +13,6 @@
       "ts-jest": "^29.2.5"
     },
     "scripts": {"start": "react-scripts start"},
-    "links": [
-      "@enterprise_search/recoil_utils"
-    ],
     "guards": {
       "compile": true,
       "publish": false,

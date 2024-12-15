@@ -1,4 +1,5 @@
-import {Headers, Method, ServiceCallDebug, ServiceRequestTC, ServiceResponseTC} from "./serviceCaller";
+import {Headers, Method, ServiceRequestTC, ServiceResponseTC} from "./serviceCaller";
+import {DebugContext} from "@enterprise_search/debug";
 
 //these classes exist to allow us to write tests without needing a concrete service caller. i.e. without fetch or node-fetch or axios
 
@@ -16,7 +17,7 @@ export type ServiceResponse = {
 
 
 export const ServiceRequestTcForServiceRequest: ServiceRequestTC<ServiceRequest> = {
-    call: (method: Method, url: string, body: string | undefined, headers: Headers, debug?: ServiceCallDebug): ServiceRequest =>
+    call: (context: DebugContext, method: Method, url: string, body: string | undefined, headers: Headers): ServiceRequest =>
         ({method, url, body, headers})
 }
 

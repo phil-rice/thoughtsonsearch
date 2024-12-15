@@ -1,6 +1,10 @@
-import {NameAnd} from "@laoban/utils";
-import {AsyncErrorCall, ErrorsOr, isErrors} from "@enterprise_search/errors";
+import {AsyncErrorCall2, ErrorsOr, isErrors} from "@enterprise_search/errors";
+import {NameAnd} from "@enterprise_search/recoil_utils";
+import {DebugContext} from "@enterprise_search/debug";
 
+export type ServiceApiContext = DebugContext & {
+    serviceCaller: ServiceCaller<any, any>
+}
 // Type class around fetch, axios, or any other library that retrieves data.
 // This wrapper allows upgrading to the latest versions of these libraries quickly and safely.
 // It abstracts the common request-response logic, making it easier to work with different HTTP libraries.
@@ -9,14 +13,10 @@ import {AsyncErrorCall, ErrorsOr, isErrors} from "@enterprise_search/errors";
 export type Method = 'Post' | 'Get' | 'Put' | 'Delete'; // Added PUT and DELETE for completeness
 export type Header = string | string[] | undefined;
 export type Headers = NameAnd<Header>
-export type ServiceCallDebug = {
-    serviceDebug?: boolean;
-    serviceHeadersDebug?: boolean; // Be cautious, as this may leak sensitive information
-};
 
 export type ServiceRequestTC<Req> = {
     // Handles transforming the request into a specific format (e.g., setting method, url, headers)
-    call(method: Method, url: string, body: string | undefined, headers: Headers, debug?: ServiceCallDebug): Req;
+    call(context: DebugContext, method: Method, url: string, body: string | undefined, headers: Headers): Req;
 };
 
 export type ServiceResponseTC<Res> = {
@@ -29,7 +29,7 @@ export type ServiceResponseTC<Res> = {
 
 export type ServiceCaller<Req, Res> = {
     // Performs the actual request based on the provided service logic
-    fetch: (req: Req, debug: ServiceCallDebug) => Promise<Res>;
+    fetch: (context: DebugContext, req: Req) => Promise<Res>;
     reqTC: ServiceRequestTC<Req>;
     resTC: ServiceResponseTC<Res>;
 };
@@ -45,8 +45,8 @@ export type DomainRequestCaller<Context, From> = {
     // Function to determine the URL for the request
     url: (context: Context, from: From) => string;
 
-    // Optionally add headers for the request
-    headers?: (context: Context, from: From) => NameAnd<string>;
+    // Optionally add headers for the request. It's a promise because sometimes we need to go get an access token and that can take time
+    headers?: (context: Context, from: From) => Promise<NameAnd<string>>;
 
     // Optionally add a body for the request
     body?: (context: Context, from: From) => string;
@@ -103,33 +103,35 @@ export async function defaultToJson<Context, Res>(resTC: ServiceResponseTC<Res>,
     }
 }
 
+
 // Main function to handle making a request and processing the response, including validation and error handling
 export const serviceCall = <Req, Res>({reqTC, resTC, fetch}: ServiceCaller<Req, Res>) =>
-    <Context, From, To>({
-                            method,
-                            headers,
-                            body,
-                            url,
-                            validateFrom = () => [], // Default empty validation function for "from" context
-                        }: DomainRequestCaller<Context, From>, context: Context, {
-                            ok = defaultOk,
-                            toJson = defaultToJson,
-                            validateTo = (context, from, headers, value) => ({value: value as To}),
-                            headersToCheck = [],
-                            handleError = defaultHandleError,
-                        }: ResultMaker<Context, From, To>, debug: ServiceCallDebug): AsyncErrorCall<From, To> => {
+    <Context extends ServiceApiContext, From, To>({
+                                                      method = () => 'Get',
+                                                      headers = async () => ({}),
+                                                      body = () => '',
+                                                      url,
+                                                      validateFrom = () => [], // Default empty validation function for "from" context
+                                                  }: DomainRequestCaller<Context, From>,
+                                                  {
+                                                      ok = defaultOk,
+                                                      toJson = defaultToJson,
+                                                      validateTo = (context, from, headers, value) => ({value: value as To}),
+                                                      headersToCheck = [],
+                                                      handleError = defaultHandleError,
+                                                  }: ResultMaker<Context, From, To>): AsyncErrorCall2<Context, From, To> => {
 
-        return async (from: From): Promise<ErrorsOr<To>> => {
+        return async (context: Context, from: From): Promise<ErrorsOr<To>> => {
             // Validate the "from" context before making the request
             const fromErrors = validateFrom(context, from);
             if (fromErrors.length > 0) return {errors: fromErrors};
 
             // Prepare the request based on the domain logic
             const theUrl = url(context, from);
-            const req: Req = reqTC.call(method(context, from), theUrl, body(context, from), headers(context, from), debug);
+            const req: Req = reqTC.call(context, method(context, from), theUrl, body(context, from), await headers(context, from));
 
             try {
-                const res: Res = await fetch(req, debug);
+                const res: Res = await fetch(context, req);
 
                 let resultHeadersWeCareAbout = getHeadersForResultMaker(headersToCheck, resTC, res);
                 const okErrors = ok(resTC.status(res), resultHeadersWeCareAbout);

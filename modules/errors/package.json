@@ -15,6 +15,7 @@
     ]
   },
   "dependencies": {
+    "@enterprise_search/recoil_utils": "0.0.1",
     "debug": "^4.3.4",
     "@focuson/lens": "1.44.3",
     "@focuson/state": "1.44.3",
@@ -69,9 +70,6 @@
     "runbook"
   ],
   "license": "MIT",
-  "links": [
-    "@enterprise_search/recoil_utils"
-  ],
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

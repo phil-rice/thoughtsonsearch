@@ -6,11 +6,11 @@ export const parseSearch = (parser: SearchParser, from: SearchState): SearchPars
     const searchState = parser(from)
     const remove = datasourceNamesToRemove(from, searchState)
     const add = datasourceNamesToAdd(from, searchState)
-    return {searchState, remove, add}
+    return {parsedSearchState: searchState, remove, add}
 };
 
 export type SearchParserResult = {
-    searchState: SearchState
+    parsedSearchState: SearchState
     //datasourceNamesToRemove
     remove: string[]
     //datasourceNamesToAdd
