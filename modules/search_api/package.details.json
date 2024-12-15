@@ -1,0 +1,23 @@
+{
+  "template": "typescript",
+  "name": "@enterprise_search/search_api",
+  "description": "implements searching by means of a call to an api",
+  "links": [
+    "@enterprise_search/search_domain",
+    "@enterprise_search/service_caller"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

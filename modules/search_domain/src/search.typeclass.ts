@@ -9,7 +9,6 @@ import {NameAnd} from "@enterprise_search/recoil_utils";
 export type SearchTypeClass<Paging> = {
     type: string
     page1: () => Promise<Paging>
-    supportedFilters: string[]
 }
 export type DatasourceNameToSearchTypeClass<Paging> = NameAnd<SearchTypeClass<Paging>>
 

@@ -18,6 +18,11 @@ export type Aggregates = NameAnd<NameAnd<number>>
 
 //A lot of these will have to become filters. And we'll need to know which data sources care about which filter
 //I think it's the filter count that matters not the count, as if a data source ignores the filter, the global count would mean a research
+//The filter will be a NameAnd<something> where something is the filter. See the file filters.ts
+//It's generic because we will want to be having lots of filters and be able to add more
+//The name of the filter is important because the search type class has a list of filters it can handle and
+//we use the name to work out how to process the filter.
+//
 export type SearchQuery = {
     //When we update the search query the count increases. This allows us to synchronise search results. if one slow one returns ... should we display it?
     count: number
@@ -25,6 +30,7 @@ export type SearchQuery = {
     keywords: string
     //The name of the filter and the value. For example 'space' and ['me8', 'infra'] or 'time': 'last 3 hours'
     //Note that each of the type classes has a list of filters they accept, and they should ignore the others
+    //I did explore making this stronger typed, but it damages the code base a lot and doesn't actually help I think
     filters: NameAnd<any>
 }
 
