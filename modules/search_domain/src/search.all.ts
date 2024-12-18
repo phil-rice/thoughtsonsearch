@@ -3,7 +3,7 @@ import {DatasourceToPromiseSearchResult, DatasourceToSearchResult, QueryDatasour
 import {searchUsingSearcher} from "./search.typeclass";
 import {parseSearch} from "./search.parser";
 
-export function searchAllDataSourcesPage1(context: SearchContext, searchState: SearchState): DatasourceToPromiseSearchResult {
+export function searchAllDataSourcesPage1<Context extends SearchContext<Context>>(context: SearchContext<Context>, searchState: SearchState): DatasourceToPromiseSearchResult {
     const {query} = searchState
     const result: DatasourceToPromiseSearchResult = {}
     for (const datasourceName of searchState.datasourceNames) {
@@ -25,7 +25,7 @@ export type ParseAndSearchResult = {
 //happens because of the parser.
 //
 //It is expected that this will be called in a debounce function when the user types and the results dynamically update
-export function parseAndSearchPage1(context: SearchContext, startSearchInfo: SearchInfo): ParseAndSearchResult {
+export function parseAndSearchPage1<Context extends SearchContext<Context>>(context: SearchContext<Context>, startSearchInfo: SearchInfo): ParseAndSearchResult {
     const {queryParser} = context
     const {searchState: startQueryState, searchResult: startSearchResults} = startSearchInfo
     const {parsedSearchState, remove, add} = parseSearch(queryParser, startQueryState)

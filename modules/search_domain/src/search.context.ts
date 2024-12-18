@@ -3,9 +3,9 @@ import {SearchParser} from "./search.parser";
 import {DebugContext} from "@enterprise_search/debug";
 
 
-export type SearchContext = DebugContext & {
-    tcs: DatasourceNameToSearchTypeClass<SearchContext>
-    searchers: DatasourceNameToSearcher<SearchContext>
+export type SearchContext<Context extends SearchContext<Context>> = DebugContext & {
+    tcs: DatasourceNameToSearchTypeClass<Context, any>
+    searchers: DatasourceNameToSearcher<Context>
     queryParser: SearchParser
 }
 

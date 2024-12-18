@@ -5,6 +5,9 @@ node_modules/
 .pnp
 .pnp.js
 
+.log
+.profile
+.session/
 
 dist/
 # testing

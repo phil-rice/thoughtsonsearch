@@ -1,7 +1,10 @@
 {
-  "template": "typescript",
-  "name": "@enterprise_search/service_caller",
-  "description": "Thin wrapper around any library to call apis using http(s)",
+  "template": "react_library",
+  "name": "@enterprise_search/authentication",
+  "description": "An interface that abstracts over authentication",
+  "links": [
+    "@enterprise_search/service_caller"
+  ],
   "packageJson": {
     "files": ["build/"],
     "dependencies": {
@@ -9,9 +12,6 @@
     "devDependencies": {
       "ts-jest": "^29.2.5"
     },
-    "links": [
-      "@enterprise_search/errors"
-    ],
     "guards": {
       "compile": true,
       "publish": false,

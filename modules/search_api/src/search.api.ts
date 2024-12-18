@@ -27,9 +27,6 @@ export type SearchByApiTypeClass<Context, Data, Paging> = SearchTypeClass<Paging
 export function apiSearcher<Data, Paging>(): Searcher<SearchByApiContext, SearchByApiTypeClass<SearchByApiContext, Data, Paging>, Data, Paging> {
     return async (context: SearchByApiContext, tc: SearchByApiTypeClass<SearchByApiContext, Data, Paging>, from: QueryDatasourceAndPaging<Paging>): Promise<ErrorsOr<SearchResult<Data, Paging>>> => {
         const {serviceCaller} = context
-        const {method, url, headers, body, validateFrom} = tc
-        const validateFromErrors = validateFrom(context, from)
-        if (validateFromErrors.length > 0) return {errors: validateFromErrors}
         const domainCaller: DomainCaller<SearchByApiContext, QueryDatasourceAndPaging<Paging>, DataAggregatesAndPaging<Data, Paging>> = tc
         const resultMaker = dataAggregatesAndPagingResultMaker(tc)
         const result = await serviceCall(serviceCaller)(domainCaller, resultMaker)(context, from)

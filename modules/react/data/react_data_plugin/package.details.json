@@ -1,0 +1,24 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/react_data",
+  "description": "Transformation and display of different data formats",
+  "links": [
+    "@enterprise_search/search_domain",
+    "@enterprise_search/service_caller",
+    "@enterprise_search/search_api"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

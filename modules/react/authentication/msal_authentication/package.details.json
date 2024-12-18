@@ -1,0 +1,24 @@
+{
+  "template": "typescript",
+  "name": "@enterprise_search/msal_authentication",
+  "description": "An interface that implements our authentication using MSAL",
+  "links": [
+    "@enterprise_search/service_caller",
+    "@enterprise_search/authentication"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+      "@azure/msal-browser": "${properties.msal}"
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

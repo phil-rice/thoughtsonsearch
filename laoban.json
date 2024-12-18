@@ -9,6 +9,7 @@
   ],
   "properties":     {
     "axios":         "1.7.2",
+    "msal":           "^3.28.0" ,
     "license":       "MIT",
     "repository":    "git@github.com:intellimaintain/intellimaintain.git",
     "laobanVersion": "1.4.51",
