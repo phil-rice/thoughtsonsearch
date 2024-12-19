@@ -118,7 +118,6 @@ describe('chainLogin', () => {
 });
 
 
-
 describe('MsalLogin methods', () => {
     let mockMsalInstance: jest.Mocked<PublicClientApplication>;
 
@@ -135,6 +134,7 @@ describe('MsalLogin methods', () => {
         acquire: MsalLogin,
         msalMethod: keyof typeof mockMsalInstance,
         scopes: string[] = [],
+        prompt?: string,
         overrideReturnValue?: any
     ) => {
         const mockReturnValue = overrideReturnValue === undefined
@@ -149,7 +149,10 @@ describe('MsalLogin methods', () => {
             // Special case: handleRedirectPromise does not use scopes
             expect(mockMsalInstance[msalMethod]).toHaveBeenCalledWith();
         } else {
-            expect(mockMsalInstance[msalMethod]).toHaveBeenCalledWith({scopes});
+            if (prompt) {
+                expect(mockMsalInstance[msalMethod]).toHaveBeenCalledWith({scopes, prompt});
+            } else
+                expect(mockMsalInstance[msalMethod]).toHaveBeenCalledWith({scopes});
         }
 
         expect(result).toEqual(mockReturnValue);
@@ -186,7 +189,7 @@ describe('MsalLogin methods', () => {
 
     it('should call acquireTokenPopup for popupLogin', async () => {
         const scopes = ['user.read'];
-        await testAcquireMethod(popupLogin, 'acquireTokenPopup', scopes);
+        await testAcquireMethod(popupLogin, 'acquireTokenPopup', scopes, 'select_account');
     });
 
     it('should propagate errors from acquireTokenPopup in popupLogin', async () => {
@@ -196,7 +199,7 @@ describe('MsalLogin methods', () => {
 
     it('should call acquireTokenRedirect for redirectLogin', async () => {
         const scopes = ['user.read'];
-        await testAcquireMethod(redirectLogin, 'acquireTokenRedirect', scopes, null);
+        await testAcquireMethod(redirectLogin, 'acquireTokenRedirect', scopes, 'select_account', null);
     });
 
     it('should propagate errors from acquireTokenRedirect in redirectLogin', async () => {

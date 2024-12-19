@@ -3,7 +3,7 @@
   "name": "@enterprise_search/react_data",
   "description": "Transformation and display of different data formats",
   "links": [
-    "@enterprise_search/search_domain",
+    "@enterprise_search/search_state",
     "@enterprise_search/service_caller",
     "@enterprise_search/search_api"
   ],

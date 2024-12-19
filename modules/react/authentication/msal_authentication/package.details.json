@@ -1,5 +1,5 @@
 {
-  "template": "typescript",
+  "template": "react_library",
   "name": "@enterprise_search/msal_authentication",
   "description": "An interface that implements our authentication using MSAL",
   "links": [

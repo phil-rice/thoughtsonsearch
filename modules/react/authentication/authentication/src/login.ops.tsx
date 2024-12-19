@@ -3,24 +3,21 @@ import React, {createContext, useContext, useEffect, useMemo} from "react";
 
 export type LoginOutListener = (loggedInNotOut: boolean) => void
 
-export type RawLoginOps = {
+export type CommonLoginOps = {
     //Doesn't pop open a new window, but logs in if it can
     refeshLogin: () => Promise<void>
     //what you should call when the user clicks 'login'
     login: () => Promise<void>
     logout: () => Promise<void>
     isLoggedIn: () => boolean
-    findEmail: () => string | undefined
-}
-export type LoginOps = RawLoginOps & {
-    email: string | undefined
 }
 
-export type IdToken = {
-    idToken: () => string
+
+export type LoginOps = CommonLoginOps & {
+    email: string | undefined
 }
-export type RefreshToken = {
-    refreshToken: (scopes: string[]) => string
+export type RawLoginOps = CommonLoginOps & {
+    findEmail: () => string | undefined
 }
 
 export const LoginContext = createContext<LoginOps | undefined>(undefined)

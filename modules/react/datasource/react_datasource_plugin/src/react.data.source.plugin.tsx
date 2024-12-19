@@ -1,4 +1,4 @@
-import {SearchQuery, SearchResult} from "@enterprise_search/search_domain";
+import {SearchQuery, SearchResult} from "@enterprise_search/search_state";
 import {ErrorsOr} from "@enterprise_search/errors";
 import {NameAnd} from "@laoban/utils";
 import React, {useMemo} from "react";

@@ -1,9 +1,18 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {createRoot} from "react-dom/client";
 import {Configuration, PublicClientApplication} from "@azure/msal-browser";
-import {LoginProvider} from "@enterprise_search/authentication";
+import {LoginProvider, RawLoginOps} from "@enterprise_search/authentication";
 import {loginUsingMsal} from "@enterprise_search/msal_authentication";
 import {useDisplayLogin} from "@enterprise_search/react_login_component/src/react.login";
+import {ExampleInitialSearchResultsPlugin, SearchResultsPluginProvider, SearchResultsPlugins, useSearchResults} from "@enterprise_search/search_results_plugin";
+
+
+import {emptySearchState} from "@enterprise_search/search_state";
+import {filtersDisplayPurpose, ReactFiltersContextData, ReactFiltersProvider} from "@enterprise_search/react_filters_plugin";
+import {exampleTimeFilterPlugin} from "@enterprise_search/react_time_filter";
+import {exampleKeywordsFilterPlugin, keywordsFilterName, SimpleSearchBar} from "@enterprise_search/react_keywords_filter";
+import {DebugSearchState, SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
+import {SearchBarProvider} from "@enterprise_search/search_bar";
 
 export const exampleMsalConfig: Configuration = {
     auth: {
@@ -14,22 +23,57 @@ export const exampleMsalConfig: Configuration = {
     },
 };
 const msal = new PublicClientApplication(exampleMsalConfig);
-const login = loginUsingMsal({msal})
+const login: RawLoginOps = loginUsingMsal({msal})
+
+const searchResultsPlugins: SearchResultsPlugins = {
+    'start': ExampleInitialSearchResultsPlugin,
+}
+
+const reactFiltersContextData: ReactFiltersContextData = {
+    plugins: {
+        [keywordsFilterName]: exampleKeywordsFilterPlugin,
+        'time': exampleTimeFilterPlugin
+    },
+    PurposeToFilterLayout: {
+        [filtersDisplayPurpose]: ({children}) => <div><h3>Filters</h3>{children}</div>
+    }
+}
 const root = createRoot(document.getElementById('root') as HTMLElement);
 
+
+type SearchAppProps = {
+    initialPurpose: string
+}
+
+
+function SearchApp({initialPurpose}: SearchAppProps) {
+    const {DisplayLogin} = useDisplayLogin()
+    const [purpose, setPurpose] = React.useState(initialPurpose)
+    const {SearchResults} = useSearchResults(purpose)
+    useEffect(() => document.querySelector("input")?.focus(), []); // Focus on the first input
+
+    return <div>
+        <DisplayLogin/>
+        <SearchResults/>
+    </div>
+}
+
 msal.initialize({}).then(() => {
-    function SearchApp() {
-        const {DisplayLogin} = useDisplayLogin()
-        return <div>
-            <DisplayLogin/>
-            <div>hello world</div>
-        </div>
-    }
 
     root.render(<React.StrictMode>
-        <LoginProvider login={login}>
-            <SearchApp/>
-        </LoginProvider>
-    </React.StrictMode>);
+            <LoginProvider login={login}>
+                <SearchBarProvider SearchBar={SimpleSearchBar}>
+                    <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
+                        <SearchResultsPluginProvider plugins={searchResultsPlugins}>
+                            <ReactFiltersProvider value={reactFiltersContextData}>
+                                <SearchApp initialPurpose='start'/>
+                                <DebugSearchState/>
+                            </ReactFiltersProvider>
+                        </SearchResultsPluginProvider>
+                    </SearchInfoProviderUsingUseState>
+                </SearchBarProvider>
+            </LoginProvider>
+        </React.StrictMode>
+    );
 })
 

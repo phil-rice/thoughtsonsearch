@@ -1,13 +1,20 @@
 import React from "react";
 import {SearchResultsPlugin} from "./search.results.plugin";
+import {useAllFilters} from "@enterprise_search/react_filters_plugin";
+import {useSearchBar} from "@enterprise_search/search_bar";
 
 
-//displays all the search results from the search
+
 export const ExampleAllSearchResults = (purpose: string) => () => {
-    return <>
-        <h1>Example all Search Results </h1></>;
-};
+    const {SearchBar} = useSearchBar()
+    const {DisplayFilters} = useAllFilters(purpose)
 
+    return <>
+        <h1>All results</h1>
+        <SearchBar/>
+        <DisplayFilters/>
+    </>
+}
 export const ExampleAllSearchResultsPlugin: SearchResultsPlugin = {
     plugin: 'search_results',
     type: 'example.all',

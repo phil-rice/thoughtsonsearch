@@ -3,7 +3,7 @@
   "name": "@enterprise_search/search_elastic",
   "description": "Code to search elastic search",
   "links": [
-    "@enterprise_search/search_domain",
+    "@enterprise_search/search_state",
     "@enterprise_search/service_caller",
     "@enterprise_search/search_api"
   ],

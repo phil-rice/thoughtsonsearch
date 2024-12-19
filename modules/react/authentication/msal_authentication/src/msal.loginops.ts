@@ -30,8 +30,8 @@ export function loginUsingMsal({
                                    logout = msalLogout,
                                }: MsalLoginConfig): RawLoginOps {
     return {
-        refeshLogin: () => msalRefreshLogin(msal)(scopes),
-        login: () => login(msal)(scopes),
+        refeshLogin: async () => {await msalRefreshLogin(msal)(scopes)},
+        login: async () => {await login(msal)(scopes)},
         logout: async () => {
             const accounts = msal.getAllAccounts();
             const account = accounts[0];

@@ -39,6 +39,10 @@ export type MsalLoginFn = (msal: PublicClientApplication) => (scopes: string[]) 
 export const msalLogin: MsalLoginFn =
     (msal: PublicClientApplication) =>
         chainLogin(msal, fromPreviousRedirectLogin, silentLogin, popupLogin, redirectLogin);
+
+
+
+
 export const msalRefreshLogin: MsalLoginFn =
     (msal: PublicClientApplication) =>
         chainLogin(msal, fromPreviousRedirectLogin, silentLogin, noLogin);

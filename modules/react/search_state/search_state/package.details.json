@@ -1,0 +1,22 @@
+{
+  "template": "typescript",
+  "name": "@enterprise_search/search_state",
+  "description": "The state for search application. This does not include state management, just the state",
+  "links": [
+    "@enterprise_search/debug"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

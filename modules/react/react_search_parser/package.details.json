@@ -1,0 +1,23 @@
+{
+  "template": "typescript",
+  "name": "@enterprise_search/react_search_parser",
+  "description": "parsers the search query in the context of the existing search query",
+  "links": [
+    "@enterprise_search/debug",
+    "@enterprise_search/search_state"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

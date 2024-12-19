@@ -1,0 +1,24 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/react_search_state",
+  "description": "Provides custom hooks to decouple the how we store the state of the search from the implementation.",
+  "links": [
+    "@enterprise_search/search_state",
+    "@enterprise_search/service_caller",
+    "@enterprise_search/search_api"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

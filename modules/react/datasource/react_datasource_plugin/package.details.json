@@ -4,10 +4,10 @@
   "description": "The plugin that abstracts over data sources",
   "links": [
     "@enterprise_search/authentication",
-    "@enterprise_search/react_search_info",
+    "@enterprise_search/react_search_state",
     "@enterprise_search/search_api",
     "@enterprise_search/service_caller",
-    "@enterprise_search/search_domain"
+    "@enterprise_search/search_state"
   ],
   "packageJson": {
     "files": ["build/"],

@@ -1,5 +1,5 @@
 import {DomainCaller, Headers, Method, ResultMaker, ServiceApiContext, serviceCall} from "@enterprise_search/service_caller";
-import {Aggregates, QueryDatasourceAndPaging, Searcher, SearchResult, SearchTypeClass} from "@enterprise_search/search_domain";
+import {Aggregates, QueryDatasourceAndPaging, Searcher, SearchResult, SearchTypeClass} from "@enterprise_search/search_state";
 import {ErrorsOr, mapErrorsOr} from "@enterprise_search/errors";
 import {NameAnd} from "@enterprise_search/recoil_utils";
 

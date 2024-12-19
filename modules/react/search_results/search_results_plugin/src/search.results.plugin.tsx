@@ -9,7 +9,7 @@ export type SearchResultsPlugin = {
     layout: (purpose: string) => SearchResultsLayout
 }
 
-export type SearchResultsLayoutProps = { purpose: string }
+export type SearchResultsLayoutProps = {}
 export type SearchResultsLayout = (props: SearchResultsLayoutProps) => React.ReactElement
 
 /* Maps from the purpose of the search results to the plugin that should be used to display them
@@ -32,8 +32,8 @@ type SearchResultsOps = {
  */
 export function useSearchResults(purpose: string): SearchResultsOps {
     const plugins = React.useContext(SearchResultsPluginContext)
+    if (!plugins) throw new Error('useSearchResults requires a SearchResultsPluginProvider')
     const SearchResults = useMemo(() => {
-        if (!plugins) throw new Error('SearchResultsPluginProvider not found in the component tree')
         const searchResultsPlugin = plugins[purpose];
         const SearchResults = searchResultsPlugin.layout(purpose)
         return SearchResults

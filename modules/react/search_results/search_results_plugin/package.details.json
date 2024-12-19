@@ -3,10 +3,12 @@
   "name": "@enterprise_search/search_results_plugin",
   "description": "The search results plugin displays search results",
   "links": [
-    "@enterprise_search/search_domain",
+    "@enterprise_search/search_state",
     "@enterprise_search/service_caller",
     "@enterprise_search/search_api",
-    "@enterprise_search/react_search_info"
+    "@enterprise_search/search_bar",
+    "@enterprise_search/react_search_state",
+    "@enterprise_search/react_keywords_filter"
   ],
   "packageJson": {
     "files": ["build/"],

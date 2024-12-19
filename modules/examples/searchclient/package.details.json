@@ -6,10 +6,11 @@
     "@enterprise_search/authentication",
     "@enterprise_search/msal_authentication",
     "@enterprise_search/react_filters_plugin",
+    "@enterprise_search/react_time_filter",
     "@enterprise_search/errors",
     "@enterprise_search/search_api",
     "@enterprise_search/service_caller",
-    "@enterprise_search/search_domain"
+    "@enterprise_search/search_state"
   ],
   "packageJson": {
     "files": ["build/"],

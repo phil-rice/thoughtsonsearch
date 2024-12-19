@@ -3,7 +3,7 @@
   "name": "@enterprise_search/search_api",
   "description": "implements searching by means of a call to an api",
   "links": [
-    "@enterprise_search/search_domain",
+    "@enterprise_search/search_state",
     "@enterprise_search/service_caller"
   ],
   "packageJson": {
