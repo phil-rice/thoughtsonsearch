@@ -140,6 +140,12 @@ export function useAllSearches<Filters>(): AllSearchesOps<Filters> {
     return context.allSearchInfoOps
 }
 
+export function useFiltersByStateType<Filters>(st: SearchType): FiltersOps<Filters> {
+    const context = React.useContext(SearchStateContext);
+    if (context === undefined) throw new Error('useOneFiltersByStateType must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
+    return context.filtersOps(st)
+}
+
 export function useOneFilterBySearchType<Filter>(st: SearchType): OneFilterOpsStateAndNameFn<Filter> {
     const context = React.useContext(SearchStateContext);
     if (context === undefined) throw new Error('useOneFilterBySearchType must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');

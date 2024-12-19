@@ -1,8 +1,8 @@
 // Define a type for the CSS variables
 import React, {useEffect} from "react";
-import {useAllSearches, useOneFilter, useSearchQuery} from "@enterprise_search/react_search_state";
+import {useFiltersByStateType, useSearchQuery} from "@enterprise_search/react_search_state";
 import {KeywordsFilter} from "@enterprise_search/react_keywords_filter";
-
+import {useSearchParser} from "@enterprise_search/react_search_parser";
 
 type CSSVariables = {
     container: React.CSSProperties;
@@ -48,20 +48,24 @@ const cssVariables: CSSVariables = {
     },
 };
 
-export function SimpleSearchBar() {
-    const {searchQuery, setSearchQuery} = useSearchQuery()
-    const {setFilter} = useOneFilter<KeywordsFilter, 'keywords'>('keywords')
-    const {allSearches, setAllSearches} = useAllSearches()
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-        setSearchQuery(e.target.value);
-    useEffect(() => setFilter(searchQuery));
 
-    function search() {
-        const immediateFilters = allSearches.immediate.filters
-        const mainSearch = allSearches.main
-        const newMain = {...mainSearch, filters: immediateFilters, count: mainSearch.count + 1}
-        setAllSearches({...allSearches, main: newMain})
-    }
+/* The logic for this method is mainly about the difference between 'main' and 'immediate' searches.
+  The main filters are the main gui driven ones, and keyword is updated when the user presses enter or clicks the search button.
+  The immediate filters are the ones that are updated as the user types in the search bar. So every time we type we copy the main filters to the immediate filters.
+  And this can be part of the parse filter...
+  When we search we just copy the immediate filters to the main filters.
+
+  Count is probably handled by the search logic
+ */
+export function SimpleSearchBar<Filters extends KeywordsFilter>() {
+    const {searchQuery, setSearchQuery} = useSearchQuery()
+    const {filters: mainFilters, setFilters: setMainFilters} = useFiltersByStateType<Filters>('main')
+    const {filters: immediateFilters, setFilters: setImmediateFilters} = useFiltersByStateType<Filters>('immediate')
+    const parser = useSearchParser<Filters>()
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)
+    useEffect(() => setImmediateFilters(parser(searchQuery, mainFilters)),[searchQuery]);
+
+    const search = () => setMainFilters(immediateFilters);
 
     return (
         <div style={cssVariables.container}>

@@ -3,7 +3,7 @@ import {createRoot} from "react-dom/client";
 import {Configuration, PublicClientApplication} from "@azure/msal-browser";
 import {LoginProvider, RawLoginOps} from "@enterprise_search/authentication";
 import {loginUsingMsal} from "@enterprise_search/msal_authentication";
-import {useDisplayLogin} from "@enterprise_search/react_login_component/src/react.login";
+import {useDisplayLogin} from "@enterprise_search/react_login_component";
 import {ExampleInitialSearchResultsPlugin, SearchResultsPluginProvider, SearchResultsPlugins, useSearchResults} from "@enterprise_search/search_results_plugin";
 
 

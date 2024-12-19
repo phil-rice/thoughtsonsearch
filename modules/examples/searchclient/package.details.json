@@ -10,6 +10,7 @@
     "@enterprise_search/errors",
     "@enterprise_search/search_api",
     "@enterprise_search/service_caller",
+    "@enterprise_search/search_bar",
     "@enterprise_search/search_state"
   ],
   "packageJson": {

@@ -10,8 +10,8 @@ export const ExampleInitialSearchResults = (purpose: string) => () => {
     const {DisplayFilters} = useAllFilters()
     return <>
         <h1>First page: no results</h1>
-        <SearchTypeProvider searchType='immediate'>
-            <SearchBar/>
+        <SearchBar/>
+        <SearchTypeProvider searchType='main'>
             <DisplayFilters/>
         </SearchTypeProvider>
     </>

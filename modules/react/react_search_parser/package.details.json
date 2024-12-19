@@ -1,9 +1,10 @@
 {
-  "template": "typescript",
+  "template": "react_library",
   "name": "@enterprise_search/react_search_parser",
   "description": "parsers the search query in the context of the existing search query",
   "links": [
     "@enterprise_search/debug",
+    "@enterprise_search/react_keywords_filter",
     "@enterprise_search/search_state"
   ],
   "packageJson": {
