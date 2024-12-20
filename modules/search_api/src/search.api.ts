@@ -30,7 +30,7 @@ export function apiSearcher<Data, Paging>(): Searcher<SearchByApiContext, Search
         const domainCaller: DomainCaller<SearchByApiContext, QueryDatasourceAndPaging<Paging>, DataAggregatesAndPaging<Data, Paging>> = tc
         const resultMaker = dataAggregatesAndPagingResultMaker(tc)
         const result = await serviceCall(serviceCaller)(domainCaller, resultMaker)(context, from)
-        return mapErrorsOr(result, res => ({...res, count: from.query.count, datasourceName: from.datasourceName}));
+        return mapErrorsOr(result, res => ({...res, count: from.filters.count, datasourceName: from.datasourceName}));
     }
 }
 

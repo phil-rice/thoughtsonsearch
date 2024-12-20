@@ -1,0 +1,21 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/react_utils",
+  "description": "Simple react utilities or type aliases",
+  "links": [
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

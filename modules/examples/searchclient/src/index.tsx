@@ -53,8 +53,9 @@ function SearchApp({initialPurpose}: SearchAppProps) {
     useEffect(() => document.querySelector("input")?.focus(), []); // Focus on the first input
 
     return <div>
-        <DisplayLogin/>
-        <SearchResults/>
+        <DisplayLogin/> {/* The headers go here */}
+        <SearchResults/> {/* The main display */}
+        {/* The footer goes here */}
     </div>
 }
 

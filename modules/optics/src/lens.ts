@@ -1,0 +1,152 @@
+// Types for Lens Path
+export type LensPathPart = string | number | ComposedPathPart;
+export type ComposedPathPart = Record<string, LensPath>;
+export type LensPath = LensPathPart[];
+
+// Types for Lens and Path
+export type LensAndPath<Main, Child> = {
+    get: (main: Main) => Child | undefined;
+    set: (main: Main, child: Child) => Main;
+    path: LensPath;
+};
+
+// Create an identity lens for a given object
+export function identityLens<T>(): LensAndPath<T, T> {
+    return {
+        get: (main: T) => main, // Simply return the main object
+        set: (main: T, child: T) => child, // Replace the main object with the child
+        path: [] // Start with an empty LensPath
+    };
+}
+
+// Create a lens that focuses on a specific child property in a larger object
+export function child<Main, T, K extends keyof T>(
+    lens: LensAndPath<Main, T>,
+    key: K
+): LensAndPath<Main, T[K]> {
+    return {
+        get: (main: Main) => lens.get(main)?.[key], // Get the child property
+        set: (main: Main, child: T[K]) => {
+            const parent = lens.get(main) || ({} as T); // Default parent to an empty object if undefined
+            const updatedParent = {...parent, [key]: child}; // Create a new object with the updated child
+            return lens.set(main, updatedParent as T); // Set the updated parent in the main object
+        },
+        path: [...lens.path, key as string] // Append key to the path
+    };
+}
+
+// A function that allows us to focus on an array element at a specific index
+export function index<Main, T>(
+    lens: LensAndPath<Main, T>,
+    idx: number
+): T extends Array<infer U> ? LensAndPath<Main, U> : never {
+    return {
+        get: (main: Main) => lens.get(main)?.[idx], // Get the array element
+        set: (main: Main, child: any) => {
+            const parent = lens.get(main) || []; // Default parent to an empty array if undefined
+            const updatedParent = [...(parent as Array<any>)]; // Clone the array
+            updatedParent[idx] = child; // Update the specific index
+            return lens.set(main, updatedParent as T); // Set the updated array in the main object
+        },
+        path: [...lens.path, idx] // Append index to the path
+    } as T extends Array<infer U> ? LensAndPath<Main, U> : never;
+}
+
+export function objectCompose<Main, T, Children extends Record<string, LensAndPath<T, any>>>(
+    main: LensAndPath<Main, T>,
+    children: Children
+): LensAndPath<Main, { [K in keyof Children]: Children[K] extends LensAndPath<T, infer U> ? U : never }> {
+    const structure: ComposedPathPart = {};
+    for (const key in children) {
+        structure[key] = children[key].path;
+    }
+    const path: LensPath = [...main.path, structure];
+    return {
+        get: (mainObj: Main) => {
+            const parentValue = main.get(mainObj);
+            if (parentValue === undefined) return undefined;
+            const result = {} as { [K in keyof Children]: Children[K] extends LensAndPath<T, infer U> ? U : never };
+            for (const key in children) {
+                result[key] = children[key].get(parentValue);
+            }
+            return result;
+        },
+        set: (mainObj: Main, childValue: { [K in keyof Children]: Children[K] extends LensAndPath<T, infer U> ? U : never }) => {
+            const parentValue = main.get(mainObj) || ({} as T);
+            let updatedParent = {...parentValue};
+            for (const key in children) {
+                if (key in childValue) {
+                    updatedParent = children[key].set(updatedParent, childValue[key]);
+                }
+            }
+            return main.set(mainObj, updatedParent);
+        },
+        path
+    };
+}
+
+/* LensBuilder class for easier lens creation and focus chaining
+
+ Example Usage
+const obj = { a: { b: [1, 2, 3] } };
+
+const lens = lensBuilder<typeof obj>()
+    .focusOn('a') // Focus on 'a'
+    .focusOn('b') // Focus on 'b'
+    .focusIndex(1) // Focus on the second element of the array
+    .build();
+
+console.log(lens.path); // Output: ['a', 'b', 1]
+console.log(lens.get(obj)); // Output: 2
+
+const updated = lens.set(obj, 42);
+console.log(updated); // Output: { a: { b: [1, 42, 3] } }
+*/
+export class LensBuilder<Main, Child> implements LensAndPath<Main, Child> {
+    private _lens: LensAndPath<Main, Child>;
+
+    constructor(lens: LensAndPath<Main, Child>) {
+        this._lens = lens;
+    }
+
+    // Delegate `get` to the embedded `_lens`
+    get(main: Main): Child | undefined { return this._lens.get(main); }
+
+    // Delegate `set` to the embedded `_lens`
+    set(main: Main, child: Child): Main { return this._lens.set(main, child); }
+
+    // Delegate `path` to the embedded `_lens`
+    get path(): LensPath { return this._lens.path; }
+
+    // Focus on a child property within the current lens focus
+    focusOn<K extends keyof Child>(key: K): LensBuilder<Main, Child[K]> {
+        return new LensBuilder(child(this._lens, key));
+    }
+
+    // Focus on an array element within the current lens focus
+    focusIndex(idx: number): Child extends Array<infer U> ? LensBuilder<Main, U> : never {
+        return new LensBuilder(index(this._lens as any, idx)) as any;
+    }
+
+    /**
+     * Composes child lenses into the current lens, creating a new lens focusing on a composed object.
+     * @param children A record of child lenses focusing on properties of the current lens's target
+     */
+    focusCompose<Children extends Record<string, LensAndPath<Child, any>>>(
+        children: Children
+    ): LensBuilder<Main, { [K in keyof Children]: Children[K] extends LensAndPath<Child, infer U> ? U : never }> {
+        const composedLens = objectCompose(this._lens, children);
+        return new LensBuilder(composedLens);
+    }
+
+
+    // Return the built lens
+    build() {
+        return this._lens;
+    }
+}
+
+// Helper function to start building a lens
+export function lensBuilder<T>(lens: LensAndPath<T, any> = identityLens()): LensBuilder<T, T> {
+    return new LensBuilder(lens);
+}

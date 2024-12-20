@@ -47,7 +47,7 @@ export type Aggregates = NameAnd<NameAnd<number>>
 
 
 export type QueryDatasourceAndPaging<Filters, Paging> = {
-    query: Filters
+    filters: Filters
     datasourceName: string
     paging?: Paging // if not specified will be page 1
 }

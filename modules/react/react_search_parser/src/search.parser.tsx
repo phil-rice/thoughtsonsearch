@@ -1,5 +1,4 @@
-
-import {createContext, useContext} from "react";
+import React, {createContext, useContext} from "react";
 import {KeywordsFilter, keywordsFilterName} from "@enterprise_search/react_keywords_filter";
 
 export type SearchParser<Filters extends KeywordsFilter> = (query: string, from: Filters) => Filters

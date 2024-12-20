@@ -1,13 +1,14 @@
 {
   "template": "react_library",
-  "name": "@enterprise_search/react_people_datasource_plugin",
-  "description": "The plugin that searches graph api for people",
+  "name": "@enterprise_search/search",
+  "description": "Actually does the search",
   "links": [
+    "@enterprise_search/debug",
     "@enterprise_search/search_state",
-    "@enterprise_search/service_caller",
-    "@enterprise_search/search_api",
     "@enterprise_search/react_datasource_plugin",
-    "@enterprise_search/react_search_state"
+    "@enterprise_search/react_keywords_filter",
+    "@enterprise_search/react_search_parser",
+    "@enterprise_search/errors"
   ],
   "packageJson": {
     "files": ["build/"],
