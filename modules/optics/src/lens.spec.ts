@@ -321,4 +321,51 @@ describe('Lens functionality', () => {
     });
 
 
+    describe('focusOnPart', () => {
+        type Obj = { selection: Selection, domain: Domain };
+        type Selection = { x: number };
+        type Domain = { other: string, junk: string };
+        it('should refine a specific part of a composed lens', () => {
+            const obj: Obj = {
+                selection: {x: 42},
+                domain: {other: 'value', junk: "junk"}
+            };
+            const compositeLens = lensBuilder<Obj>()
+                .focusCompose({
+                    selection: lensBuilder<Obj>().focusOn('selection').build(),
+                    domain: lensBuilder<Obj>().focusOn('domain').build()
+                });
+
+            const refinedLens = compositeLens.focusOnPart('domain', 'other');
+
+
+            // Test get functionality
+            expect(refinedLens.get(obj)).toEqual({
+                selection: {x: 42},
+                domain: 'value'
+            });
+
+            // Test set functionality
+            const updated = refinedLens.set(obj, {
+                selection: {x: 100},
+                domain: 'newValue'
+            });
+
+            expect(updated).toEqual({
+                selection: {x: 100},
+                domain: {other: 'newValue', "junk": "junk"}
+            });
+        });
+
+        it('should throw an error for invalid parts', () => {
+            const compositeLens = lensBuilder<Obj>()
+                .focusCompose({
+                    selection: lensBuilder<Obj>().focusOn('selection').build(),
+                    domain: lensBuilder<Obj>().focusOn('domain').build()
+                });
+
+            expect(() => compositeLens.focusOnPart('invalid' as any, 'key' as any)).toThrow('Invalid path for focusOnPart. Must focus on an objectComposed path.');
+        });
+    });
+
 });

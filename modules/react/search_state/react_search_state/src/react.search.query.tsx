@@ -1,41 +1,20 @@
-import React, {Dispatch, SetStateAction, useCallback} from "react";
+import React, {useCallback} from "react";
 import {AllSearches, OneSearch, SearchState, SearchType} from "@enterprise_search/search_state";
-import {Setter} from "../../../react_utils";
-import {identityLens} from "@enterprise_search/optics/src/lens";
+import {GetterSetter} from "@enterprise_search/react_utils";
+import {lensBuilder} from "@enterprise_search/optics";
+import {makeGetterSetter} from "@enterprise_search/optics/src/lens.getter.setters";
 
 
-export type SearchStateOps<Filters> = {
-    searchState: SearchState<Filters>
-    setSearchState: Setter<SearchState<Filters>>
-}
-
-export type SearchQueryOps = {
-    searchQuery: string
-    setSearchQuery: Setter<string>
-}
-export type AllSearchesOps<Filters> = {
-    allSearches: AllSearches<Filters>
-    setAllSearches: Setter<AllSearches<Filters>>
-}
-
-export type OneSearchOpsFn<Filters> = (t: SearchType) => OneSearchOps<Filters>
-export type OneSearchOps<Filters> = {
-    filtersAndResult: OneSearch<Filters>
-    setFiltersAndResult: Setter<OneSearch<Filters>>
-}
-
-export type FiltersOpFn<Filters> = (t: SearchType) => FiltersOps<Filters>
-export type FiltersOps<Filters> = {
-    filters: Filters
-    setFilters: Setter<Filters>
-}
+export type SearchStateOps<Filters> = GetterSetter<SearchState<Filters>>
+export type SearchQueryOps = GetterSetter<string>
+export type AllSearchesOps<Filters> = GetterSetter<AllSearches<Filters>>
+export type OneSearchOpsFn<Filters> = (t: SearchType) => GetterSetter<OneSearch<Filters>>
+export type OneSearchOps<Filters> = GetterSetter<OneSearch<Filters>>
+export type FiltersOpFn<Filters> = (t: SearchType) => GetterSetter<Filters>
+export type FiltersOps<Filters> = GetterSetter<Filters>
 export type OneFilterOpsStateAndNameFn<Filters> = <FilterName extends keyof Filters> (t: SearchType, filterName: FilterName) => OneFilterOps<Filters, FilterName>
 export type OneFilterOpsFn<Filters> = <FilterName extends keyof Filters> (filterName: FilterName) => OneFilterOps<Filters, FilterName>
-export type OneFilterOps<Filters, FilterName extends keyof Filters> = {
-    filterName: FilterName
-    filter: Filters[FilterName]
-    setFilter: Setter<Filters[FilterName]>
-}
+export type OneFilterOps<Filters, FilterName extends keyof Filters> = GetterSetter<Filters[FilterName]>
 
 
 export type SearchStateContextData<Filters> = {
@@ -64,63 +43,27 @@ type SearchStateUsingStateProvider<Filters> = {
     children: React.ReactNode
 }
 
+const searchsL = lensBuilder<SearchState<any>>().focusOn('searches');
+const searchQueryL = lensBuilder<SearchState<any>>().focusOn('searchQuery');
+
 //Note that this is a very inefficient implementation, as it will re-render the entire app on every state change.
 //We will probably use recoil for real. But this allows us to get started.
 export const SearchInfoProviderUsingUseState = <Filters, >({allSearchState: initialSearchState, children}: SearchStateUsingStateProvider<Filters>) => {
     const [searchState, setSearchState] = React.useState<SearchState<Filters>>(initialSearchState);
-    const x = setSearchState
-    const searchStateOps: SearchStateOps<Filters> = {searchState, setSearchState}
-    const searchQueryOps: SearchQueryOps = {
-        searchQuery: searchState.searchQuery,
-        setSearchQuery: (searchQuery: string) => setSearchState({...searchState, searchQuery})
-    }
-    const allSearchInfoOps: AllSearchesOps<Filters> = {
-        allSearches: searchState.searches,
-        setAllSearches: (allSearchInfo: AllSearches<Filters>) => setSearchState({...searchState, searches: allSearchInfo})
-    };
+    const searchStateOps: SearchStateOps<Filters> = [searchState, setSearchState]
+    const searchQueryOps: SearchQueryOps = makeGetterSetter(searchState, setSearchState, searchQueryL)
+    const allSearchInfoOps: AllSearchesOps<Filters> = makeGetterSetter(searchState, setSearchState, searchsL)
 
     const filtersAndResultOps: OneSearchOpsFn<Filters> = useCallback<OneSearchOpsFn<Filters>>(
-        (t: SearchType): OneSearchOps<Filters> => {
-            return {
-                filtersAndResult: searchState.searches[t],
-                setFiltersAndResult: (filtersAndResult: OneSearch<Filters>) => setSearchState({
-                    ...searchState,
-                    searches: {...searchState.searches, [t]: filtersAndResult}
-                })
-            }
-        }, [searchState, setSearchState]);
+        (t: SearchType): OneSearchOps<Filters> => makeGetterSetter(searchState, setSearchState, searchsL.focusOn(t)), [searchState, setSearchState]);
 
     const filtersOps: FiltersOpFn<Filters> = useCallback<FiltersOpFn<Filters>>(
-        (t: SearchType): FiltersOps<Filters> => {
-            return {
-                filters: searchState.searches[t].filters,
-                setFilters: (filters: Filters) => setSearchState({
-                    ...searchState,
-                    searches: {
-                        ...searchState.searches,
-                        [t]: {...searchState.searches[t], filters}
-                    }
-                })
-            }
-        }, [searchState, setSearchState]);
+        (t: SearchType): FiltersOps<Filters> =>
+            makeGetterSetter(searchState, setSearchState, searchsL.focusOn(t).focusOn('filters')), [searchState, setSearchState]);
+
     const oneFilterOps: OneFilterOpsStateAndNameFn<Filters> = useCallback<OneFilterOpsStateAndNameFn<Filters>>(
-        <FilterName extends keyof Filters>(st: SearchType, filterName: FilterName) => {
-            const filterL = identityLens().focusOn('searchState').focusOn('searches').focusOn('searchType').focusOn('filters')
-            return {
-                filterName,
-                filter: searchState.searches[st].filters[filterName],
-                setFilter: (filter: Filters[keyof Filters]) => setSearchState(filterL.set({
-                    ...searchState,
-                    searches: {
-                        ...searchState.searches,
-                        [st]: {
-                            ...searchState.searches[st],
-                            filters: {...searchState.searches[st].filters, [filterName]: filter}
-                        }
-                    }
-                })
-            }
-        }, [searchState, setSearchState]);
+        <FilterName extends keyof Filters>(st: SearchType, filterName: FilterName) =>
+            makeGetterSetter(searchState, setSearchState, searchsL.focusOn(st).focusOn('filters').focusOn<FilterName>(filterName)), [searchState, setSearchState]);
 
     const contextData: SearchStateContextData<Filters> = {searchStateOps, searchQueryOps, allSearchInfoOps, filtersAndResultOps, filtersOps, oneFilterOps};
     return <SearchStateProvider ops={contextData}>{children}</SearchStateProvider>;
@@ -198,7 +141,7 @@ export function useOneFilter<Filters, FilterName extends keyof Filters>(filter: 
 }
 
 export function DebugSearchState<Filters, >() {
-    const {searchState} = useSearchState<Filters>()
+    const [searchState] = useSearchState<Filters>()
     return <pre>{JSON.stringify(searchState, null, 2)}</pre>
 }
 

@@ -58,9 +58,9 @@ const cssVariables: CSSVariables = {
   Count is probably handled by the search logic
  */
 export function SimpleSearchBar<Filters extends KeywordsFilter>() {
-    const {searchQuery, setSearchQuery} = useSearchQuery()
-    const {filters: mainFilters, setFilters: setMainFilters} = useFiltersByStateType<Filters>('main')
-    const {filters: immediateFilters, setFilters: setImmediateFilters} = useFiltersByStateType<Filters>('immediate')
+    const [searchQuery, setSearchQuery] = useSearchQuery()
+    const [ mainFilters, setMainFilters] = useFiltersByStateType<Filters>('main')
+    const [immediateFilters,  setImmediateFilters] = useFiltersByStateType<Filters>('immediate')
     const parser = useSearchParser<Filters>()
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)
     useEffect(() => setImmediateFilters(parser(searchQuery, mainFilters)),[searchQuery]);

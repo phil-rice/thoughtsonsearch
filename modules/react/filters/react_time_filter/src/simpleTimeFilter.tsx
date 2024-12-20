@@ -35,7 +35,7 @@ const cssVariables: CSSVariables = {
 };
 
 export function SimpleTimeFilter() {
-    const {filter='', setFilter} = useOneFilter<TimeFilters, 'time'>(timefilterPluginName)
+    const [filter='', setFilter] = useOneFilter<TimeFilters, 'time'>(timefilterPluginName)
 
     const onChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
         setFilter(e.target.value);

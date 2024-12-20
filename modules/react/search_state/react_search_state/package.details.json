@@ -5,7 +5,9 @@
   "links": [
     "@enterprise_search/search_state",
     "@enterprise_search/service_caller",
-    "@enterprise_search/search_api"
+    "@enterprise_search/search_api",
+    "@enterprise_search/optics",
+    "@enterprise_search/react_utils"
   ],
   "packageJson": {
     "files": ["build/"],

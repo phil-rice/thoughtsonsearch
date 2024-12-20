@@ -15,6 +15,6 @@ export const exampleKeywordsFilterPlugin: ReactFiltersPlugin<KeywordsFilter, 'ke
 }
 
 export function SimpleKeywordsDisplay() {
-    const {filter} = useOneFilter<KeywordsFilter, 'keywords'>(keywordsFilterName)
+    const [filter] = useOneFilter<KeywordsFilter, 'keywords'>(keywordsFilterName)
     return <div>{filter}</div>
 }

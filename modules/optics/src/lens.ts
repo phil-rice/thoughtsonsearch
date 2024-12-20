@@ -1,4 +1,6 @@
 // Types for Lens Path
+import {lensFromPath} from "./lens.serialisation";
+
 export type LensPathPart = string | number | ComposedPathPart;
 export type ComposedPathPart = Record<string, LensPath>;
 export type LensPath = LensPathPart[];
@@ -118,9 +120,26 @@ export class LensBuilder<Main, Child> implements LensAndPath<Main, Child> {
     // Delegate `path` to the embedded `_lens`
     get path(): LensPath { return this._lens.path; }
 
-    // Focus on a child property within the current lens focus
+    //Focus on a child property within the current lens focus
     focusOn<K extends keyof Child>(key: K): LensBuilder<Main, Child[K]> {
         return new LensBuilder(child(this._lens, key));
+    }
+
+    chain<Child2>(lens: LensAndPath<Child, Child2>): LensBuilder<Main, Child2> {
+        return new LensBuilder({
+            get: (main: Main) => lens.get(this._lens.get(main)),
+            set: (main: Main, child: Child2) => {
+                const parent = this._lens.get(main) || ({} as Child);
+                const updatedParent = lens.set(parent, child);
+                return this._lens.set(main, updatedParent);
+            },
+            path: [...this._lens.path, ...lens.path]
+        });
+    }
+
+
+    focusOnPath<T>(path: LensPath | string): LensBuilder<Main, T> {
+        return this.chain(lensFromPath(path))
     }
 
     // Focus on an array element within the current lens focus
@@ -139,6 +158,31 @@ export class LensBuilder<Main, Child> implements LensAndPath<Main, Child> {
         return new LensBuilder(composedLens);
     }
 
+    focusOnPart<
+        K extends keyof Child, // Key in the Child object (e.g., 'domain')
+        SubKey extends keyof Child[K] // Key within the selected part (e.g., 'other')
+    >(
+        part: K, // The top-level part (e.g., 'domain')
+        subPart: SubKey // The nested key within the part (e.g., 'other')
+    ): LensBuilder<Main, { [P in keyof Child]: P extends K ? Child[K][SubKey] : Child[P] }> {
+        const lastPath: ComposedPathPart = this._lens.path[this._lens.path.length - 1] as ComposedPathPart;
+        if (!lastPath || typeof lastPath !== 'object') throw new Error('Invalid path for focusOnPart. Must focus on an objectComposed path.');
+        const newLastPart: ComposedPathPart = {...lastPath, [subPart]: [...lastPath[part as any], subPart.toString()]};
+        const path: LensPath = [...this._lens.path.slice(0, -1), newLastPart];
+        const get = (main: Main) => {
+            const parentValue = this._lens.get(main);
+            const newValue = {...parentValue, [part]: parentValue?.[part]?.[subPart]};
+            return newValue
+        }
+        const set = (main: Main, childValue: any) => {
+            const parentValue = this._lens.get(main) || ({} as Child);
+            const partValue = parentValue[part] || ({} as any);
+            const newPartValue = {...partValue, [subPart]: childValue[part]};
+            const updatedChildValue = {...childValue, [part]: newPartValue};
+            return this._lens.set(main, updatedChildValue);
+        }
+        return new LensBuilder({get, set, path});
+    }
 
     // Return the built lens
     build() {
@@ -148,7 +192,7 @@ export class LensBuilder<Main, Child> implements LensAndPath<Main, Child> {
 
 // Helper function to start building a lens
 export function lensBuilder<T, Child = T>(
-    lens: LensAndPath<T, Child> = identityLens<T>()  as unknown as  LensAndPath<T, Child>
+    lens: LensAndPath<T, Child> = identityLens<T>() as unknown as LensAndPath<T, Child>
 ): LensBuilder<T, Child> {
     return new LensBuilder(lens);
 }
