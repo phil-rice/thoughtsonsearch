@@ -1,4 +1,4 @@
-import {LensPath, LensPathPart} from "./lens";
+import {child, ComposedPathPart, identityLens, index, LensAndPath, LensPath, LensPathPart, objectCompose} from "./lens";
 
 export type Token = string | number | '{' | '}' | ':' | ',';
 
@@ -89,8 +89,8 @@ export function parseTokens(tokens: Token[]): LensPath {
             if (typeof keyToken !== 'string') {
                 throw new Error(`Expected string key, got '${keyToken}' at position ${index}`);
             }
-            if (keyToken ==='}') throw new Error(`Unexpected '}' at position ${index}`);
-            if (keyToken ===',') throw new Error(`Unexpected ',' at position ${index}`);
+            if (keyToken === '}') throw new Error(`Unexpected '}' at position ${index}`);
+            if (keyToken === ',') throw new Error(`Unexpected ',' at position ${index}`);
 
             if (tokens[index++] !== ':') {
                 throw new Error(`Expected ':' after key '${keyToken}', got '${tokens[index]}'`);
@@ -107,7 +107,7 @@ export function parseTokens(tokens: Token[]): LensPath {
                 return nestedObject;
             }
             if (index >= tokens.length) {
-               throw new Error(`Unexpected end of context. Expected a }. This object started at ${startIdx}`);
+                throw new Error(`Unexpected end of context. Expected a }. This object started at ${startIdx}`);
             } else {
                 throw new Error(`Expected ',' or '}', got '${tokens[index]}' at position ${index}`);
             }
@@ -147,4 +147,28 @@ export function serializeLens(path: LensPath): string {
     };
 
     return path.map(serializePart).join('.');
+}
+
+export function lensFromPath<Main, Child>(path: LensPath | string): LensAndPath<Main, Child> {
+
+    const buildLens = (lens: LensAndPath<any, any>, pathPart: LensPathPart): LensAndPath<any, any> => {
+        if (typeof pathPart === 'string') {
+            return child(lens, pathPart);
+        } else if (typeof pathPart === 'number') {
+            return index(lens, pathPart);
+        } else if (typeof pathPart === 'object') {
+            const childLenses: Record<string, LensAndPath<any, any>> = {};
+            for (const [key, subPath] of Object.entries(pathPart as ComposedPathPart)) {
+                childLenses[key] = lensFromPath(subPath);
+            }
+            return objectCompose(lens, childLenses);
+        } else {
+            throw new Error(`Unexpected path part: ${pathPart}`);
+        }
+    };
+
+    if (typeof path === 'string') {
+        path = parseLens(path);
+    }
+    return path.reduce(buildLens, identityLens<Main>());
 }

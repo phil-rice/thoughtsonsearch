@@ -147,6 +147,8 @@ export class LensBuilder<Main, Child> implements LensAndPath<Main, Child> {
 }
 
 // Helper function to start building a lens
-export function lensBuilder<T>(lens: LensAndPath<T, any> = identityLens()): LensBuilder<T, T> {
+export function lensBuilder<T, Child = T>(
+    lens: LensAndPath<T, Child> = identityLens<T>()  as unknown as  LensAndPath<T, Child>
+): LensBuilder<T, Child> {
     return new LensBuilder(lens);
 }
