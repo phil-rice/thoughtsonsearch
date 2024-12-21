@@ -13,10 +13,10 @@ export type LoadingOrProps<Input, Output> = {
     loading?: LoadingDisplay;
     error?: LoadingOrErrorFn;
     onUnmount?: (output: Output) => void;
-    children: (output: Output) => React.ReactElement;
+    children: (output: Output) => React.ReactNode;
 }
 
-export function defaultLoading(): React.ReactElement {
+export function simpleLoadingDisplay(): React.ReactElement {
     return <div>Loading...</div>;
 }
 
@@ -24,7 +24,7 @@ export function defaultLoading(): React.ReactElement {
 export const defaultError: LoadingOrErrorFn = ({error}): React.ReactElement =>
     <div>Error: {error}</div>;
 
-export function LoadingOr<Input, Output>({input, kleisli, loading = defaultLoading, error = defaultError, children, onUnmount = () => {}}: LoadingOrProps<Input, Output>): React.ReactNode {
+export function LoadingOr<Input, Output>({input, kleisli, loading = simpleLoadingDisplay, error = defaultError, children, onUnmount = () => {}}: LoadingOrProps<Input, Output>): React.ReactNode {
     const state = useKleisli<Input, Output>(kleisli, input);
     useEffect(() => {
         return () => {if (hasData(state)) onUnmount(state.data as Output);};

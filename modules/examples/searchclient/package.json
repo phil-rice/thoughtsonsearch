@@ -20,7 +20,6 @@
     "@enterprise_search/errors": "0.0.1",
     "@enterprise_search/msal_authentication": "0.0.1",
     "@enterprise_search/search_api": "0.0.1",
-    "@enterprise_search/search_plugins_provider": "0.0.1",
     "@enterprise_search/search_important_components": "0.0.1",
     "@enterprise_search/service_caller": "0.0.1",
     "@enterprise_search/search_state": "0.0.1",

@@ -1,14 +1,14 @@
-import React, {createContext, useContext} from "react";
+import React, {createContext, useContext, useMemo} from "react";
 import {LoginOps} from "./login.ops";
 import {UserData, UserDataGetter} from "./userData";
 
-export type LoginOutFn = (callback: () => void) => Promise<void>
+export type LoginOutFn = (callback: () => void, debug: boolean) => Promise<void>
 export type LoginConfig = {
-    refeshLogin: () => Promise<void>
+    refeshLogin: LoginOutFn
     login: LoginOutFn
     logout: LoginOutFn
-    isLoggedIn: () => boolean
-    userData: UserDataGetter
+    userDataGetter: UserDataGetter
+    debug: boolean
 
 }
 
@@ -26,28 +26,43 @@ export type LoginProviderProps = {
 export type AuthenticateContextData = {
     sessionId: string
     loginOps: LoginOps
-    userData: UserDataGetter
-
+    userDataGetter: UserDataGetter
 }
 
 export const LoginContext = createContext<AuthenticateContextData | undefined>(undefined)
+export const UserDataContext = createContext<UserData | undefined>(undefined)
 
+export function UserDataProvider({userDataGetter, children}: { userDataGetter: UserDataGetter, children: React.ReactNode }) {
+
+}
 
 export function AuthenticationProvider({loginConfig, children, makeSessionId = defaultMakeSessionId}: LoginProviderProps) {
-    const [data, setData] = React.useState<AuthenticateContextData>(makeAuthenticateContextData(loginConfig))
+    const [userData, setUserData] = React.useState<UserData>({loggedIn: false, email: '', isDev: false, isAdmin: false})
+    const {userDataGetter, logout, refeshLogin, login, debug} = loginConfig
 
-    function makeAuthenticateContextData(config: LoginConfig): AuthenticateContextData {
-        const {userData, logout, isLoggedIn, refeshLogin, login} = config
-        const loginOps: LoginOps = {
-            refeshLogin,
-            login: async () => login(() => {setData(makeAuthenticateContextData(config))}),
-            logout: async () => logout(() => {setData(makeAuthenticateContextData(config))}),
-            isLoggedIn
+    //problem is the useMemo before we have the userDataGetter
+
+    const contextData = useMemo(() => {
+        const updateUserData = (reason: string,) => () => {
+            const userData = userDataGetter();
+            if (debug) console.log('updateUserData', reason, userData)
+            setUserData(userData)
         };
-        return {loginOps, userData, sessionId: makeSessionId()}
-    }
 
-    return <LoginContext.Provider value={data}>{children}</LoginContext.Provider>
+        const loginOps: LoginOps = {
+            refeshLogin: async () => refeshLogin(updateUserData('refresh'), debug),
+            login: async () => login(updateUserData('login'), debug),
+            logout: async () => logout(updateUserData('logout'), debug),
+
+        };
+        return {loginOps, sessionId: makeSessionId(), userDataGetter}
+    }, [login, logout, refeshLogin, debug])
+    if (debug) console.log('AuthenticationProvider', contextData)
+    return <LoginContext.Provider value={contextData}>
+        <UserDataContext.Provider value={userData}>
+            {children}
+        </UserDataContext.Provider>
+    </LoginContext.Provider>
 }
 
 export function useLogin(): LoginOps {
@@ -56,10 +71,9 @@ export function useLogin(): LoginOps {
     return login.loginOps
 }
 
-export function useUserData(): UserData {
-    const login = useContext(LoginContext)
-    if (!login) throw new Error('useUserData must be used within a LoginProvider')
-    return login.userData()
+export function useUserData(): UserData | undefined {
+    const userData = useContext(UserDataContext)
+    return userData
 }
 
 

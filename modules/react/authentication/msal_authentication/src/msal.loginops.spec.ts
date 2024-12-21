@@ -30,7 +30,7 @@ describe("loginUsingMsal", () => {
             _msalLogout: mockLogout,
         });
 
-        const result = await loginHandler.login();
+        const result = await loginHandler.login(false);
 
         expect(result).toEqual({test: "login success"});
     });
@@ -61,7 +61,7 @@ describe("loginUsingMsal", () => {
             _msalLogout: mockLogout,
         });
 
-        await loginHandler.logout();
+        await loginHandler.logout(false);
 
         expect(mockLogout.logout).not.toHaveBeenCalled();
     });

@@ -14,7 +14,7 @@ type MsalLoginConfig = {
     scopes?: string[];
     _msalLogin?: MsalLoginFn
     _msalLogout?: MsalLogout,
-
+    debug: boolean
 }
 
 /**
@@ -29,11 +29,13 @@ export function loginUsingMsal({
                                    scopes = ["openid", "profile", "user.read", "offline_access"],
                                    _msalLogin = msalLogin,
                                    _msalLogout = msalLogout,
-
+                                   debug
                                }: MsalLoginConfig): LoginConfig {
-    const login: LoginOutFn = async (callback) => {
-        await _msalLogin(msal)(scopes);
+    const login: LoginOutFn = async (callback, debug) => {
+        if (debug) console.log('loginUsingMsal.login')
+        await _msalLogin(msal)(scopes, debug);
         callback()
+        if (debug) console.log('loginUsingMsal.login - ended')
     };
     const logout: LoginOutFn = async (callback) => {
         const accounts = msal.getAllAccounts();
@@ -42,22 +44,28 @@ export function loginUsingMsal({
             return;
         }
         await _msalLogout.logout(msal, account)
+        if (debug) console.log('loginUsingMsal after logout')
         callback();
+        if (debug) console.log('loginUsingMsal after callback')
     };
-    const isLoggedIn = (): boolean => {
-        const accounts = msal.getAllAccounts();
-        return accounts.length > 0;
+
+    const refeshLogin = async (callback,debug: boolean) => {
+        if (debug) console.log('loginUsingMsal.refeshLogin')
+        await msalRefreshLogin(msal)(scopes, debug)
+        callback()
+        if (debug) console.log('loginUsingMsal.refeshLogin - ended')
     };
-    const refeshLogin = async () => {await msalRefreshLogin(msal)(scopes)};
-    const userData: UserDataGetter = () => {
+
+    const userDataGetter: UserDataGetter = () => {
         const accounts = msal.getAllAccounts();
         const account = accounts[0];
+        const loggedIn = !!account;
         const email = account ? account.username : undefined;
         const isDev = window.location.href.includes("dev=true");
         const isAdmin = window.location.href.includes("admin=true");
-        return {email, isDev, isAdmin};
+        return {email, isDev, isAdmin,loggedIn};
     }
-    return {login, logout, isLoggedIn, refeshLogin, userData};
+    return {login, logout, refeshLogin, userDataGetter, debug};
 }
 
 

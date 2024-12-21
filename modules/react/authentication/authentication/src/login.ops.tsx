@@ -9,6 +9,5 @@ export type LoginOps = {
     //what you should call when the user clicks 'login'
     login: () => Promise<void>
     logout: () => Promise<void>
-    isLoggedIn: () => boolean
 }
 

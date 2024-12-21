@@ -1,24 +1,24 @@
 import React, {useEffect} from "react";
 import {createRoot} from "react-dom/client";
 import {Configuration, PublicClientApplication} from "@azure/msal-browser";
-import {AuthenticationProvider, LoginConfig} from "@enterprise_search/authentication";
+import {Authenticate, AuthenticationProvider, LoginConfig} from "@enterprise_search/authentication";
 import {loginUsingMsal} from "@enterprise_search/msal_authentication";
-import {SimpleMustBeLoggedIn, useDisplayLogin} from "@enterprise_search/react_login_component";
-import {ExampleInitialSearchResultsPlugin, SearchResultsPluginProvider, SearchResultsPlugins, useSearchResults} from "@enterprise_search/search_results_plugin";
+import {SimpleDisplayLogin, SimpleMustBeLoggedIn, useDisplayLogin} from "@enterprise_search/react_login_component";
+import {ExampleInitialSearchResultsPlugin, SearchResultsPlugins, useSearchResults} from "@enterprise_search/search_results_plugin";
 
 
 import {emptySearchState} from "@enterprise_search/search_state";
-import {filtersDisplayPurpose, ReactFiltersContextData, ReactFiltersProvider} from "@enterprise_search/react_filters_plugin";
+import {filtersDisplayPurpose, ReactFiltersContextData} from "@enterprise_search/react_filters_plugin";
 import {exampleTimeFilterPlugin} from "@enterprise_search/react_time_filter_plugin";
 import {DebugSearchState, SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
 import {keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
-import {Authenticate} from "@enterprise_search/authentication";
-import {SearchImportantComponentsProvider} from "@enterprise_search/search_important_components";
+import {SearchImportantComponents, SearchImportantComponentsProvider} from "@enterprise_search/search_important_components";
 
 
-import {SearchPluginsProvider, SearchProviderConfig} from "@enterprise_search/search_plugins_provider";
 import {DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPlugins} from "@enterprise_search/react_data/src/react.data";
+import {SimpleSearchBar} from "@enterprise_search/search_bar";
+import {simpleLoadingDisplay} from "@enterprise_search/loading";
 
 export const exampleMsalConfig: Configuration = {
     auth: {
@@ -29,7 +29,7 @@ export const exampleMsalConfig: Configuration = {
     },
 };
 const msal = new PublicClientApplication(exampleMsalConfig);
-const login: LoginConfig = loginUsingMsal({msal});
+const login: LoginConfig = loginUsingMsal({msal,debug:false});
 
 const searchResultsPlugins: SearchResultsPlugins = {
     'start': ExampleInitialSearchResultsPlugin,
@@ -46,11 +46,16 @@ const reactFiltersContextData: ReactFiltersContextData<any, any> = {
 }
 const dataSourcePlugins: DataSourcePlugins<any> = {}
 const dataPlugins: DataPlugins = {}
-export const searchProviderConfig: SearchProviderConfig<any, any> = {
+
+const searchImportComponents: SearchImportantComponents<any, any> = {
+    SearchBar: SimpleSearchBar,
     searchResultsPlugins,
-    reactFiltersContextData,
     dataSourcePlugins,
     dataPlugins,
+    filterPlugins: reactFiltersContextData,
+    LoadingDisplay: simpleLoadingDisplay,
+    displayLogin: SimpleDisplayLogin,
+    NotLoggedIn: SimpleMustBeLoggedIn
 }
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
@@ -77,10 +82,10 @@ function SearchApp({initialPurpose}: SearchAppProps) {
 msal.initialize({}).then(() => {
 
     root.render(<React.StrictMode>
-            <SearchImportantComponentsProvider components={simpleSearchImportantComponents}>
+            <SearchImportantComponentsProvider components={searchImportComponents}>
                 <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
                     <AuthenticationProvider loginConfig={login}>
-                        <Authenticate NotLoggedIn={SimpleMustBeLoggedIn}>
+                        <Authenticate>
                             <SearchApp initialPurpose='start'/>
                             <DebugSearchState/>
                         </Authenticate>

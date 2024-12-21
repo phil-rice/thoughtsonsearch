@@ -1,8 +1,8 @@
-import {useLogin} from "@enterprise_search/authentication";
+import {useLogin, UserDataContext, useUserData} from "@enterprise_search/authentication";
 import {LoadingOr} from "@enterprise_search/loading";
 import {delay} from "@enterprise_search/recoil_utils";
-import React, {ReactElement} from "react";
-import {useDisplayLogin, useNotLoggedIn} from "./react.login";
+import React, {ReactNode, useContext} from "react";
+import {useNotLoggedIn} from "./react.login";
 
 export type AuthenticateProps = {
     children: React.ReactNode
@@ -15,7 +15,10 @@ export type AuthenticateProps = {
 export function Authenticate({children = null}: AuthenticateProps) {
     const {refeshLogin} = useLogin();
     const {NotLoggedIn} = useNotLoggedIn();
-    const kleisli = (isLoggedIn: boolean) => delay(3000).then(() => refeshLogin());
+    const kleisli = async () => {
+        await delay(3000)
+        await refeshLogin()
+    }
     return <LoadingOr kleisli={kleisli} input={undefined}>{() =>
         NotLoggedIn ? <MustBeLoggedIn notLoggedIn={NotLoggedIn}>{children}</MustBeLoggedIn> : children
     }</LoadingOr>
@@ -23,14 +26,15 @@ export function Authenticate({children = null}: AuthenticateProps) {
 }
 
 export type MustBeLoggedInProps = {
-    notLoggedIn: () => React.ReactElement,
-    children: React.ReactElement
+    notLoggedIn: () => ReactNode,
+    children: ReactNode
 };
 
 export type MustBeLoggedInDisplay = (props: MustBeLoggedInProps) => React.ReactElement;
 
-export function MustBeLoggedIn({children, notLoggedIn}: MustBeLoggedInProps): ReactElement {
-    const {isLoggedIn} = useLogin();
-    return isLoggedIn() ? children : notLoggedIn();
+export function MustBeLoggedIn({children, notLoggedIn}: MustBeLoggedInProps): ReactNode {
+    const {loggedIn} = useContext(UserDataContext) //no idea why useUserData doesn't work here.
+    // const {loggedIn} = useUserData()
+    return loggedIn ? children : notLoggedIn();
 }
 

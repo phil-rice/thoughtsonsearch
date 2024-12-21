@@ -1,14 +1,12 @@
-import {SearchBar, SearchBarProvider, SimpleSearchBar} from "@enterprise_search/search_bar";
-import {DisplayFilter, ReactFiltersContextData, ReactFiltersPlugins, ReactFiltersProvider} from "@enterprise_search/react_filters_plugin";
+import {SearchBar, SearchBarProvider} from "@enterprise_search/search_bar";
+import {ReactFiltersContextData, ReactFiltersProvider} from "@enterprise_search/react_filters_plugin";
 
 import {LoadingDisplay} from "@enterprise_search/loading";
-import {MustBeLoggedInDisplay} from "modules/react/authentication/react_login_component/src/authenticate";
-import React, {createContext} from "react";
-import {SimpleKeywordsDisplay} from "@enterprise_search/react_keywords_filter_plugin";
-import {SimpleTimeDisplay} from "@enterprise_search/react_time_filter_plugin";
+import React from "react";
 import {DataSourcePluginProvider, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
-import {DataPlugin, DataPluginProvider, DataPlugins} from "@enterprise_search/react_data/src/react.data";
+import {DataPluginProvider, DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {SearchResultsPluginProvider, SearchResultsPlugins} from "@enterprise_search/search_results_plugin";
+import {DisplayLogin, LoginProvider} from "@enterprise_search/react_login_component";
 
 
 export type SearchImportantContext = {}
@@ -25,7 +23,8 @@ export interface SearchImportantComponents<Context, Filters> {
     dataSourcePlugins: DataSourcePlugins<Filters>
     dataPlugins: DataPlugins
     SearchBar: SearchBar
-
+    displayLogin: DisplayLogin
+    NotLoggedIn?: () => React.ReactElement
     /*If present will be displayed when loading. There is a default but it's not very pretty*/
     LoadingDisplay?: LoadingDisplay
 }
@@ -37,14 +36,15 @@ export type SearchImportantComponentsProviderProps<Context, Filters> = {
 }
 
 export function SearchImportantComponentsProvider<Context, Filters>({components, children}: SearchImportantComponentsProviderProps<Context, Filters>) {
-    const {SearchBar, dataPlugins, dataSourcePlugins, searchResultsPlugins, filterPlugins, LoadingDisplay} = components
-
+    const {SearchBar, dataPlugins, dataSourcePlugins, searchResultsPlugins, filterPlugins, LoadingDisplay, displayLogin, NotLoggedIn} = components
     return <SearchBarProvider SearchBar={SearchBar}>
         <ReactFiltersProvider value={filterPlugins}>
             <SearchResultsPluginProvider plugins={searchResultsPlugins}>
                 <DataSourcePluginProvider plugins={dataSourcePlugins}>
                     <DataPluginProvider ops={dataPlugins}>
-                        {children}
+                        <LoginProvider displayLogin={displayLogin} NotLoggedIn={NotLoggedIn}>
+                            {children}
+                        </LoginProvider>
                     </DataPluginProvider>
                 </DataSourcePluginProvider>
             </SearchResultsPluginProvider>

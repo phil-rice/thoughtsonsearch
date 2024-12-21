@@ -1,12 +1,13 @@
 import {DisplayLoginProps} from "./react.login";
-import {useLogin, useUserData} from "@enterprise_search/authentication";
+import { useLogin, useUserData} from "@enterprise_search/authentication";
 import React, {ReactElement} from "react";
 
 export function SimpleDisplayLogin(props: DisplayLoginProps) {
-    const {login, isLoggedIn, logout} = useLogin()
-    const {email, isAdmin, isDev} = useUserData()
+    const {login,  logout} = useLogin()
+    const {loggedIn} = useUserData()
+    const {email, isAdmin, isDev} = useUserData() || {}
     return <div>
-        {isLoggedIn() ? <div>
+        {loggedIn ? <div>
             <div>Logged in as {email}{isAdmin ? ' - Admin' : ''}{isDev ? ' - Dev' : ''}</div>
             <button onClick={logout}>Logout</button>
         </div> : <button onClick={login}>Login</button>}
@@ -14,9 +15,10 @@ export function SimpleDisplayLogin(props: DisplayLoginProps) {
 }
 
 export function SimpleMustBeLoggedIn(): ReactElement {
-    const {isLoggedIn, login} = useLogin()
+    const {login} = useLogin()
+    const {loggedIn} = useUserData()
 
-    return isLoggedIn() ?
+    return loggedIn ?
         <span>SimpleMustBeLoggedIn called in error: actually logged in</span> :
         <div>Must be logged in
             <button onClick={login}>Login</button>
