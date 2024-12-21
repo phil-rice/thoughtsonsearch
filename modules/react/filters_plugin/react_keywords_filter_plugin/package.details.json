@@ -1,0 +1,25 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/react_keywords_filter_plugin",
+  "description": "How we search using text",
+  "links": [
+    "@enterprise_search/react_filters_plugin",
+    "@enterprise_search/search_state",
+    "@enterprise_search/service_caller",
+    "@enterprise_search/search_api"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "name": "@enterprise_search/search_results_plugin",
+  "description": "The search results plugin displays search results",
+  "version": "0.0.1",
+  "browserslist": {
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ],
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ]
+  },
+  "dependencies": {
+    "@enterprise_search/search_state": "0.0.1",
+    "@enterprise_search/service_caller": "0.0.1",
+    "@enterprise_search/search_api": "0.0.1",
+    "@enterprise_search/search_bar": "0.0.1",
+    "@enterprise_search/react_search_state": "0.0.1",
+    "@enterprise_search/react_keywords_filter_plugin": "0.0.1",
+    "debug": "^4.3.4",
+    "@focuson/lens": "1.44.3",
+    "@focuson/state": "1.44.3",
+    "@laoban/utils": "1.4.45"
+  },
+  "devDependencies": {
+    "ts-jest": "^29.2.5",
+    "parcel": "^2.13.3",
+    "typescript": "^5.3.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/dom": "^10.4.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/user-event": "^14.5.2",
+    "@babel/preset-react": "^7.23.3",
+    "@types/react": "^18.2.56",
+    "@types/react-dom": "^18.2.19",
+    "recoil": "^0.7.7",
+    "@types/jest": "^27.5.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      }
+    ]
+  },
+  "files": [
+    "build/",
+    "dist/index.js",
+    "dist/index.d.ts",
+    "dist/src/",
+    "build/"
+  ],
+  "guards": {
+    "compile": true,
+    "publish": false,
+    "test": false,
+    "react": false
+  },
+  "keywords": [
+    "react",
+    "runbook"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "repository": "git@github.com:intellimaintain/intellimaintain.git",
+  "scripts": {
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html",
+    "test": "jest --config jest.config.json",
+    "test:watch": "npm run test -- --watch",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  }
+}

@@ -3,6 +3,7 @@
   "name": "@enterprise_search/authentication",
   "description": "An interface that abstracts over authentication",
   "links": [
+    "@enterprise_search/loading",
     "@enterprise_search/service_caller"
   ],
   "packageJson": {

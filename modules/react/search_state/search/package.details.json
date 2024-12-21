@@ -6,7 +6,7 @@
     "@enterprise_search/debug",
     "@enterprise_search/search_state",
     "@enterprise_search/react_datasource_plugin",
-    "@enterprise_search/react_keywords_filter",
+    "@enterprise_search/react_keywords_filter_plugin",
     "@enterprise_search/react_search_parser",
     "@enterprise_search/errors"
   ],

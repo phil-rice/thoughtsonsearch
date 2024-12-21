@@ -1,4 +1,4 @@
-import {KeywordsFilter} from "@enterprise_search/react_keywords_filter";
+import {KeywordsFilter} from "@enterprise_search/react_keywords_filter_plugin";
 import {DatasourceToPromiseSearchResult, DatasourceToSearchResult, QueryDatasourceAndPaging, SearchResult, SearchState, SearchType} from "@enterprise_search/search_state";
 import {SearchParser} from "@enterprise_search/react_search_parser";
 import {ErrorsOr} from "@enterprise_search/errors";

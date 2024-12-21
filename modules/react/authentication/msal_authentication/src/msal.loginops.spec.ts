@@ -26,8 +26,8 @@ describe("loginUsingMsal", () => {
         const loginHandler = loginUsingMsal({
             msal: mockMsalInstance,
             scopes,
-            login: mockLogin,
-            logout: mockLogout,
+            _msalLogin: mockLogin,
+            _msalLogout: mockLogout,
         });
 
         const result = await loginHandler.login();
@@ -41,9 +41,9 @@ describe("loginUsingMsal", () => {
         mockMsalInstance.getAllAccounts.mockReturnValue([mockAccount]);
 
         const loginHandler = loginUsingMsal({
-            login: undefined as any,
+            _msalLogin: undefined as any,
             msal: mockMsalInstance,
-            logout: mockLogout,
+            _msalLogout: mockLogout,
         });
 
         await loginHandler.logout();
@@ -56,9 +56,9 @@ describe("loginUsingMsal", () => {
         mockMsalInstance.getAllAccounts.mockReturnValue([]);
 
         const loginHandler = loginUsingMsal({
-            login: undefined as any,
+            _msalLogin: undefined as any,
             msal: mockMsalInstance,
-            logout: mockLogout,
+            _msalLogout: mockLogout,
         });
 
         await loginHandler.logout();
@@ -70,8 +70,8 @@ describe("loginUsingMsal", () => {
         mockMsalInstance.getAllAccounts.mockReturnValue([{username: "testUser", homeAccountId: "id123", environment: "env", tenantId: "tenant123"} as AccountInfo]);
 
         const loginHandler = loginUsingMsal({
-            login: undefined as any,
-            logout: undefined as any,
+            _msalLogin: undefined as any,
+            _msalLogout: undefined as any,
             msal: mockMsalInstance,
         });
 

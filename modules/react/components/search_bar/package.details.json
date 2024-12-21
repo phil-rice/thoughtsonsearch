@@ -1,0 +1,27 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/search_bar",
+  "description": "An interface for how we do the searchbar",
+  "links": [
+    "@enterprise_search/search_state",
+    "@enterprise_search/service_caller",
+    "@enterprise_search/search_api",
+    "@enterprise_search/react_search_state",
+    "@enterprise_search/react_search_parser",
+    "@enterprise_search/react_keywords_filter_plugin"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}
