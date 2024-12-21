@@ -38,7 +38,9 @@ export const SearchStateProvider = <Filters, >({ops, children}: SearchStateProvi
     return <SearchStateContext.Provider value={ops}>{children}</SearchStateContext.Provider>;
 }
 
-type SearchStateUsingStateProvider<Filters> = {
+
+
+type SearchStateUsingStateProviderProps<Filters> = {
     allSearchState: SearchState<Filters>
     children: React.ReactNode
 }
@@ -48,7 +50,7 @@ const searchQueryL = lensBuilder<SearchState<any>>().focusOn('searchQuery');
 
 //Note that this is a very inefficient implementation, as it will re-render the entire app on every state change.
 //We will probably use recoil for real. But this allows us to get started.
-export const SearchInfoProviderUsingUseState = <Filters, >({allSearchState: initialSearchState, children}: SearchStateUsingStateProvider<Filters>) => {
+export const SearchInfoProviderUsingUseState = <Filters, >({allSearchState: initialSearchState, children}: SearchStateUsingStateProviderProps<Filters>) => {
     const [searchState, setSearchState] = React.useState<SearchState<Filters>>(initialSearchState);
     const searchStateOps: SearchStateOps<Filters> = [searchState, setSearchState]
     const searchQueryOps: SearchQueryOps = makeGetterSetter(searchState, setSearchState, searchQueryL)

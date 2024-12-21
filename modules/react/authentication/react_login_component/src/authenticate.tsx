@@ -1,18 +1,20 @@
-import {useLogin} from "./authenticationProvider";
+import {useLogin} from "@enterprise_search/authentication";
 import {LoadingOr} from "@enterprise_search/loading";
 import {delay} from "@enterprise_search/recoil_utils";
 import React, {ReactElement} from "react";
+import {useDisplayLogin, useNotLoggedIn} from "./react.login";
 
 export type AuthenticateProps = {
-    children: React.ReactElement
-    NotLoggedIn?: () => React.ReactElement
+    children: React.ReactNode
+
 };
 
 /** When we load the page we need to refresh any logged in tokens for authenticating.
  * If we set notLoggedIn then we will show the notLoggedIn component until we have refreshed the login.
  * */
-export function Authenticate({children, NotLoggedIn}: AuthenticateProps) {
+export function Authenticate({children = null}: AuthenticateProps) {
     const {refeshLogin} = useLogin();
+    const {NotLoggedIn} = useNotLoggedIn();
     const kleisli = (isLoggedIn: boolean) => delay(3000).then(() => refeshLogin());
     return <LoadingOr kleisli={kleisli} input={undefined}>{() =>
         NotLoggedIn ? <MustBeLoggedIn notLoggedIn={NotLoggedIn}>{children}</MustBeLoggedIn> : children

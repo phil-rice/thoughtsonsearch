@@ -1,4 +1,5 @@
 export * from './src/authentication'
+export * from '../react_login_component/src/authenticate'
 export * from './src/login.ops'
 export * from './src/userData'
 export * from './src/authenticationProvider'

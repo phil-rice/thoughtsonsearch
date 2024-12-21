@@ -1,19 +1,26 @@
-import React from "react";
+import React, {useMemo} from "react";
 import {SimpleDisplayLogin} from "./simple.login";
 
 
 export type DisplayLoginProps = {}
 export type DisplayLogin = (props: DisplayLoginProps) => React.ReactElement
 
-export const DisplayLoginContext = React.createContext<DisplayLogin>(SimpleDisplayLogin)
+export type DisplayLoginContextData = {
+    DisplayLogin: DisplayLogin
+    NotLoggedIn?: () => React.ReactElement
+}
+export const DisplayLoginContext = React.createContext<DisplayLoginContextData>({DisplayLogin: SimpleDisplayLogin})
 
 export type LoginProviderProps = {
     displayLogin: DisplayLogin
+    NotLoggedIn?: () => React.ReactElement
     children: React.ReactNode
 }
 
-export function LoginProvider({displayLogin, children}: LoginProviderProps) {
-    return <DisplayLoginContext.Provider value={displayLogin}>{children}</DisplayLoginContext.Provider>
+export function LoginProvider({displayLogin, NotLoggedIn, children}: LoginProviderProps) {
+    const data = useMemo(() =>
+        ({DisplayLogin: displayLogin, NotLoggedIn}), [displayLogin, NotLoggedIn])
+    return <DisplayLoginContext.Provider value={data}>{children}</DisplayLoginContext.Provider>
 }
 
 export type DisplayLoginOps = {
@@ -21,6 +28,11 @@ export type DisplayLoginOps = {
 }
 
 export function useDisplayLogin(): DisplayLoginOps {
-    const DisplayLogin = React.useContext(DisplayLoginContext)
+    const {DisplayLogin} = React.useContext(DisplayLoginContext)
     return {DisplayLogin}
+}
+
+export function useNotLoggedIn() {
+    const {NotLoggedIn} = React.useContext(DisplayLoginContext)
+    return {NotLoggedIn}
 }

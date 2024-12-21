@@ -12,7 +12,7 @@ export type KeywordsFilter = {
 export const keywordsFilterPlugin = (Display: DisplayFilter<string>): ReactFiltersPlugin<any, KeywordsFilter, 'keywords'> => ({
     plugin: 'filter',
     type: keywordsFilterName,
-    DefaultDisplay: SimpleKeywordsDisplay,
+    DefaultDisplay: Display,
     PurposeToDisplay: {[filtersDisplayPurpose]: null}
 })
 export const simpleKeywordsFilterPlugin = keywordsFilterPlugin(SimpleKeywordsDisplay)

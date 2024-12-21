@@ -1,11 +1,14 @@
 import {SearchBar, SearchBarProvider, SimpleSearchBar} from "@enterprise_search/search_bar";
-import {DisplayFilter} from "@enterprise_search/react_filters_plugin";
+import {DisplayFilter, ReactFiltersContextData, ReactFiltersPlugins, ReactFiltersProvider} from "@enterprise_search/react_filters_plugin";
 
 import {LoadingDisplay} from "@enterprise_search/loading";
-import {MustBeLoggedInDisplay} from "@enterprise_search/authentication/src/authenticate";
+import {MustBeLoggedInDisplay} from "modules/react/authentication/react_login_component/src/authenticate";
 import React, {createContext} from "react";
 import {SimpleKeywordsDisplay} from "@enterprise_search/react_keywords_filter_plugin";
 import {SimpleTimeDisplay} from "@enterprise_search/react_time_filter_plugin";
+import {DataSourcePluginProvider, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
+import {DataPlugin, DataPluginProvider, DataPlugins} from "@enterprise_search/react_data/src/react.data";
+import {SearchResultsPluginProvider, SearchResultsPlugins} from "@enterprise_search/search_results_plugin";
 
 
 export type SearchImportantContext = {}
@@ -16,43 +19,39 @@ we can easily find them, and have different versions of them for different clien
 
 If for example we choose to move to MUI we can implement this for MUI and the search application should work
  */
-export interface SearchImportantComponents {
+export interface SearchImportantComponents<Context, Filters> {
+    searchResultsPlugins: SearchResultsPlugins
+    filterPlugins: ReactFiltersContextData<Context, Filters>
+    dataSourcePlugins: DataSourcePlugins<Filters>
+    dataPlugins: DataPlugins
     SearchBar: SearchBar
-    KeywordsFilter: DisplayFilter<string>
-    TimeFilter: DisplayFilter<string>
-    // ExplainFilter: DisplayFilter<ExplainData>
 
     /*If present will be displayed when loading. There is a default but it's not very pretty*/
     LoadingDisplay?: LoadingDisplay
 }
 
-export const SearchImportantComponentsContext = createContext<SearchImportantComponents | undefined>(undefined);
 
-export type SearchImportantComponentsProviderProps = {
-    components: SearchImportantComponents
+export type SearchImportantComponentsProviderProps<Context, Filters> = {
+    components: SearchImportantComponents<Context, Filters>
     children: React.ReactNode
 }
 
-export function SearchImportantComponentsProvider({components, children}: SearchImportantComponentsProviderProps) {
-    return (
-        <SearchImportantComponentsContext.Provider value={components}>
-            <SearchBarProvider SearchBar={components.SearchBar}>
-                {children}
-            </SearchBarProvider>
-        </SearchImportantComponentsContext.Provider>
-    )
+export function SearchImportantComponentsProvider<Context, Filters>({components, children}: SearchImportantComponentsProviderProps<Context, Filters>) {
+    const {SearchBar, dataPlugins, dataSourcePlugins, searchResultsPlugins, filterPlugins, LoadingDisplay} = components
+
+    return <SearchBarProvider SearchBar={SearchBar}>
+        <ReactFiltersProvider value={filterPlugins}>
+            <SearchResultsPluginProvider plugins={searchResultsPlugins}>
+                <DataSourcePluginProvider plugins={dataSourcePlugins}>
+                    <DataPluginProvider ops={dataPlugins}>
+                        {children}
+                    </DataPluginProvider>
+                </DataSourcePluginProvider>
+            </SearchResultsPluginProvider>
+        </ReactFiltersProvider>
+    </SearchBarProvider>
 }
 
-export const simpleSearchImportantComponents: SearchImportantComponents = {
-    SearchBar: SimpleSearchBar,
-    KeywordsFilter: SimpleKeywordsDisplay,
-    TimeFilter: SimpleTimeDisplay,
-}
 
-export function useSearchImportantComponents(): SearchImportantComponents {
-    const components = React.useContext(SearchImportantComponentsContext)
-    if (!components) {
-        throw new Error("useSearchImportantComponents must be used within a SearchImportantComponentsProvider")
-    }
-    return components
-}
+
+
