@@ -40,12 +40,12 @@ export type SearchImportantComponentsProviderProps<Context, Filters> = {
 
 export function SearchImportantComponentsProvider<Context, Filters>({components, children}: SearchImportantComponentsProviderProps<Context, Filters>) {
     const {
-        SearchBar, dataPlugins, dataSourcePlugins, searchResultsPlugins, filterPlugins, LoadingDisplay, displayLogin,
+        SearchBar, dataPlugins, dataSourcePlugins, searchResultsPlugins, reactFiltersContextData, LoadingDisplay, displayLogin,
         NotLoggedIn, DataSourceNavBarLayout, DataSourceAllButton
     } = components
     const navBarComp: DataSourceNavBarComponents = useMemo(() => ({DataSourceAllButton, DataSourceNavBarLayout}), [DataSourceAllButton, DataSourceNavBarLayoutProvider])
     return <SearchBarProvider SearchBar={SearchBar}>
-        <ReactFiltersProvider value={filterPlugins}>
+        <ReactFiltersProvider value={reactFiltersContextData}>
             <SearchResultsPluginProvider plugins={searchResultsPlugins}>
                 <DataSourcePluginProvider plugins={dataSourcePlugins}>
                     <DataPluginProvider ops={dataPlugins}>

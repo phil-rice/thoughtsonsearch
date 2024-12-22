@@ -1,7 +1,7 @@
-    // Define a type for the CSS variables
+// Define a type for the CSS variables
 import React, {useEffect} from "react";
 import {useFiltersByStateType, useSearchQuery} from "@enterprise_search/react_search_state";
-import {KeywordsFilter} from "@enterprise_search/react_keywords_filter";
+import {KeywordsFilter} from "@enterprise_search/react_keywords_filter_plugin";
 import {useSearchParser} from "@enterprise_search/react_search_parser";
 
 type CSSVariables = {
@@ -59,11 +59,11 @@ const cssVariables: CSSVariables = {
  */
 export function SimpleSearchBar<Filters extends KeywordsFilter>() {
     const [searchQuery, setSearchQuery] = useSearchQuery()
-    const [ mainFilters, setMainFilters] = useFiltersByStateType<Filters>('main')
-    const [immediateFilters,  setImmediateFilters] = useFiltersByStateType<Filters>('immediate')
+    const [mainFilters, setMainFilters] = useFiltersByStateType<Filters>('main')
+    const [immediateFilters, setImmediateFilters] = useFiltersByStateType<Filters>('immediate')
     const parser = useSearchParser<Filters>()
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)
-    useEffect(() => setImmediateFilters(parser(searchQuery, mainFilters)),[searchQuery]);
+    useEffect(() => setImmediateFilters(parser(searchQuery, mainFilters)), [searchQuery]);
 
     const search = () => setMainFilters(immediateFilters);
 

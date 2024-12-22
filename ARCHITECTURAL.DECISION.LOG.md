@@ -1,3 +1,5 @@
+Review of this log https://chatgpt.com/share/6767b9fe-3e08-8013-bdfc-9cb6e1e81e6c
+
 # Many small packages in a mono repo
 
 Large applications should be built of small composable components. This allows us to think about each of the
@@ -13,15 +15,15 @@ There is a lot of advanced types in this codebase: fortunately modern AI tools c
 are typically in 'library' code allowing the use of the library to throw compilation errors if not used properly. See
 the optics package for an example
 
-# Use of react
+# Use of React
 
 Mandated by the customer. But in addition it is in the opinion of the author that react is a great way to build UIs.
 
 # Decoupling of state management
 
-While react is great for rendering components and declaratively asserting what should be on the screen it is very weak
+While React is great for rendering components and declaratively asserting what should be on the screen it is very weak
 in state management. There are tools to help: the useState hook, the contexts, but these quickly become unwieldy. Redux
-is not a desirable solution: it breaks cohesion: smearing the intent in a lot of places, it is object oriented and thus
+is not a desirable solution: it breaks cohesion: smearing the intent in a lot of places, it is object-oriented and thus
 always clunky when interacting with the functional Redux. Refactoring and understanding large redux programs is in
 the opinion of the author frankly a nightmare.
 
@@ -50,7 +52,7 @@ const [searchState, setSearchState] = useSearchState<Filters>(initialState)
 And we have no idea how the state is actually managed: we can change it at any time. This allows us to change the recoil
 version or move to redux or whatever we want. I have actually implemented these using useState for now anyway: this
 makes
-the application re-render more than it needs to but it demonstrates the decoupling
+the application re-render more than it needs to, but it demonstrates the decoupling
 
 ## Use of optics in state management
 
@@ -165,15 +167,15 @@ export const SearchInfoProviderUsingUseState = <Filters, >({
 }
 ``` 
 
-However optics are not used in most of the code because with the custom hooks we have hidden them.
+However, optics are not used in most of the code because with the custom hooks we have hidden them.
 
 ## Comment on the useCallback in the state management
 
-Note the heavy use of useCallback. Without them we would be probably re-rendering the whole application every time the
+Note the heavy use of useCallback. Without them, we would be probably re-rendering the whole application every time the
 state changes.
 This is extremely subtle, extremely easy to mess up, and we need to constantly be checking.
 
-# Seperation of concerns in the state
+# Separation of concerns in the state
 
 We have a number of types of state
 
@@ -200,8 +202,8 @@ We have a number of types of state
     * Some of this can be css, but that is often painful to get right. The css grows and becomes too hard for humans to
       understand
 * We want to be able to change the framework we use to display the components
-    * For example we might want to use react native for mobile.
-    * Companies change their 'prefered library' constantly (say every 5 years). We want this to be easy for us
+    * For example, we might want to use 'react native' for mobile.
+    * Companies change their 'preferred library' constantly (say every 5 years). We want this to be easy for us
     * Versions have breaking changes. This layer makes it much easier to swap in the old and new to compare the
       differences (it can be a feature flag, and that is almost impossible with this)
 * We want A/B testing
@@ -220,7 +222,7 @@ There are four moving parts
 * We declare the component interface / context and custom hooks
 * We implement the component
 * We use the component
-* We dependency inject the component using 'important components'
+* We 'dependency inject' the component using 'important components'
 
 ### Declare the component interface / context and custom hooks
 
@@ -278,7 +280,7 @@ export interface SearchImportantComponents<Context, Filters> {
   displayLogin: DisplayLogin
   NotLoggedIn?: () => React.ReactElement
   LoadingDisplay?: LoadingDisplay
-          ...
+    //      ...
 }
 ```
 We have a `SearchImportantComponentsProvider` that takes the important components and provides them to the rest of the app using their individual hooks
@@ -322,7 +324,7 @@ This is a whole layer. An extra place to wire in every component. We need to und
 * We need to add the new component to the interface
 
 ## Neutral
-* We need to dependency inject this somewhere: this is a cost but it's a cost we have to pay it somewhere
+* We need to dependency inject this somewhere: this is a cost, but it's a cost we have to pay it somewhere
 
 # Error handling
 
@@ -330,23 +332,23 @@ We have four basic kinds of errors
 
 * Errors that are software errors: we missed a case in a switch statement, we have a null pointer exception, we have a
   type error.
-    * Typescript helps us enormously here especially with the advanced types. However they still happen and we need to
+    * Typescript helps us enormously here especially with the advanced types. However, they still happen and we need to
       catch them. Sometimes this code is effectively impossible to test as it catches errors that can't happen at the
       moment
 * Errors that are due to an outside thing (user/api/etc) doing something wrong: they have entered a string where a
   number is expected, they have entered a date in the wrong format. The api returned data
     * These are often called 'validation'.
-    * We often will have more than one in some data and want to see all of the errors at once.
+    * We often will have more than one in some data and want to see all the errors at once.
     * We want to give the user feedback on what they did wrong, not just the first point
 * Errors that are network errors etc
     * These will happen all the time, and we need to handle them gracefully
     * We also want to be able to test these
 * OMG errors such as out of memory.
-    * We can't really do anything about these but we want to catch them and give the user a nice message
+    * We can't really do anything about these, but we want to catch them and give the user a nice message
 
 ## Zero errors in the log
 
-We should have zero errors in the log in normal usage no matter what the environment is doing. However we can have
+We should have zero errors in the log in normal usage no matter what the environment is doing. However, we can have
 debugging levels and when they are on, we can display things like validation results.
 
 ## User doing something wrong / validation
@@ -436,9 +438,9 @@ The real power of this is in testing. We can test the fetching and the displayin
 We typically have three tests. For each test we pass to the 'fetching and displaying' component a mock function with a
 promise. The three states are
 
-* The promise is pending and we test that we display the loading
-* The promise holds data and we test that we display the data
-* The promise is rejected and we test that we display the error
+* The promise is pending, and we test that we display the loading
+* The promise holds data, and we test that we display the data
+* The promise is rejected, and we test that we display the error
 
 Sometimes I'll have a fourth: checking the dismounting. This is for when we are using resources that need to be disposed
 of.
@@ -451,7 +453,7 @@ and very simply
 
 Same is normal. Just pass in the data and see what is displayed.
 
-# The Filters generic is a composed type and we don't know what it is until the main method
+# The Filters generic is a composed type, and we don't know what it is until the main method
 
 This was a very challenging part of the 'type programming'.
 
@@ -480,8 +482,8 @@ This is fairly straightforward. We have a name for the filter and the state of t
 ## Combining these in the main index.tsx
 
 ```typescript jsx
-export type SearchAppFilters = TimeFilters & KeywordsFilter &
-...
+export type SearchAppFilters = TimeFilters & KeywordsFilter // & 
+//...
 ```
 
 This is simple. It just combines all the filters. We can add more filters as we go along. Only the main method needs to
@@ -500,7 +502,7 @@ export function search<Filters extends TimeFilters & KeywordsFilter>(filters: Fi
 }
 ```
 
-If we have a lot of these and we want to make it less verbose we can use a type alias. Usually named for the area of
+If we have a lot of these, and we want to make it less verbose we can use a type alias. Usually named for the area of
 the code we are in. This is a good practice because if we want to add one, or remove one, it's all done in one place
 
 ```typescript jsx
