@@ -42,6 +42,19 @@ export function mapErrorsOr<T, T1>(e: ErrorsOr<T>, f: (t: T) => T1): ErrorsOr<T1
     if (isValue(e)) return {value: f(e.value)}
     return e
 }
+export function flatMapErrorsOr<T, T1>(e: ErrorsOr<T>, f: (t: T) => ErrorsOr<T1>): ErrorsOr<T1> {
+    if (isValue(e)) return f(e.value)
+    return e
+}
+
+export async function mapErrorsOrK<T, T1>(e: ErrorsOr<T>, f: (t: T) => Promise<T1>):Promise<ErrorsOr<T1>> {
+    if (isValue(e)) return {value: await f(e.value)}
+    return e
+}
+export async function flatMapErrorsOrK<T, T1>(e: ErrorsOr<T>, f: (t: T) => Promise<ErrorsOr<T1>>):Promise<ErrorsOr<T1>> {
+    if (isValue(e)) return await f(e.value)
+    return e
+}
 
 export type AsyncErrorCall<From, To> = (from: From) => Promise<ErrorsOr<To>>
 export type AsyncErrorCall2<From1, From2, To> = (from1: From1, from2: From2) => Promise<ErrorsOr<To>>

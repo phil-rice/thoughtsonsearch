@@ -2,11 +2,12 @@ import {SearchBar, SearchBarProvider} from "@enterprise_search/search_bar";
 import {ReactFiltersContextData, ReactFiltersProvider} from "@enterprise_search/react_filters_plugin";
 
 import {LoadingDisplay} from "@enterprise_search/loading";
-import React from "react";
-import {DataSourcePluginProvider, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
+import React, {useMemo} from "react";
+import {DataSourceAllButton, DataSourceNavBarComponents, DataSourcePluginProvider, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPluginProvider, DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {SearchResultsPluginProvider, SearchResultsPlugins} from "@enterprise_search/search_results_plugin";
 import {DisplayLogin, LoginProvider} from "@enterprise_search/react_login_component";
+import {DataSourceNavBarLayout, DataSourceNavBarLayoutProvider} from "@enterprise_search/react_datasource_plugin/src/data.source.nav.bar";
 
 
 export type SearchImportantContext = {}
@@ -18,8 +19,10 @@ we can easily find them, and have different versions of them for different clien
 If for example we choose to move to MUI we can implement this for MUI and the search application should work
  */
 export interface SearchImportantComponents<Context, Filters> {
+    DataSourceNavBarLayout: DataSourceNavBarLayout
+    DataSourceAllButton: DataSourceAllButton
     searchResultsPlugins: SearchResultsPlugins
-    filterPlugins: ReactFiltersContextData<Context, Filters>
+    reactFiltersContextData: ReactFiltersContextData<Context, Filters>
     dataSourcePlugins: DataSourcePlugins<Filters>
     dataPlugins: DataPlugins
     SearchBar: SearchBar
@@ -36,14 +39,20 @@ export type SearchImportantComponentsProviderProps<Context, Filters> = {
 }
 
 export function SearchImportantComponentsProvider<Context, Filters>({components, children}: SearchImportantComponentsProviderProps<Context, Filters>) {
-    const {SearchBar, dataPlugins, dataSourcePlugins, searchResultsPlugins, filterPlugins, LoadingDisplay, displayLogin, NotLoggedIn} = components
+    const {
+        SearchBar, dataPlugins, dataSourcePlugins, searchResultsPlugins, filterPlugins, LoadingDisplay, displayLogin,
+        NotLoggedIn, DataSourceNavBarLayout, DataSourceAllButton
+    } = components
+    const navBarComp: DataSourceNavBarComponents = useMemo(() => ({DataSourceAllButton, DataSourceNavBarLayout}), [DataSourceAllButton, DataSourceNavBarLayoutProvider])
     return <SearchBarProvider SearchBar={SearchBar}>
         <ReactFiltersProvider value={filterPlugins}>
             <SearchResultsPluginProvider plugins={searchResultsPlugins}>
                 <DataSourcePluginProvider plugins={dataSourcePlugins}>
                     <DataPluginProvider ops={dataPlugins}>
                         <LoginProvider displayLogin={displayLogin} NotLoggedIn={NotLoggedIn}>
-                            {children}
+                            <DataSourceNavBarLayoutProvider components={navBarComp}>
+                                {children}
+                            </DataSourceNavBarLayoutProvider>
                         </LoginProvider>
                     </DataPluginProvider>
                 </DataSourcePluginProvider>

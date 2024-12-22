@@ -2,11 +2,11 @@ import {ReactFiltersPlugin} from "@enterprise_search/react_filters_plugin";
 import {SimpleTimeDisplay} from "./simpleTimeFilter";
 
 
+export const timefilterPluginName = 'time';
 export type TimeFilters = {
     [timefilterPluginName]: string
 }
-export const timefilterPluginName = 'time';
-export const exampleTimeFilterPlugin: ReactFiltersPlugin<TimeFilters, 'time'> = {
+export const exampleTimeFilterPlugin: ReactFiltersPlugin<any,TimeFilters, 'time'> = {
     plugin: 'filter',
     type: timefilterPluginName,
     DefaultDisplay: SimpleTimeDisplay,

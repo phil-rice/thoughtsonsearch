@@ -1,0 +1,26 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/data_views",
+  "description": "How we group data sources and parts of a data source onto the screen",
+  "links": [
+    "@enterprise_search/authentication",
+    "@enterprise_search/react_search_state",
+    "@enterprise_search/search_api",
+    "@enterprise_search/service_caller",
+    "@enterprise_search/search_state"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

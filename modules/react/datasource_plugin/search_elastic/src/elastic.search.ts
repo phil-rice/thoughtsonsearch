@@ -1,6 +1,8 @@
 import {SearchByApiContext, SearchByApiTypeClass} from "@enterprise_search/search_api";
 import {KeywordsFilter} from "@enterprise_search/react_keywords_filter_plugin";
 import {TimeFilters} from "@enterprise_search/react_time_filter_plugin";
+import {DataSourcePlugin, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
+import {simpleDataSourceButton} from "@enterprise_search/react_datasource_plugin/src/data.source.buttons";
 
 export type ElasticSearchContext = SearchByApiContext & {
     elasticSearchUrl: string
@@ -9,6 +11,18 @@ export type ElasticSearchContext = SearchByApiContext & {
 
 type ElasticSearchPaging = {}
 export type ElasticSearchFilters = KeywordsFilter & TimeFilters
+
+export const elasticSearchDataSourcePlugin: DataSourcePlugin<ElasticSearchContext, ElasticSearchFilters> = {
+    plugin: 'datasource',
+    type: 'elasticsearch.keywords',
+    fetch: async (context, filters) => {
+        return []
+    },
+    navBar: simpleDataSourceButton('Elastic Search')
+}
+
+
+
 
 const elasticSearchTC: SearchByApiTypeClass<ElasticSearchContext, ElasticSearchFilters, any, ElasticSearchPaging> = {
     type: 'api',

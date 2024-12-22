@@ -1,6 +1,6 @@
 {
-  "name": "@enterprise_search/search_results_plugin",
-  "description": "The search results plugin displays search results",
+  "name": "@enterprise_search/data_views",
+  "description": "How we group data sources and parts of a data source onto the screen",
   "version": "0.0.1",
   "browserslist": {
     "development": [
@@ -15,13 +15,11 @@
     ]
   },
   "dependencies": {
-    "@enterprise_search/search_state": "0.0.1",
-    "@enterprise_search/service_caller": "0.0.1",
-    "@enterprise_search/search_api": "0.0.1",
-    "@enterprise_search/search_bar": "0.0.1",
+    "@enterprise_search/authentication": "0.0.1",
     "@enterprise_search/react_search_state": "0.0.1",
-    "@enterprise_search/react_keywords_filter_plugin": "0.0.1",
-    "@enterprise_search/react_datasource_plugin": "0.0.1",
+    "@enterprise_search/search_api": "0.0.1",
+    "@enterprise_search/service_caller": "0.0.1",
+    "@enterprise_search/search_state": "0.0.1",
     "debug": "^4.3.4",
     "@focuson/lens": "1.44.3",
     "@focuson/state": "1.44.3",

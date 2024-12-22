@@ -1,4 +1,4 @@
-// Define a type for the CSS variables
+    // Define a type for the CSS variables
 import React, {useEffect} from "react";
 import {useFiltersByStateType, useSearchQuery} from "@enterprise_search/react_search_state";
 import {KeywordsFilter} from "@enterprise_search/react_keywords_filter";

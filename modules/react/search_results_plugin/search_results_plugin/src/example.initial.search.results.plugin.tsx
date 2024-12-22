@@ -4,6 +4,7 @@ import {useAllFilters} from "@enterprise_search/react_filters_plugin";
 import React from "react";
 import {useSearchBar} from "@enterprise_search/search_bar";
 import {SearchTypeProvider} from "@enterprise_search/react_search_state";
+import {DataSourceNavBar} from "@enterprise_search/react_datasource_plugin";
 
 export const ExampleInitialSearchResults = (purpose: string) => () => {
     const {SearchBar} = useSearchBar()
@@ -11,6 +12,7 @@ export const ExampleInitialSearchResults = (purpose: string) => () => {
     return <>
         <h1>First page: no results</h1>
         <SearchBar/>
+        <DataSourceNavBar/>
         <SearchTypeProvider searchType='main'>
             <DisplayFilters/>
         </SearchTypeProvider>

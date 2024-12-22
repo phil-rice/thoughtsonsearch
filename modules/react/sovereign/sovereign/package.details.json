@@ -1,15 +1,13 @@
 {
   "template": "react_library",
-  "name": "@enterprise_search/search_results_plugin",
-  "description": "The search results plugin displays search results",
+  "name": "@enterprise_search/sovereign",
+  "description": "A sovereign is something that takes up the whole display.",
   "links": [
     "@enterprise_search/search_state",
     "@enterprise_search/service_caller",
     "@enterprise_search/search_api",
-    "@enterprise_search/search_bar",
-    "@enterprise_search/react_search_state",
-    "@enterprise_search/react_keywords_filter_plugin",
-    "@enterprise_search/react_datasource_plugin"
+    "@enterprise_search/optics",
+    "@enterprise_search/react_utils"
   ],
   "packageJson": {
     "files": ["build/"],

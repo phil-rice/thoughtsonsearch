@@ -9,9 +9,9 @@ import {ExampleInitialSearchResultsPlugin, SearchResultsPlugins, useSearchResult
 
 import {emptySearchState} from "@enterprise_search/search_state";
 import {filtersDisplayPurpose, ReactFiltersContextData} from "@enterprise_search/react_filters_plugin";
-import {exampleTimeFilterPlugin} from "@enterprise_search/react_time_filter_plugin";
+import {exampleTimeFilterPlugin, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
 import {DebugSearchState, SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
-import {keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
+import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
 import {SearchImportantComponents, SearchImportantComponentsProvider} from "@enterprise_search/search_important_components";
 
 
@@ -19,6 +19,11 @@ import {DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {SimpleSearchBar} from "@enterprise_search/search_bar";
 import {simpleLoadingDisplay} from "@enterprise_search/loading";
+import {SimpleDataSourceNavBarLayout} from "@enterprise_search/react_datasource_plugin/src/data.source.nav.bar";
+// import {elasticSearchDataSourcePlugin, keywordsFilterToElasticSearchFilter} from "@enterprise_search/search_elastic";
+import {SimpleDataSourceAllButton} from "@enterprise_search/react_datasource_plugin";
+
+export type SearchAppFilters = TimeFilters & KeywordsFilter
 
 export const exampleMsalConfig: Configuration = {
     auth: {
@@ -29,11 +34,8 @@ export const exampleMsalConfig: Configuration = {
     },
 };
 const msal = new PublicClientApplication(exampleMsalConfig);
-const login: LoginConfig = loginUsingMsal({msal,debug:false});
+const login: LoginConfig = loginUsingMsal({msal, debug: false});
 
-const searchResultsPlugins: SearchResultsPlugins = {
-    'start': ExampleInitialSearchResultsPlugin,
-}
 
 const reactFiltersContextData: ReactFiltersContextData<any, any> = {
     plugins: {
@@ -44,18 +46,61 @@ const reactFiltersContextData: ReactFiltersContextData<any, any> = {
         [filtersDisplayPurpose]: ({children}) => <div><h3>Filters</h3>{children}</div>
     }
 }
-const dataSourcePlugins: DataSourcePlugins<any> = {}
+const dataSourcePlugins: DataSourcePlugins<any> = {
+    // elasticSearch: elasticSearchDataSourcePlugin
+
+}
 const dataPlugins: DataPlugins = {}
 
-const searchImportComponents: SearchImportantComponents<any, any> = {
+const searchResultsPlugins: SearchResultsPlugins = {
+    'start': ExampleInitialSearchResultsPlugin,
+}
+
+const allElasticSearchData = {type: 'elasticSearch', indicies: ['jira-prod', 'confluence-prod']}
+const jiraElasicSearchData = {type: 'elasticSearch', indicies: ['jira-prod']}
+const confluenceElasticSearchData = {type: 'elasticSearch', indicies: ['confluence-prod']}
+const graphApiPeopleData = {type: 'graphApiPeople'}
+const sharepointData = {type: 'sharepoint'}
+const allDataSources = [allElasticSearchData, jiraElasicSearchData, confluenceElasticSearchData, graphApiPeopleData, sharepointData];
+const someLayout = {
+    start: {
+        searchResult: 'start',
+        visibleInNavBar: false,
+        dataSources: allDataSources
+    },
+    all: {
+        searchResult: 'all',
+        dataSources: allDataSources
+    },
+    jira: {
+        searchResult: 'oneDataSource',
+        dataSources: [jiraElasicSearchData]
+    },
+    confluence: {
+        searchResult: 'oneDataSource',
+        dataSources: [confluenceElasticSearchData]
+    },
+    graphApiPeople: {
+        searchResult: 'oneDataSource',
+        dataSources: [graphApiPeopleData]
+    },
+    sharepoint: {
+        searchResult: 'oneDataSource',
+        dataSources: [sharepointData]
+    }
+}
+
+const searchImportantComponents: SearchImportantComponents<any, any> = {
     SearchBar: SimpleSearchBar,
     searchResultsPlugins,
     dataSourcePlugins,
     dataPlugins,
-    filterPlugins: reactFiltersContextData,
+    reactFiltersContextData,
     LoadingDisplay: simpleLoadingDisplay,
     displayLogin: SimpleDisplayLogin,
-    NotLoggedIn: SimpleMustBeLoggedIn
+    NotLoggedIn: SimpleMustBeLoggedIn,
+    DataSourceNavBarLayout: SimpleDataSourceNavBarLayout,
+    DataSourceAllButton: SimpleDataSourceAllButton
 }
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
@@ -72,23 +117,22 @@ function SearchApp({initialPurpose}: SearchAppProps) {
     const {SearchResults} = useSearchResults(purpose)
     useEffect(() => document.querySelector("input")?.focus(), []); // Focus on the first input
 
-    return <div>
+    return <Authenticate>
         <DisplayLogin/> {/* The headers go here */}
         <SearchResults/> {/* The main display */}
         {/* The footer goes here */}
-    </div>
+    </Authenticate>
 }
 
 msal.initialize({}).then(() => {
-
+//we set up here: how we display the components, how we do state management and how we do authentication
     root.render(<React.StrictMode>
-            <SearchImportantComponentsProvider components={searchImportComponents}>
+            <SearchImportantComponentsProvider components={searchImportantComponents}>
                 <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
                     <AuthenticationProvider loginConfig={login}>
-                        <Authenticate>
-                            <SearchApp initialPurpose='start'/>
-                            <DebugSearchState/>
-                        </Authenticate>
+                        <SearchApp initialPurpose='start'/>
+                        <hr/>
+                        <DebugSearchState/>
                     </AuthenticationProvider>
                 </SearchInfoProviderUsingUseState>
             </SearchImportantComponentsProvider>
