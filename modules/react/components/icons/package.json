@@ -1,6 +1,6 @@
 {
-  "name": "@enterprise_search/translation",
-  "description": "This is how we handle translations.",
+  "name": "@enterprise_search/icons",
+  "description": "How we handle icons",
   "version": "0.0.1",
   "browserslist": {
     "development": [
@@ -15,7 +15,7 @@
     ]
   },
   "dependencies": {
-    "@enterprise_search/recoil_utils": "0.0.1",
+    "@enterprise_search/errors": "0.0.1",
     "debug": "^4.3.4",
     "@focuson/lens": "1.44.3",
     "@focuson/state": "1.44.3",

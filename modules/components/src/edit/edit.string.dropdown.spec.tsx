@@ -3,7 +3,7 @@ import {render, fireEvent, screen} from '@testing-library/react';
 import {atom, RecoilRoot} from 'recoil';
 import '@testing-library/jest-dom';
 import {EditStringDropdown} from "./edit.string.dropdown";
-import {TranslationProvider} from "@enterprise_search/recoil_translation";
+import {TranslationProvider} from "@enterprise_search/translation";
 
 // Define test atom
 type TestState = {

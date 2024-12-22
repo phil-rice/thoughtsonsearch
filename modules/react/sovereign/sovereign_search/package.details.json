@@ -1,9 +1,11 @@
 {
   "template": "react_library",
-  "name": "@enterprise_search/translation",
-  "description": "This is how we handle translations.",
+  "name": "@enterprise_search/sovereign_search",
+  "description": "A sovereign page that displays search",
   "links": [
-    "@enterprise_search/recoil_utils"
+    "@enterprise_search/search_state",
+    "@enterprise_search/react_utils",
+    "@enterprise_search/react_datasource_plugin"
   ],
   "packageJson": {
     "files": ["build/"],
@@ -12,7 +14,6 @@
     "devDependencies": {
       "ts-jest": "^29.2.5"
     },
-    "scripts": {"start": "react-scripts start"},
     "guards": {
       "compile": true,
       "publish": false,

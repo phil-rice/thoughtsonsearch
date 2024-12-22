@@ -2,7 +2,7 @@ import {RecoilState, useRecoilState} from "recoil";
 import {keySelector} from "./selector";
 
 import {ChangeEventHandler, ReactElement} from "react";
-import {useTranslation} from "@enterprise_search/recoil_translation";
+import {useTranslation} from "@enterprise_search/translation";
 import {debugLog} from "@enterprise_search/recoil_utils";
 
 export type StringValueProps<T> = {

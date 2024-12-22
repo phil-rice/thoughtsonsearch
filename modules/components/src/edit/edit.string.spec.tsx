@@ -4,7 +4,7 @@ import {atom, RecoilRoot} from 'recoil';
 
 import {EditStringInput} from './edit.string';
 import "@testing-library/jest-dom";
-import {TranslationProvider} from "@enterprise_search/recoil_translation";
+import {TranslationProvider} from "@enterprise_search/translation";
 
 // Define test atom
 type TestState = {

@@ -5,9 +5,11 @@
   "links": [
     "@enterprise_search/authentication",
     "@enterprise_search/errors",
+    "@enterprise_search/icons",
     "@enterprise_search/msal_authentication",
     "@enterprise_search/search_api",
     "@enterprise_search/search_important_components",
+    "@enterprise_search/sovereign",
     "@enterprise_search/service_caller",
     "@enterprise_search/search_state"
   ],

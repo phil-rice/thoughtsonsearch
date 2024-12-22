@@ -37,7 +37,10 @@ export function isErrors<T>(e: ErrorsOr<T>): e is Errors {
 }
 
 export type ErrorsOr<T> = Errors | Value<T>
-
+export function recover<T>(e: ErrorsOr<T>, f: (e: Errors) => T):T {
+    if (isErrors(e)) return f(e)
+    return e.value
+}
 export function mapErrorsOr<T, T1>(e: ErrorsOr<T>, f: (t: T) => T1): ErrorsOr<T1> {
     if (isValue(e)) return {value: f(e.value)}
     return e

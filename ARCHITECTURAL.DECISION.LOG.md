@@ -479,7 +479,7 @@ export type TimeFilters = {
 
 This is fairly straightforward. We have a name for the filter and the state of the filter. The name needs to be unique
 
-## Combining these in the main index.tsx
+## Combining these in the main index.ts
 
 ```typescript jsx
 export type SearchAppFilters = TimeFilters & KeywordsFilter // & 

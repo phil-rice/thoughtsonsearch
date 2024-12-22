@@ -1,9 +1,9 @@
 {
   "template": "react_library",
-  "name": "@enterprise_search/translation",
-  "description": "This is how we handle translations.",
+  "name": "@enterprise_search/icons",
+  "description": "How we handle icons",
   "links": [
-    "@enterprise_search/recoil_utils"
+    "@enterprise_search/errors"
   ],
   "packageJson": {
     "files": ["build/"],
@@ -12,7 +12,6 @@
     "devDependencies": {
       "ts-jest": "^29.2.5"
     },
-    "scripts": {"start": "react-scripts start"},
     "guards": {
       "compile": true,
       "publish": false,

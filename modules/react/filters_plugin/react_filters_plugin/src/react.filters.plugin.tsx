@@ -30,7 +30,7 @@ export type ReactFiltersPlugin<Context, Filters, FilterName extends keyof Filter
     PurposeToDisplay: NameAnd<DisplayFilter<Filters[FilterName]> | null>
 }
 
-export type DisplayFilterProps<Filter> = {}
+export type DisplayFilterProps<Filter> = {id?:string}
 export type DisplayFilter<Filter> = (props: DisplayFilterProps<Filter>) => React.ReactElement
 
 

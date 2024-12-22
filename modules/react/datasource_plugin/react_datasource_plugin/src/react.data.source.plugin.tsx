@@ -8,7 +8,9 @@ import {Authentication} from "@enterprise_search/authentication";
 
 //Maps from a data source name to the plugin that fetches data from that source, and displays it
 export type DataSourcePlugins<Filters> = NameAnd<DataSourcePlugin<Filters, any>>
+
 export type FetchFromDatasourceFn<Filters, Paging> = (filters: Filters, paging?: Paging) => Promise<ErrorsOr<SearchResult<any, any>>>;
+
 export type DataSourcePlugin<Filters, Paging> = {
     plugin: 'datasource'
     datasourceName: string

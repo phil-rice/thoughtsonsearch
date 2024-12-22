@@ -79,7 +79,7 @@
   "license": "MIT",
   "links": [
     "@enterprise_search/recoil_utils",
-    "@enterprise_search/recoil_translation"
+    "@enterprise_search/translation"
   ],
   "peerDependencies": {},
   "repository": "git@github.com:intellimaintain/intellimaintain.git",

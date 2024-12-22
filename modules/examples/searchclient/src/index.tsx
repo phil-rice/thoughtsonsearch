@@ -9,19 +9,22 @@ import {ExampleInitialSearchResultsPlugin, SearchResultsPlugins, useSearchResult
 
 import {emptySearchState} from "@enterprise_search/search_state";
 import {filtersDisplayPurpose, ReactFiltersContextData} from "@enterprise_search/react_filters_plugin";
-import {exampleTimeFilterPlugin, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
+import {exampleTimeFilterPlugin, timefilterPluginName, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
 import {DebugSearchState, SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
 import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
 import {SearchImportantComponents, SearchImportantComponentsProvider} from "@enterprise_search/search_important_components";
 
 
-import {DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
+// import {elasticSearchDataSourcePlugin, keywordsFilterToElasticSearchFilter} from "@enterprise_search/search_elastic";
+import {DataSourcePlugins, SimpleDataSourceAllButton} from "@enterprise_search/react_datasource_plugin";
 import {DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {SimpleSearchBar} from "@enterprise_search/search_bar";
 import {simpleLoadingDisplay} from "@enterprise_search/loading";
 import {SimpleDataSourceNavBarLayout} from "@enterprise_search/react_datasource_plugin/src/data.source.nav.bar";
-// import {elasticSearchDataSourcePlugin, keywordsFilterToElasticSearchFilter} from "@enterprise_search/search_elastic";
-import {SimpleDataSourceAllButton} from "@enterprise_search/react_datasource_plugin";
+import {SovereignStateProviderFromUseState} from "@enterprise_search/sovereign/src/sovereign.state.context";
+import {SovereignSelectionState} from "@enterprise_search/sovereign";
+import {IconProvider, simpleIconFn} from "@enterprise_search/icons";
+import {dataSourceFilterName, simpleDataSourceFilter} from "@enterprise_search/react_data_sources_filter_plugin";
 
 export type SearchAppFilters = TimeFilters & KeywordsFilter
 
@@ -40,7 +43,9 @@ const login: LoginConfig = loginUsingMsal({msal, debug: false});
 const reactFiltersContextData: ReactFiltersContextData<any, any> = {
     plugins: {
         [keywordsFilterName]: simpleKeywordsFilterPlugin,
-        'time': exampleTimeFilterPlugin
+        [timefilterPluginName]: exampleTimeFilterPlugin,
+        [dataSourceFilterName]: simpleDataSourceFilter
+
     },
     PurposeToFilterLayout: {
         [filtersDisplayPurpose]: ({children}) => <div><h3>Filters</h3>{children}</div>
@@ -103,6 +108,12 @@ const searchImportantComponents: SearchImportantComponents<any, any> = {
     DataSourceAllButton: SimpleDataSourceAllButton
 }
 
+
+const initialSelectionState: SovereignSelectionState<any> = {
+    selected: 'start',
+    state: {start: {}}
+}
+
 const root = createRoot(document.getElementById('root') as HTMLElement);
 
 
@@ -124,18 +135,23 @@ function SearchApp({initialPurpose}: SearchAppProps) {
     </Authenticate>
 }
 
+
 msal.initialize({}).then(() => {
 //we set up here: how we display the components, how we do state management and how we do authentication
     root.render(<React.StrictMode>
-            <SearchImportantComponentsProvider components={searchImportantComponents}>
-                <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
-                    <AuthenticationProvider loginConfig={login}>
-                        <SearchApp initialPurpose='start'/>
-                        <hr/>
-                        <DebugSearchState/>
-                    </AuthenticationProvider>
-                </SearchInfoProviderUsingUseState>
-            </SearchImportantComponentsProvider>
+            <SovereignStateProviderFromUseState state={initialSelectionState}>
+                <SearchImportantComponentsProvider components={searchImportantComponents}>
+                    <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
+                        <AuthenticationProvider loginConfig={login}>
+                            <IconProvider iconFn={simpleIconFn}>
+                                <SearchApp initialPurpose='start'/>
+                                <hr/>
+                                <DebugSearchState/>
+                            </IconProvider>
+                        </AuthenticationProvider>
+                    </SearchInfoProviderUsingUseState>
+                </SearchImportantComponentsProvider>
+            </SovereignStateProviderFromUseState>
         </React.StrictMode>
     );
 })

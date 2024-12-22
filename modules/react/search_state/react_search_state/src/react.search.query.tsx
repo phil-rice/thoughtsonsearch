@@ -2,7 +2,7 @@ import React, {useCallback} from "react";
 import {AllSearches, OneSearch, SearchState, SearchType} from "@enterprise_search/search_state";
 import {GetterSetter} from "@enterprise_search/react_utils";
 import {lensBuilder} from "@enterprise_search/optics";
-import {makeGetterSetter} from "@enterprise_search/optics/src/lens.getter.setters";
+import {makeGetterSetter} from "@enterprise_search/optics";
 
 
 export type SearchStateOps<Filters> = GetterSetter<SearchState<Filters>>

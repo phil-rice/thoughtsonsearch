@@ -12,7 +12,7 @@
     "scripts": {"start": "react-scripts start"},
     "links": [
       "@enterprise_search/recoil_utils",
-      "@enterprise_search/recoil_translation"
+      "@enterprise_search/translation"
     ],
     "guards": {
       "compile": true,

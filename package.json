@@ -15,5 +15,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "scripts": {
+    "example": "cd modules/examples/searchclient && parcel src/index.html --port 8080"
+  }
 }

@@ -1,7 +1,7 @@
 import {useRecoilState} from "recoil";
 import {StringValueProps} from "./edit.string";
 import {keySelector} from "./selector";
-import {useTranslation} from "@enterprise_search/recoil_translation";
+import {useTranslation} from "@enterprise_search/translation";
 import {debugLog} from "@enterprise_search/recoil_utils";
 
 export type DropdownValueProps<T> = StringValueProps<T> & {
