@@ -7,13 +7,13 @@ import {SearchResults} from "./display.search.results";
 
 
 export function AdvancelSearchSovereignPage<Filters>() {
-    const {SearchBar} = useSearchBar()
+    const SearchBar = useSearchBar()
     const {DisplayAllFilters} = useDisplayAllFilters<Filters>()
 
     const filterOps = useGuiFilters()
     return <>
         <h1>Advance search</h1>
-        {/*<SearchBar onSearch={() => console.log('searching on advance')}/>*/}
+        <SearchBar onSearch={() => console.log('searching on advance')}/>
         <SearchResults st='main'/>
         <DisplayAllFilters id='filter' filtersOps={filterOps}/>
     </>
