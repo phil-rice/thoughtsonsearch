@@ -3,7 +3,8 @@
   "name": "@enterprise_search/search_gui_state",
   "description": "The data we hold for the search gui",
   "links": [
-    "@enterprise_search/recoil_utils"
+    "@enterprise_search/recoil_utils",
+    "@enterprise_search/react_datasource_plugin"
   ],
   "packageJson": {
     "files": ["build/"],

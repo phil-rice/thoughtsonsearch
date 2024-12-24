@@ -6,6 +6,7 @@
  * @returns The formatted string.
  */
 export function camelCaseToWords(input: string): string {
+    if (!input) return input
     return input
         .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert space before uppercase letters preceded by lowercase letters
         .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2') // Handle sequences of uppercase letters

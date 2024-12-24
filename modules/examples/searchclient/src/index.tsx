@@ -9,7 +9,7 @@ import {filtersDisplayPurpose, ReactFiltersContextData} from "@enterprise_search
 import {exampleTimeFilterPlugin, timefilterPluginName, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
 import {DebugSearchState, SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
 import {SearchImportantComponents, SearchImportantComponentsProvider} from "@enterprise_search/search_important_components";
-import {DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
+import {CommonDataSourceDetails, DataSourceDetails, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {SimpleSearchBar} from "@enterprise_search/search_bar";
 import {simpleLoadingDisplay} from "@enterprise_search/loading";
@@ -18,8 +18,10 @@ import {IconProvider, simpleIconContext} from "@enterprise_search/icons";
 import {dataViewFilter, dataViewFilterName, DataViewFilters, SimpleDataViewFilterDisplay} from "@enterprise_search/react_data_views_filter_plugin";
 import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResultsLayout} from "@enterprise_search/sovereign_search";
 import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
-import {emptySearchGuiState, SearchGuiStateProvider} from "@enterprise_search/search_gui_state";
+import {DebugGuiState, emptySearchGuiState, SearchGuiStateProvider} from "@enterprise_search/search_gui_state";
 import {DoTheSearching} from "@enterprise_search/search/src/search";
+import {SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "@enterprise_search/data_views";
+import {ElasticSearchSourceDetails} from "@enterprise_search/search_elastic/src/elastic.search";
 
 
 export const exampleMsalConfig: Configuration = {
@@ -51,42 +53,24 @@ const dataSourcePlugins: DataSourcePlugins<any> = {
 }
 const dataPlugins: DataPlugins = {}
 
+type AllDataSourceDetails = ElasticSearchSourceDetails | CommonDataSourceDetails
 
-const allElasticSearchData = {type: 'elasticSearch', indicies: ['jira-prod', 'confluence-prod']}
-const jiraElasicSearchData = {type: 'elasticSearch', indicies: ['jira-prod']}
-const confluenceElasticSearchData = {type: 'elasticSearch', indicies: ['confluence-prod']}
-const graphApiPeopleData = {type: 'graphApiPeople'}
-const sharepointData = {type: 'sharepoint'}
-const allDataSources = [allElasticSearchData, jiraElasicSearchData, confluenceElasticSearchData, graphApiPeopleData, sharepointData];
-
-const someLayout = {
-    start: {
-        searchResult: 'start',
-        dataSources: allDataSources
-    },
-    all: {
-        searchResult: 'all',
-        dataSources: allDataSources
-    },
-    jira: {
-        searchResult: 'oneDataSource',
-        dataSources: [jiraElasicSearchData]
-    },
-    confluence: {
-        searchResult: 'oneDataSource',
-        dataSources: [confluenceElasticSearchData]
-    },
-    graphApiPeople: {
-        searchResult: 'oneDataSource',
-        dataSources: [graphApiPeopleData]
-    },
-    sharepoint: {
-        searchResult: 'oneDataSource',
-        dataSources: [sharepointData]
-    }
+const allElasticSearchData: ElasticSearchSourceDetails = {type: 'elasticSearch', names: ['jira-prod', 'confluence-prod']}
+const jiraElasicSearchData: ElasticSearchSourceDetails = {type: 'elasticSearch', names: ['jira-prod']}
+const confluenceElasticSearchData: ElasticSearchSourceDetails = {type: 'elasticSearch', names: ['confluence-prod']}
+const graphApiPeopleData: CommonDataSourceDetails = {type: 'graphApiPeople', names: ['people']}
+const sharepointData: CommonDataSourceDetails = {type: 'sharepoint', names: ['sharepoint']}
+const allDetails: AllDataSourceDetails[] = [allElasticSearchData, graphApiPeopleData, sharepointData];
+const dataViewDetails: DataSourceDetails<AllDataSourceDetails> = {
+    all: allDetails,
+    jira: [jiraElasicSearchData],
+    confluence: [confluenceElasticSearchData],
+    graphApiPeople: [graphApiPeopleData],
+    sharepoint: [sharepointData]
 }
 
-const searchImportantComponents: SearchImportantComponents<any, any> = {
+
+const searchImportantComponents: SearchImportantComponents<any, AllDataSourceDetails, any> = {
     dataSourcePlugins,
     dataPlugins,
     reactFiltersContextData,
@@ -94,7 +78,10 @@ const searchImportantComponents: SearchImportantComponents<any, any> = {
     DisplayLogin: SimpleDisplayLogin,
     NotLoggedIn: SimpleMustBeLoggedIn,
     SearchBar: SimpleSearchBar,
-    DisplaySearchResultsLayout: SimpleDisplayResultsLayout
+    DisplaySearchResultsLayout: SimpleDisplayResultsLayout,
+    DataViewNavBarLayout: SimpleDataViewNavbarLayout,
+    NavBarItem: SimpleDataViewNavItem,
+    dataViewDetails
 }
 
 const sovereignStatePlugins: SovereignStatePlugins = {
@@ -129,15 +116,16 @@ msal.initialize({}).then(() => {
                     <SearchImportantComponentsProvider components={searchImportantComponents}>
                         <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
                             <AuthenticationProvider loginConfig={login}>
-                                <SearchGuiStateProvider searchGuiState={emptySearchGuiState}>
+
                                     <IconProvider icons={simpleIconContext}>
                                         <DoTheSearching>
                                             <SearchApp/>
                                             <hr/>
+                                            <DebugGuiState/>
                                             <DebugSearchState/>
                                         </DoTheSearching>
                                     </IconProvider>
-                                </SearchGuiStateProvider>
+                           +
                             </AuthenticationProvider>
                         </SearchInfoProviderUsingUseState>
                     </SearchImportantComponentsProvider>

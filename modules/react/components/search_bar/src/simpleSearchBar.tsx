@@ -3,8 +3,9 @@ import React, {useEffect} from "react";
 import {useFiltersByStateType} from "@enterprise_search/react_search_state";
 import {useSearchParser} from "@enterprise_search/react_search_parser";
 import {SearchBarProps} from "./search.bar";
-import {KeywordsFilter} from "@enterprise_search/react_keywords_filter_plugin";
-import {useGuiSearchQuery} from "@enterprise_search/search_gui_state";
+import {KeywordsFilter, keywordsFilterName} from "@enterprise_search/react_keywords_filter_plugin";
+import {useGuiFilters, useGuiSearchQuery, useSearchGuiState} from "@enterprise_search/search_gui_state";
+import {DataSourcePlugin} from "@enterprise_search/react_datasource_plugin";
 
 type CSSVariables = {
     container: React.CSSProperties;
@@ -61,17 +62,19 @@ const cssVariables: CSSVariables = {
  */
 export function SimpleSearchBar<Filters extends KeywordsFilter>({onSearch}: SearchBarProps) {
     const [searchQuery, setSearchQuery] = useGuiSearchQuery()
+    const [guiFilters] = useGuiFilters()
     const [mainFilters, setMainFilters] = useFiltersByStateType<Filters>('main')
     const [immediateFilters, setImmediateFilters] = useFiltersByStateType<Filters>('immediate')
     const parser = useSearchParser()
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)
-    useEffect(() => setImmediateFilters(parser(searchQuery, mainFilters)), [searchQuery]);
-
+    useEffect(() => {
+        const newGuiFilters = {...guiFilters, [keywordsFilterName]: searchQuery}
+        setImmediateFilters(parser(newGuiFilters, mainFilters))
+    }, [guiFilters, searchQuery]);
     const search = () => {
         setMainFilters(immediateFilters);
         onSearch?.()
     };
-
     return (
         <div style={cssVariables.container}>
             <input
@@ -81,6 +84,7 @@ export function SimpleSearchBar<Filters extends KeywordsFilter>({onSearch}: Sear
                 placeholder="Search..."
                 aria-label="Search input"
                 style={cssVariables.input}
+                onKeyUp={(e) => e.key === "Enter" && search()}
                 onFocus={(e) =>
                     Object.assign(e.target.style, cssVariables.inputFocus)
                 }

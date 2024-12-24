@@ -2,11 +2,15 @@ import {SearchBar, SearchBarProvider} from "@enterprise_search/search_bar";
 import {ReactFiltersContextData, ReactFiltersProvider} from "@enterprise_search/react_filters_plugin";
 
 import {LoadingDisplay} from "@enterprise_search/loading";
-import React from "react";
-import {DataSourcePluginProvider, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
+import React, {useEffect} from "react";
+import {CommonDataSourceDetails, DataSourceDetails, DataSourcePluginProvider, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPluginProvider, DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {DisplayLogin, LoginProvider} from "@enterprise_search/react_login_component";
 import {DisplaySearchResultsLayout, SearchResultsProvider} from "@enterprise_search/sovereign_search";
+import {dataSourceDetailsToDataView, DataViewComponentsProvider, DataViewNavBarLayout, DataViews, DataViewsProvider, NavBarItem} from "@enterprise_search/data_views";
+import {NameAnd} from "@enterprise_search/recoil_utils";
+import {emptySearchGuiState, SearchGuiData, SearchGuiStateProvider, useGuiFilters, useGuiSearchQuery, useSearchGuiState} from "@enterprise_search/search_gui_state";
+import {dataViewFilterName, DataViewFilters} from "@enterprise_search/react_data_views_filter_plugin";
 
 
 export type SearchImportantContext = {}
@@ -17,9 +21,10 @@ we can easily find them, and have different versions of them for different clien
 
 If for example we choose to move to MUI we can implement this for MUI and the search application should work
  */
-export interface SearchImportantComponents<Context, Filters> {
+export interface SearchImportantComponents<Context, Details extends CommonDataSourceDetails, Filters> {
     reactFiltersContextData: ReactFiltersContextData<Filters>
     dataSourcePlugins: DataSourcePlugins<Filters>
+    dataViewDetails: DataSourceDetails<Details>
     dataPlugins: DataPlugins
     SearchBar: SearchBar
     DisplayLogin: DisplayLogin
@@ -27,26 +32,58 @@ export interface SearchImportantComponents<Context, Filters> {
     /*If present will be displayed when loading. There is a default but it's not very pretty*/
     LoadingDisplay?: LoadingDisplay
     DisplaySearchResultsLayout: DisplaySearchResultsLayout
+    DataViewNavBarLayout: DataViewNavBarLayout
+    NavBarItem: NavBarItem
 }
 
 
-export type SearchImportantComponentsProviderProps<Context, Filters> = {
-    components: SearchImportantComponents<Context, Filters>
+export type SearchImportantComponentsProviderProps<Context, Details extends CommonDataSourceDetails, Filters> = {
+    components: SearchImportantComponents<Context, Details, Filters>
     children: React.ReactNode
 }
 
-export function SearchImportantComponentsProvider<Context, Filters>({components, children}: SearchImportantComponentsProviderProps<Context, Filters>) {
+export type SetupStartStateProps<Filters extends DataViewFilters> = {
+    start?: string
+    dataViewDetails: DataSourceDetails<CommonDataSourceDetails>
+    children: React.ReactNode
+}
+
+export function SetUpStartState<Filters extends DataViewFilters>({dataViewDetails, start = 'all', children}: SetupStartStateProps<Filters>) {
+    const [state, setState] = useSearchGuiState()
+    useEffect(() => {
+        const startState: SearchGuiData<Filters> = {
+            ...emptySearchGuiState, filters: {
+                [dataViewFilterName]: {allowedNames: dataViewDetails[start].flatMap(x => x.names), selectedNames: []}
+            } as Filters
+        }
+        setState(startState)
+    },[])
+    return <>{children}</>
+}
+
+export function SearchImportantComponentsProvider<Context, Details extends CommonDataSourceDetails, Filters extends DataViewFilters>({components, children}: SearchImportantComponentsProviderProps<Context, Details, Filters>) {
     const {
         SearchBar, dataPlugins, dataSourcePlugins, reactFiltersContextData, LoadingDisplay, DisplayLogin, DisplaySearchResultsLayout,
-        NotLoggedIn
+        NotLoggedIn, NavBarItem, DataViewNavBarLayout, dataViewDetails
     } = components
+    const dataViews: DataViews<Details> = dataSourceDetailsToDataView(dataViewDetails, NavBarItem)
+
+
     return <SearchBarProvider searchBar={SearchBar}>
         <ReactFiltersProvider reactFilters={reactFiltersContextData}>
             <DataSourcePluginProvider plugins={dataSourcePlugins}>
                 <DataPluginProvider dataPlugins={dataPlugins}>
                     <LoginProvider loginComponents={{DisplayLogin: DisplayLogin, NotLoggedIn: NotLoggedIn}}>
                         <SearchResultsProvider DisplaySearchResultsLayout={DisplaySearchResultsLayout}>
-                            {children}
+                            <DataViewsProvider dataViews={dataViews}>
+                                <DataViewComponentsProvider components={{NavBarItem, NavBarLayout: DataViewNavBarLayout}}>
+                                    <SearchGuiStateProvider searchGuiState={emptySearchGuiState}>
+                                        <SetUpStartState dataViewDetails={dataViewDetails}>{
+                                            children
+                                        }</SetUpStartState>
+                                    </SearchGuiStateProvider>
+                                </DataViewComponentsProvider>
+                            </DataViewsProvider>
                         </SearchResultsProvider>
                     </LoginProvider>
                 </DataPluginProvider>

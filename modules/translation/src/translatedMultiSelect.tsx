@@ -12,7 +12,7 @@ interface CheckboxItemProps {
 
 const CheckboxItem: React.FC<CheckboxItemProps> = ({rootId, name, isChecked, onChange}) => {
     const translate = useTranslation();
-    const iconFn = useIcon();
+    const {iconFn} = useIcon();
     const Icon = iconFn(name);
     const id = `${rootId}-${name}`;
 

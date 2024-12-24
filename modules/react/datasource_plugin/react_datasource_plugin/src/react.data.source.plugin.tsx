@@ -9,8 +9,10 @@ import {makeContextFor} from "@enterprise_search/react_utils";
 * For example elastic search will have indicies. A database might have schemas and tables */
 export type CommonDataSourceDetails = {
     type: string
+    names: string[]
 }
 
+export type DataSourceDetails<Details extends CommonDataSourceDetails> = NameAnd<Details[]>
 
 //Maps from a data source name to the plugin that fetches data from that source
 export type DataSourcePlugins<Filters> = NameAnd<DataSourcePlugin<any, Filters, any>>
