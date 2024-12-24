@@ -19,6 +19,7 @@ import {dataViewFilter, dataViewFilterName, DataViewFilters, SimpleDataViewFilte
 import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResultsLayout} from "@enterprise_search/sovereign_search";
 import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
 import {emptySearchGuiState, SearchGuiStateProvider} from "@enterprise_search/search_gui_state";
+import {DoTheSearching} from "@enterprise_search/search/src/search";
 
 
 export const exampleMsalConfig: Configuration = {
@@ -130,9 +131,11 @@ msal.initialize({}).then(() => {
                             <AuthenticationProvider loginConfig={login}>
                                 <SearchGuiStateProvider searchGuiState={emptySearchGuiState}>
                                     <IconProvider icons={simpleIconContext}>
-                                        <SearchApp/>
-                                        <hr/>
-                                        <DebugSearchState/>
+                                        <DoTheSearching>
+                                            <SearchApp/>
+                                            <hr/>
+                                            <DebugSearchState/>
+                                        </DoTheSearching>
                                     </IconProvider>
                                 </SearchGuiStateProvider>
                             </AuthenticationProvider>

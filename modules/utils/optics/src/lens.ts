@@ -117,6 +117,10 @@ export class LensBuilder<Main, Child> implements LensAndPath<Main, Child> {
     // Delegate `set` to the embedded `_lens`
     set(main: Main, child: Child): Main { return this._lens.set(main, child); }
 
+    map(fn: (child: Child | undefined) => Child) {
+        return main => this._lens.set(main, fn(this._lens.get(main)))
+    }
+
     // Delegate `path` to the embedded `_lens`
     get path(): LensPath { return this._lens.path; }
 

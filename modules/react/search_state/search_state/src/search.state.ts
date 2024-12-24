@@ -2,6 +2,7 @@ import {ErrorsOr} from "@enterprise_search/errors";
 import {NameAnd} from "@enterprise_search/recoil_utils";
 
 export type SearchType = 'main' | 'immediate'
+export const searchTypes: SearchType[] = ['main', 'immediate']
 
 //Filters will be NameAnd<... something...> in practice
 //The name of the filter and the value. For example 'space' and ['me8', 'infra'] or 'time': 'last 3 hours'
