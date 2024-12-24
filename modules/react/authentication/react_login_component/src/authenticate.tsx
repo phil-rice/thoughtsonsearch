@@ -1,8 +1,9 @@
-import {useLogin, UserDataContext, useUserData} from "@enterprise_search/authentication";
+import {useLogin, UserDataContext} from "@enterprise_search/authentication";
 import {LoadingOr} from "@enterprise_search/loading";
 import {delay} from "@enterprise_search/recoil_utils";
 import React, {ReactNode, useContext} from "react";
-import {useNotLoggedIn} from "./react.login";
+import {useLoginComponents} from "./react.login";
+
 
 export type AuthenticateProps = {
     children: React.ReactNode
@@ -14,7 +15,7 @@ export type AuthenticateProps = {
  * */
 export function Authenticate({children = null}: AuthenticateProps) {
     const {refeshLogin} = useLogin();
-    const {NotLoggedIn} = useNotLoggedIn();
+    const {NotLoggedIn} = useLoginComponents();
     const kleisli = async () => {
         await delay(3000)
         await refeshLogin()
@@ -31,10 +32,41 @@ export type MustBeLoggedInProps = {
 };
 
 export type MustBeLoggedInDisplay = (props: MustBeLoggedInProps) => React.ReactElement;
+export function MustBeLoggedIn({ children, notLoggedIn }: MustBeLoggedInProps): ReactNode {
+    // Hook is always called
+    const { loggedIn } = useContext(UserDataContext);
 
-export function MustBeLoggedIn({children, notLoggedIn}: MustBeLoggedInProps): ReactNode {
-    const {loggedIn} = useContext(UserDataContext) //no idea why useUserData doesn't work here.
-    // const {loggedIn} = useUserData()
-    return loggedIn ? children : notLoggedIn();
+    // Always render one component tree
+    // (even though we conditionally show different content inside)
+    return (
+        <MustBeLoggedInWrapper
+            loggedIn={loggedIn}
+            children={children}
+            notLoggedIn={notLoggedIn}
+        />
+    );
 }
 
+// The wrapper that decides which content to show
+function MustBeLoggedInWrapper({
+                                   loggedIn,
+                                   children,
+                                   notLoggedIn,
+                               }: {
+    loggedIn: boolean;
+    children: ReactNode;
+    notLoggedIn: () => ReactNode;
+}) {
+    // We do not conditionally skip any hooks here.
+    // If we had more hooks, they'd always be called.
+
+    // We only conditionally show different content.
+    if (loggedIn) {
+        // If children is a component that uses hooks, that's fine,
+        // we always render children in the "loggedIn" path consistently
+        return <>{children}</>;
+    } else {
+        // If notLoggedIn uses hooks, it is always used in the "loggedOut" path consistently
+        return <>{notLoggedIn()}</>;
+    }
+}

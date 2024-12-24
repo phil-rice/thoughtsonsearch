@@ -23,6 +23,7 @@
     "@enterprise_search/search_api": "0.0.1",
     "@enterprise_search/search_important_components": "0.0.1",
     "@enterprise_search/sovereign": "0.0.1",
+    "@enterprise_search/sovereign_search": "0.0.1",
     "@enterprise_search/service_caller": "0.0.1",
     "@enterprise_search/search_state": "0.0.1",
     "debug": "^4.3.4",

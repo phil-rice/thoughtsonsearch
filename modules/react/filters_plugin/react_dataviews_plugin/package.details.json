@@ -1,6 +1,6 @@
 {
   "template": "react_library",
-  "name": "@enterprise_search/react_data_sources_filter_plugin",
+  "name": "@enterprise_search/react_data_views_filter_plugin",
   "description": "How we search for time",
   "links": [
     "@enterprise_search/icons",

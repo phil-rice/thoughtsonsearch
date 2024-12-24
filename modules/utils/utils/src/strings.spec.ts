@@ -1,4 +1,4 @@
-import {camelCaseToWords} from "./strings";
+import {camelCaseToWords, capitalizeFirstLetter} from "./strings";
 
 describe('camelCaseToWords', () => {
     it('converts simple camelCase strings to words', () => {
@@ -42,3 +42,31 @@ describe('camelCaseToWords', () => {
         expect(camelCaseToWords('  thisText  ')).toBe('This Text');
     });
 });
+
+
+describe('capitalizeFirstLetter', () => {
+    it('capitalizes the first letter of a string', () => {
+        expect(capitalizeFirstLetter('test')).toBe('Test');
+        expect(capitalizeFirstLetter('another')).toBe('Another');
+    });
+
+    it('handles empty strings', () => {
+        expect(capitalizeFirstLetter('')).toBe('');
+    });
+
+    it('handles strings with numbers', () => {
+        expect(capitalizeFirstLetter('123test')).toBe('123test');
+    });
+
+    it('handles strings with special characters', () => {
+        expect(capitalizeFirstLetter('@test')).toBe('@test');
+    });
+
+    it('handles strings with existing spaces', () => {
+        expect(capitalizeFirstLetter('  test  ')).toBe('  test  ');
+    });
+
+    it('handles strings that are already properly formatted', () => {
+        expect(capitalizeFirstLetter('Test')).toBe('Test');
+    });
+})

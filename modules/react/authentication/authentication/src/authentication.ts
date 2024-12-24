@@ -16,3 +16,8 @@ export const bearerAuthentication = (token: string): Authentication => ({
         ({...headers, Authorization: `Bearer ${token}`})
 })
 
+export const bearerAuthenticationFromFn = (token: () => Promise<string>): Authentication => ({
+    modifyHeaders: async (headers: Headers) =>
+        ({...headers, Authorization: `Bearer ${await token()}`})
+})
+

@@ -1,21 +1,7 @@
-import React, {createContext} from "react";
+import React from "react";
+import {makeContextFor} from "@enterprise_search/react_utils";
 
-export type SearchBarProps = {}
+export type SearchBarProps = { onSearch?: () => void }
 export type SearchBar = (props: SearchBarProps) => React.ReactElement
 
-export const SearchContext = createContext<SearchBar | undefined>(undefined)
-
-export type SearchBarProviderProps = {
-    SearchBar: SearchBar
-    children: React.ReactNode
-}
-
-export const SearchBarProvider = ({SearchBar, children}: SearchBarProviderProps) => {
-    return <SearchContext.Provider value={SearchBar}>{children}</SearchContext.Provider>
-}
-
-export const useSearchBar = () => {
-    const SearchBar = React.useContext(SearchContext)
-    if (!SearchBar) throw new Error("useSearchBar must be used within a SearchContextProvider")
-    return {SearchBar}
-}
+export const {Provider: SearchBarProvider, use: useSearchBar} = makeContextFor<SearchBar,'searchBar'>('searchBar')

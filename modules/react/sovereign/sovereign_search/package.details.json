@@ -1,11 +1,15 @@
 {
   "template": "react_library",
   "name": "@enterprise_search/sovereign_search",
-  "description": "A sovereign page that displays search",
+  "description": "Sovereign pages that displays search",
   "links": [
+    "@enterprise_search/sovereign",
+    "@enterprise_search/search_bar",
+    "@enterprise_search/react_filters_plugin",
+    "@enterprise_search/react_datasource_plugin",
     "@enterprise_search/search_state",
-    "@enterprise_search/react_utils",
-    "@enterprise_search/react_datasource_plugin"
+    "@enterprise_search/react_search_state",
+    "@enterprise_search/react_utils"
   ],
   "packageJson": {
     "files": ["build/"],

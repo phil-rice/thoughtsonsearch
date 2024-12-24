@@ -10,8 +10,8 @@ export type LoadingDisplay = () => React.ReactElement;
 export type LoadingOrProps<Input, Output> = {
     input: Input;
     kleisli: Kleisli<Input, Output>;
-    loading?: LoadingDisplay;
-    error?: LoadingOrErrorFn;
+    Loading?: LoadingDisplay;
+    Error?: LoadingOrErrorFn;
     onUnmount?: (output: Output) => void;
     children: (output: Output) => React.ReactNode;
 }
@@ -24,14 +24,74 @@ export function simpleLoadingDisplay(): React.ReactElement {
 export const defaultError: LoadingOrErrorFn = ({error}): React.ReactElement =>
     <div>Error: {error}</div>;
 
-export function LoadingOr<Input, Output>({input, kleisli, loading = simpleLoadingDisplay, error = defaultError, children, onUnmount = () => {}}: LoadingOrProps<Input, Output>): React.ReactNode {
+
+
+/**
+ * The top-level function:
+ * - Unconditionally calls hooks.
+ * - Always returns the same wrapper component.
+ */
+export function LoadingOr<Input, Output>({
+                                             input,
+                                             kleisli,
+                                             Loading = simpleLoadingDisplay,
+                                             Error = defaultError,
+                                             children,
+                                             onUnmount = () => {},
+                                         }: LoadingOrProps<Input, Output>): React.ReactElement {
+    // 1. Call your hooks unconditionally
     const state = useKleisli<Input, Output>(kleisli, input);
+
     useEffect(() => {
-        return () => {if (hasData(state)) onUnmount(state.data as Output);};
+        return () => {
+            if (hasData(state)) {
+                onUnmount(state.data as Output);
+            }
+        };
     }, [state.data, onUnmount]);
-    if (isLoading(state)) return loading!();
-    if (hasError(state)) return error({error: state.error as string}) || null;
-    if (hasData(state)) return children!(state.data as Output);
-    console.error("This should never happen: state is in an invalid state", state);
+
+    // 2. Always return the same top-level component:
+    //    The conditional logic will happen *inside* the wrapper.
+    return (
+        <LoadingOrWrapper
+            state={state}
+            Loading={Loading}
+            Error={Error}
+            childrenFn={children}
+        />
+    );
+}
+
+/**
+ * The wrapper that decides *what* to render
+ * based on the provided `state` (loading, error, data).
+ *
+ * Importantly, React now always sees *one* component here,
+ * so the hook order is stable.
+ */
+function LoadingOrWrapper<Input, Output>({
+                                             state,
+                                             Loading,
+                                             Error,
+                                             childrenFn,
+                                         }: {
+    state: any;  // Replace `any` with your actual state type
+    Loading?: React.ComponentType | null;
+    Error?: React.ComponentType<{ error: unknown }> | null;
+    childrenFn: (data: Output) => React.ReactNode;
+}) {
+    // Conditionally render the content *within* a stable component structure:
+    if (isLoading(state) && Loading) {
+        return <Loading />;
+    }
+    if (hasError(state)) {
+        return Error === null ? <></> : <Error error={state.error} />;
+    }
+    if (hasData(state)) {
+        return <>{childrenFn(state.data as Output)}</>;
+    }
+
+    console.error("This should never happen: invalid state =>", state);
     return <></>;
 }
+

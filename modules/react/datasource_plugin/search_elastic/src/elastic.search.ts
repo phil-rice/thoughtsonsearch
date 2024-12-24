@@ -1,50 +1,38 @@
-import {SearchByApiContext, SearchByApiTypeClass} from "@enterprise_search/search_api";
-import {KeywordsFilter} from "@enterprise_search/react_keywords_filter_plugin";
+import {SearchByApiContext} from "@enterprise_search/search_api";
+import {CommonDataSourceDetails, DataSourcePlugin} from "@enterprise_search/react_datasource_plugin";
+import {KeywordsFilter} from "modules/react/filters_plugin/react_keywords_filter_plugin";
 import {TimeFilters} from "@enterprise_search/react_time_filter_plugin";
-import {DataSourcePlugin, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
-import {simpleDataSourceButton} from "@enterprise_search/react_datasource_plugin/src/data.source.buttons";
+import {Authentication} from "@enterprise_search/authentication";
+import {DataViewFilters} from "@enterprise_search/react_data_views_filter_plugin";
+
+/* This lets us say 'in the elastic search I want you to search these indicies
+The indicies are the 'ones that are known'. Filters can trim this down
+ */
+
+export type ElasticSearchSourceDetails = CommonDataSourceDetails & {
+    indicies: string[]
+}
 
 export type ElasticSearchContext = SearchByApiContext & {
     elasticSearchUrl: string
     elasticSearchToken: () => Promise<string>
+    knownIndicies: string[]
 }
 
-type ElasticSearchPaging = {}
-export type ElasticSearchFilters = KeywordsFilter & TimeFilters
+export type ElasticSearchPaging = {}
+export type ElasticSearchFilters = KeywordsFilter & TimeFilters & DataViewFilters
 
-export const elasticSearchDataSourcePlugin: DataSourcePlugin<ElasticSearchContext, ElasticSearchFilters> = {
-    plugin: 'datasource',
-    type: 'elasticsearch.keywords',
-    fetch: async (context, filters) => {
-        return []
-    },
-    navBar: simpleDataSourceButton('Elastic Search')
+export function elasticSearchDataSourcePlugin(authentication: Authentication,
+                                              allDetails: ElasticSearchSourceDetails[]): DataSourcePlugin<ElasticSearchSourceDetails, ElasticSearchFilters, ElasticSearchPaging> {
+    return {
+        plugin: 'datasource',
+        datasourceName: 'elasticsearch',
+        authentication,
+        fetch: async (filters, paging) => {
+            return undefined as any
+        },
+        allDetails
+    };
 }
 
 
-
-
-const elasticSearchTC: SearchByApiTypeClass<ElasticSearchContext, ElasticSearchFilters, any, ElasticSearchPaging> = {
-    type: 'api',
-    page1: async () => ({}),
-    url: (context, from) => `${context.elasticSearchUrl}/_search`,
-    body: (context, from) => {
-        const keywordsFilter = keywordsFilterToElasticSearchFilter(from.filters.keywords)
-        const timeFilter = timeFilterToElasticSearchFilter(from.filters.time)
-        const paging = from.paging
-        return JSON.stringify({paging, keywordsFilter, timeFilter});
-    },
-    method: () => `Post`,
-    headers: async (context) => ({Authorization: `Bearer ${await context.elasticSearchToken()}`}),
-    findAggregates: () => ({}),
-    findData: (context, from, headers, res: any) => (res.hits),
-    findPaging: (context, from, headers, res: any) => ({}),
-}
-
-export function timeFilterToElasticSearchFilter(timeFilter: TimeFilters): any {
-    return {}
-}
-
-export function keywordsFilterToElasticSearchFilter(keywordsFilter: KeywordsFilter): any {
-    return {}
-}

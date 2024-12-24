@@ -1,10 +1,10 @@
-import {DisplayLoginProps} from "./react.login";
-import { useLogin, useUserData} from "@enterprise_search/authentication";
+import {DisplayLogin, DisplayLoginProps} from "./react.login";
+import {useLogin, useUserData} from "@enterprise_search/authentication";
 import React, {ReactElement} from "react";
 
-export function SimpleDisplayLogin(props: DisplayLoginProps) {
-    const {login,  logout} = useLogin()
-    const {loggedIn} = useUserData()
+export const SimpleDisplayLogin: DisplayLogin = (props: DisplayLoginProps) => {
+    const {login, logout} = useLogin()
+    const {loggedIn} = useUserData() || {}
     const {email, isAdmin, isDev} = useUserData() || {}
     return <div>
         {loggedIn ? <div>
@@ -12,7 +12,7 @@ export function SimpleDisplayLogin(props: DisplayLoginProps) {
             <button onClick={logout}>Logout</button>
         </div> : <button onClick={login}>Login</button>}
     </div>
-}
+};
 
 export function SimpleMustBeLoggedIn(): ReactElement {
     const {login} = useLogin()

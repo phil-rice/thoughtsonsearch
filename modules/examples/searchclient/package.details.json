@@ -10,6 +10,7 @@
     "@enterprise_search/search_api",
     "@enterprise_search/search_important_components",
     "@enterprise_search/sovereign",
+    "@enterprise_search/sovereign_search",
     "@enterprise_search/service_caller",
     "@enterprise_search/search_state"
   ],

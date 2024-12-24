@@ -14,7 +14,7 @@ describe("LoadingOr", () => {
             <LoadingOr
                 input={1}
                 kleisli={unresolvedKleisli}
-                loading={() => <div>Loading...</div>}
+                Loading={() => <div>Loading...</div>}
             >
                 {(data) => <div>Data: {data}</div>}
             </LoadingOr>
@@ -29,7 +29,7 @@ describe("LoadingOr", () => {
             <LoadingOr
                 input={1}
                 kleisli={errorKleisli}
-                error={({error}) => <div>Error: {error}</div>}>
+                Error={({error}) => <div>Error: {error}</div>}>
                 {(data) => <div>Data: {data}</div>}
             </LoadingOr>
         );

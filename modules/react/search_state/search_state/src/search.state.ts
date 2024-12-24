@@ -14,7 +14,6 @@ export type SearchType = 'main' | 'immediate'
 export type AllSearches<Filters> = Record<SearchType, OneSearch<Filters>>
 
 export type SearchState<Filters> = {
-    searchQuery: string
     /** We can have many of these going on at once
      * Importantly there is the 'main' which happens when you press enter, and the 'intermediate' which is while you are typing.
      * I am sure there will be others     *
@@ -25,16 +24,15 @@ export type OneSearch<Filters> = {
     //This is to prevent race conditions. We only use the result if the count hasn't changed
     count: number
     filters: Filters
-    searchResult: DatasourceToSearchResult
+    dataSourceToSearchResult: DatasourceToSearchResult
 }
 
 export const emptyOneSearch: OneSearch<any> = {
     count: 0,
     filters: {},
-    searchResult: {}
+    dataSourceToSearchResult: {}
 }
 export const emptySearchState: SearchState<any> = {
-    searchQuery: '',
     searches: {
         main: emptyOneSearch,
         immediate: emptyOneSearch

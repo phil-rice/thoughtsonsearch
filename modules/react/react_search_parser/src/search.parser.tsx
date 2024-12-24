@@ -1,19 +1,9 @@
-import React, {createContext, useContext} from "react";
 import {KeywordsFilter, keywordsFilterName} from "@enterprise_search/react_keywords_filter_plugin";
+import {makeContextFor} from "@enterprise_search/react_utils";
 
 export type SearchParser<Filters extends KeywordsFilter> = (query: string, from: Filters) => Filters
 
-export function simpleSearchParser<Filters extends KeywordsFilter>(query: string, from: Filters): Filters {
-    return {...from, [keywordsFilterName]: query}
-}
+export const simpleSearchParser: SearchParser<any> = <Filters extends KeywordsFilter>(query: string, from: Filters): Filters => ({...from, [keywordsFilterName]: query});
 
-export const SearchParserContext = createContext<SearchParser<any>>(simpleSearchParser)
-
-export function SearchParserProvider<Filters extends KeywordsFilter>({children, parser}: { children: React.ReactNode, parser: SearchParser<Filters> }) {
-    return <SearchParserContext.Provider value={parser}>{children}</SearchParserContext.Provider>
-}
-
-export function useSearchParser<Filters extends KeywordsFilter>(): SearchParser<Filters> {
-    return useContext(SearchParserContext)
-}
+export const {use: useSearchParser, context: SearchParserContext, Provider: SearchParserProvider} = makeContextFor('searchParser', simpleSearchParser)
 

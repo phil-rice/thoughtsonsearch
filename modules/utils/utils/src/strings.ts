@@ -16,3 +16,7 @@ export function camelCaseToWords(input: string): string {
         .join(' ') // Join words back into a string
         .trim(); // Trim leading and trailing spaces
 }
+
+export function capitalizeFirstLetter(input: string): string {
+    return input.charAt(0).toUpperCase() + input.slice(1);
+}

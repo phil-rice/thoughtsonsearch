@@ -25,7 +25,7 @@ export type SearchUsingSearcherContext<Context, Filters> = DebugContext & {
 }
 
 export type Searcher<Context extends DebugContext, TC extends SearchTypeClass<Context, Filters, Paging>, Filters, Data, Paging> = (context: Context, tc: TC, from: QueryDatasourceAndPaging<Filters, Paging>) => Promise<ErrorsOr<SearchResult<Data, Paging>>>
-export type DatasourceNameToSearcher<Context> = NameAnd<Searcher<Context, any, any, any, any>>
+export type DatasourceNameToSearcher<Context extends DebugContext> = NameAnd<Searcher<Context, any, any, any, any>>
 
 export function findSearcher<Context extends SearchUsingSearcherContext<Context, Filters>, TC extends SearchTypeClass<Context, Filters, Paging>, Filters, Data, Paging>(context: Context, datasourceName: string, searcherType: string): Searcher<Context, TC, Filters, Data, Paging> {
     const searchers = context.searchers;

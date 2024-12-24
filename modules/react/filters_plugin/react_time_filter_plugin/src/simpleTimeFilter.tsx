@@ -1,8 +1,6 @@
 // Define a type for CSS styles
 import React from "react";
-
-import {timefilterPluginName, TimeFilters} from "./react.time.filter";
-import {useOneFilter} from "@enterprise_search/react_search_state";
+import {DisplayFilterProps} from "@enterprise_search/react_filters_plugin";
 
 type CSSVariables = {
     container: React.CSSProperties;
@@ -34,22 +32,15 @@ const cssVariables: CSSVariables = {
     },
 };
 
-export function SimpleTimeDisplay() {
-    const [filter='', setFilter] = useOneFilter<TimeFilters, 'time'>(timefilterPluginName)
+export function SimpleTimeDisplay({filterOps, id}: DisplayFilterProps<string>) {
 
-    const onChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
-        setFilter(e.target.value);
-
-    const onReset = () => {
-        setFilter("");
-    };
-
+    const [time, setTime] = filterOps;
 
     return (
-        <div style={cssVariables.container}>
+        <div id={id} style={cssVariables.container}>
             <select
-                value={filter}
-                onChange={onChange}
+                value={time||''}
+                onChange={e => setTime(e.target.value)}
                 aria-label="Time filter"
                 style={cssVariables.select}
             >

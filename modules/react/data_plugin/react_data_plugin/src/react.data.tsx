@@ -1,5 +1,6 @@
 import React from "react";
 import {NameAnd} from "@enterprise_search/recoil_utils";
+import {makeContextFor} from "@enterprise_search/react_utils";
 
 
 export type DataOps<Data> = {
@@ -21,28 +22,11 @@ export type DisplayDataProps<Data> = {
 }
 export type DisplayData<Data> = (props: DisplayDataProps<Data>) => React.ReactElement
 
-
-export const DataPluginContext = React.createContext<DataPlugins | undefined>(undefined);
-
-
-type DataPluginProvider = {
-    ops: DataPlugins
-    children: React.ReactNode
-}
-
-export const DataPluginProvider = ({ops, children}: DataPluginProvider) => {
-    return (
-        <DataPluginContext.Provider value={ops}>{children}</DataPluginContext.Provider>
-    );
-}
-
+export const {Provider: DataPluginProvider, use: useDataPlugins} = makeContextFor('dataPlugins', {} as DataPlugins);
 
 export function useData<Data>(purpose: string, type: string): DataOps<Data> {
-    const context = React.useContext(DataPluginContext);
-    if (context === undefined) {
-        throw new Error('useData must be used within a DataPluginProvider');
-    }
-    const plugin: DataPlugin<Data> = context[type]
+    const dataPlugins = useDataPlugins();
+    const plugin: DataPlugin<Data> = dataPlugins[type]
     if (!plugin) throw new Error(`Unknown data type ${type}. Legal values are ${Object.keys(plugin).sort()}`)
     const DisplayData = plugin.DisplayDataForPurpose[purpose] || plugin.DefaultDisplayData
     return {DisplayData};

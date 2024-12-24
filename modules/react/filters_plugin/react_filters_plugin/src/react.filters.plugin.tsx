@@ -1,5 +1,7 @@
 import {NameAnd} from "@enterprise_search/recoil_utils";
 import React from "react";
+import {GetterSetter, makeContextFor, makeGetterSetter} from "@enterprise_search/react_utils";
+import {lensBuilder} from "@enterprise_search/optics";
 
 // Filters are intrinsically bound to many places, and therefore if we aren't very
 // careful with our design they will become complex
@@ -7,10 +9,6 @@ import React from "react";
 // We have 'simple filters' such as 'time' or 'location' which are just a blob in the search info,
 // We display the filters differently for different purposes, so we provide an overrider
 
-// An example purpose is the '
-
-
-export const dataSourcesFilterName = 'dataSources'
 
 //This shows most of the filters, but not the searchbar.
 export const filtersDisplayPurpose = 'filters.display.purpose'
@@ -18,11 +16,11 @@ export const filtersDisplayPurpose = 'filters.display.purpose'
 
 //Filters must be a Record-like structure for this to work
 //We enforce that the keys in filters are the keys in the ReactFiltersPlugins
-export type ReactFiltersPlugins<Context, Filters extends Record<string, any>> = {
-    [Key in keyof Filters]: ReactFiltersPlugin<Context, Filters, Key>;
+export type ReactFiltersPlugins<Filters> = {
+    [Key in keyof Filters]: ReactFiltersPlugin<Pick<Filters, Key>, Key>;
 };
 
-export type ReactFiltersPlugin<Context, Filters, FilterName extends keyof Filters> = {
+export type ReactFiltersPlugin<Filters, FilterName extends keyof Filters> = {
     plugin: 'filter'
     type: FilterName
     DefaultDisplay: DisplayFilter<Filters[FilterName]>
@@ -30,76 +28,54 @@ export type ReactFiltersPlugin<Context, Filters, FilterName extends keyof Filter
     PurposeToDisplay: NameAnd<DisplayFilter<Filters[FilterName]> | null>
 }
 
-export type DisplayFilterProps<Filter> = {id?:string}
+/** Filters may be viewing data pretty much anywhere in the state. So we pass in a getter/setter */
+export type DisplayFilterProps<Filter> = { id?: string, filterOps: GetterSetter<Filter> }
 export type DisplayFilter<Filter> = (props: DisplayFilterProps<Filter>) => React.ReactElement
 
 
 export type FilterLayoutProps = {
+    id: string
     children: React.ReactNode
 }
 export type FilterLayout = (props: FilterLayoutProps) => React.ReactElement
-export type ReactFiltersContextData<Context, Filters> = {
-    plugins: ReactFiltersPlugins<Context, Filters>
+
+export type ReactFiltersContextData<Filters> = {
+    plugins: ReactFiltersPlugins<Filters>
     PurposeToFilterLayout: NameAnd<FilterLayout>
 }
-export const ReactFiltersContext = React.createContext<ReactFiltersContextData<any, any> | undefined>(undefined)
 
-export type ReactFiltersProviderProps<Context, Filters> = {
-    value: ReactFiltersContextData<Context, Filters>
-    children: React.ReactNode
-}
-export const ReactFiltersProvider = <Context, Filters>({value, children}: ReactFiltersProviderProps<Context, Filters>) => {
-    return <ReactFiltersContext.Provider value={value}>{children}</ReactFiltersContext.Provider>
-}
-export type ReactFilterOps<Filter> = {
-    DisplayFilter: DisplayFilter<Filter>
-}
+export const {Provider: ReactFiltersProvider, use: useReactFilters} = makeContextFor('reactFilters', undefined as ReactFiltersContextData<any>)
 
-function findDisplayFilterFor<Context, Filters, FilterName extends keyof Filters>(plugins: ReactFiltersPlugins<Context, any>, filterName: FilterName, purpose: string) {
+function findDisplayFilterFor<Filters, FilterName extends keyof Filters>(plugins: ReactFiltersPlugins<any>, filterName: FilterName, purpose: string) {
     const plugin = plugins[filterName]
     if (!plugin) throw new Error(`No plugin for '${filterName.toString()}'. Legal values are ${Object.keys(plugins).sort()}`);
     const DisplayFilter = purpose && purpose in plugin.PurposeToDisplay ? plugin.PurposeToDisplay[purpose] : plugin.DefaultDisplay
     return DisplayFilter;
 }
 
-export function useFilterDisplay<Context, Filters, FilterName extends keyof Filters>(filterName: FilterName, purpose?: string): ReactFilterOps<Filters[FilterName]> {
-    const context = React.useContext(ReactFiltersContext)
-    if (!context) throw new Error('useReactFilters must be used within a ReactFiltersProvider')
-    const {plugins} = context
-    const DisplayFilter = findDisplayFilterFor<Context, Filters, FilterName>(plugins, filterName, purpose);
-    return {DisplayFilter}
-}
-
-type SearchBarOps = {
-    SearchBar: () => React.ReactElement
-}
-
-
 //returns a list of all the DisplayFilters for the given purpose. A classical example (the default)is for the 'main filter display' that has everything except the searchbar
-
-export type UseAllFiltersOps = {
-    DisplayFilters: () => React.ReactElement
+export type DisplayFiltersProps<Filters> = { id: string, filtersOps: GetterSetter<Filters> }
+export type DisplayFilters<Filters> = (props: DisplayFiltersProps<Filters>) => React.ReactElement
+export type DisplayAllFiltersOps<Filters> = {
+    DisplayAllFilters: DisplayFilters<Filters>
 }
 
-export function useAllFilters<Context, Filters>(filterPurpose: string = filtersDisplayPurpose): UseAllFiltersOps {
-    const context = React.useContext(ReactFiltersContext);
-    if (!context) throw new Error('useAllFiltersFor must be used within a ReactFiltersProvider.');
-
-    const {plugins, PurposeToFilterLayout} = context;
-    const FilterLayout = PurposeToFilterLayout[filterPurpose];
-    if (!FilterLayout) throw new Error(`No FilterLayout for purpose '${filterPurpose}'. Legal values are: ${Object.keys(PurposeToFilterLayout).sort().join(', ')}`);
-
-
-    // Return a React component
-    const DisplayFilters = () => (
-        <FilterLayout>
+export const SimpleDisplayFilters = (filterPurpose: string) =>
+    <Filters extends any>({filtersOps, id}: DisplayFiltersProps<Filters>) => {
+        const [filters, setFilters] = filtersOps;
+        const {plugins, PurposeToFilterLayout} = useReactFilters()
+        const FilterLayout = PurposeToFilterLayout[filterPurpose];
+        if (!FilterLayout) throw new Error(`No FilterLayout for purpose '${filterPurpose}'. Legal values are: ${Object.keys(PurposeToFilterLayout).sort().join(', ')}`);
+        return <FilterLayout id={id}>
             {Object.keys(plugins).map((filterName) => {
-                const DisplayFilter: DisplayFilter<any> = findDisplayFilterFor<Context, Filters, any>(plugins, filterName, filterPurpose);
+                const DisplayFilter: DisplayFilter<any> = findDisplayFilterFor<Filters, any>(plugins, filterName, filterPurpose);
                 if (!DisplayFilter) return null;
-                return <DisplayFilter key={filterName}/>;
+                const filterOps = makeGetterSetter(filters, setFilters, lensBuilder<Filters>().focusOn(filterName as any));
+                return <DisplayFilter key={filterName} id={`${id}.${filterName}`} filterOps={filterOps}/>;
             })}
         </FilterLayout>
-    );
+    };
 
-    return {DisplayFilters};
+export function useDisplayAllFilters<Filters>(filterPurpose: string = filtersDisplayPurpose): DisplayAllFiltersOps<Filters> {
+    return {DisplayAllFilters: SimpleDisplayFilters(filterPurpose)}
 }
