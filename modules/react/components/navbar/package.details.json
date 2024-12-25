@@ -1,11 +1,11 @@
 {
   "template": "react_library",
-  "name": "@enterprise_search/devmode_gui_state",
-  "description": "components to support dev mode for gui state",
+  "name": "@enterprise_search/navbar",
+  "description": "Interface and simple implementation for navbar",
   "links": [
-    "@enterprise_search/recoil_utils",
-    "@enterprise_search/react_datasource_plugin",
-    "@enterprise_search/navbar"
+    "@enterprise_search/react_utils",
+    "@enterprise_search/translation",
+    "@enterprise_search/react_keywords_filter_plugin"
   ],
   "packageJson": {
     "files": ["build/"],

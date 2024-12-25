@@ -1,4 +1,4 @@
-import {camelCaseToWords, capitalizeFirstLetter} from "./strings";
+import {camelCase, camelCaseToWords, capitalizeFirstLetter} from "./strings";
 
 describe('camelCaseToWords', () => {
     it('converts simple camelCase strings to words', () => {
@@ -70,3 +70,61 @@ describe('capitalizeFirstLetter', () => {
         expect(capitalizeFirstLetter('Test')).toBe('Test');
     });
 })
+
+
+describe('camelCase', () => {
+
+    test('converts space-separated words to camelCase', () => {
+        expect(camelCase("hello world")).toBe("helloWorld");
+    });
+
+    test('handles single-word input', () => {
+        expect(camelCase("hello")).toBe("hello");
+    });
+
+    test('converts snake_case to camelCase', () => {
+        expect(camelCase("some_value_here")).toBe("someValueHere");
+    });
+
+    test('converts kebab-case to camelCase', () => {
+        expect(camelCase("get-this-done")).toBe("getThisDone");
+    });
+
+    test('handles mixed separators (spaces, underscores, hyphens)', () => {
+        expect(camelCase("one_two-three four")).toBe("oneTwoThreeFour");
+    });
+
+    test('ignores leading and trailing spaces', () => {
+        expect(camelCase("   leading spaces  ")).toBe("leadingSpaces");
+    });
+
+    test('handles uppercase input', () => {
+        expect(camelCase("MAKE IT WORK")).toBe("makeItWork");
+    });
+
+    test('returns empty string for empty input', () => {
+        expect(camelCase("")).toBe("");
+    });
+
+    test('handles input with special characters', () => {
+        expect(camelCase("hello@world!")).toBe("hello@world");
+    });
+
+    test('handles numeric and alphanumeric input', () => {
+        expect(camelCase("convert 123 to words")).toBe("convert123ToWords");
+        expect(camelCase("mix123Words")).toBe("mix123words");
+    });
+
+    test('handles repetitive separators', () => {
+        expect(camelCase("----repeated---hyphens__and_spaces ")).toBe("repeatedHyphensAndSpaces");
+    });
+
+    test('converts dash-only input to empty string', () => {
+        expect(camelCase("----")).toBe("");
+    });
+
+    test('preserves case for words after first word', () => {
+        expect(camelCase("UPPER lowercase MixEd")).toBe("upperLowercaseMixed");
+    });
+
+});

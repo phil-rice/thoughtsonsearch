@@ -18,6 +18,21 @@ export function camelCaseToWords(input: string): string {
         .trim(); // Trim leading and trailing spaces
 }
 
+export function camelCase(input: string): string {
+    return input
+        .replace(/[^a-zA-Z@0-9\s-_]/g, '')  // Remove special characters except spaces, hyphens, and underscores
+        .toLowerCase()
+        .split(/[\s-_]+/)  // Split by space, hyphen, or underscore
+        .filter(x => x.trim().length > 0)
+        .map((word, index) =>
+            index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)
+        )
+        .join('');
+}
+
+
+
+
 export function capitalizeFirstLetter(input: string): string {
     return input.charAt(0).toUpperCase() + input.slice(1);
 }

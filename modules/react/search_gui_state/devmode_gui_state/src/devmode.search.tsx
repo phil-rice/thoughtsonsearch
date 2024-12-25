@@ -4,6 +4,7 @@ import {NameAnd} from "@enterprise_search/recoil_utils";
 import {makeContextFor, makeContextForState, makeUseStateChild} from "@enterprise_search/react_utils";
 import {useUserData} from "@enterprise_search/authentication";
 import {DevModeSearchState} from "./devModeSearchState";
+import { makeSimpleNavBar, NavBar} from "@enterprise_search/navbar";
 
 export type DevModeComponent = () => React.ReactElement;
 export type DevModeNavbarComponent = () => ReactElement;
@@ -13,19 +14,18 @@ export type DevModeNavItem = (props: DevModeNavItemProps) => React.ReactElement;
 export type DevModeComponents = NameAnd<DevModeComponent>
 
 export type SearchDevModeComponents = {
-    DevModeNavBar: DevModeNavbarComponent
-    DevModeNavItem: DevModeNavItem
+    DevModeNavBar: NavBar
     components: DevModeComponents
 }
 
+const debugComponents = {
+    GuiState: DevModeGuiState,
+    SearchState: DevModeSearchState,
+    UserData: DevModeUserData
+};
 export const simpleDevModeComponents: SearchDevModeComponents = {
-    DevModeNavBar: SimpleDevModeNavBar,
-    DevModeNavItem: SimpleDevModeNavItem,
-    components: {
-        GuiState: DevModeGuiState,
-        SearchState: DevModeSearchState,
-        UserData: DevModeUserData
-    }
+    DevModeNavBar: makeSimpleNavBar('devmode', Object.keys(debugComponents)),
+    components: debugComponents
 }
 export const {Provider: DevModeComponentsProvider, use: useDevModeComponents} = makeContextFor('components', simpleDevModeComponents)
 export type DevModeState = {
@@ -33,17 +33,6 @@ export type DevModeState = {
 }
 export const {Provider: DevModeForSearchProvider, use: useDevModeState} = makeContextForState<DevModeState, 'devModeState'>('devModeState')
 export const useDevModeSelected = makeUseStateChild(useDevModeState, id => id.focusOn('selected'))
-
-export function SimpleDevModeNavBar() {
-    const {DevModeNavItem, components} = useDevModeComponents();
-    return <nav className={"dev-mode-navbar"}>{Object.entries(components).map(([key, component]) =>
-        <DevModeNavItem key={key} name={key}/>)}</nav>
-}
-
-export function SimpleDevModeNavItem({name}: { name: string }) {
-    const [selected, setSelected] = useDevModeSelected();
-    return <button className='devmode-nav-item' onClick={() => setSelected(name)}>{name}</button>
-}
 
 export function DevModeGuiState() {
     const [searchState] = useSearchGuiState()

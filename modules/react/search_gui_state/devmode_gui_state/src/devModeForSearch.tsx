@@ -3,11 +3,12 @@ import {useDevModeComponents, useDevModeSelected} from "./devmode.search";
 
 export function DevModeForSearch() {
     const {DevModeNavBar, components} = useDevModeComponents()
-    const [selected] = useDevModeSelected()
+    const selectedOps = useDevModeSelected()
+    const [selected] = selectedOps
     const Component = components[selected] || (() => <></>)
     return <div className='dev-mode'>
         <hr/>
-        <DevModeNavBar/>
+        <DevModeNavBar selectedOps={selectedOps}/>
         <Component/>
     </div>
 }
