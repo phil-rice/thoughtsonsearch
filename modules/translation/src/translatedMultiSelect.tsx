@@ -68,6 +68,7 @@ const CheckboxItem: React.FC<CheckboxItemProps> = ({rootId, name, isChecked, onC
 
 export interface TranslatedMultiSelectProps {
     id: string;
+    purpose: string;
     allowedNames: string[];
     stateOps: GetterSetter<string[]>;
     className?: string;
@@ -75,7 +76,8 @@ export interface TranslatedMultiSelectProps {
 }
 
 export const TranslatedMultiSelect: React.FC<TranslatedMultiSelectProps> = ({
-                                                                                id ,
+                                                                                id,
+                                                                                purpose,
                                                                                 allowedNames,
                                                                                 stateOps,
                                                                                 className = "custom-dropdown",
@@ -93,7 +95,7 @@ export const TranslatedMultiSelect: React.FC<TranslatedMultiSelectProps> = ({
     };
 
     return (
-        <div id={id} className={className} role="listbox" aria-multiselectable="true">
+        <div id={id} className={className} aria-label={purpose} role="listbox" aria-multiselectable="true">
             {allowedNames.length === 0 && (
                 <div className="empty-message" role="alert">
                     {noItemsKey ? t(noItemsKey) : t("common.noItemsAvailable")}

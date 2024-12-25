@@ -7,7 +7,9 @@ import {KeywordsFilter} from "@enterprise_search/react_keywords_filter_plugin";
 import React, {ReactNode, useEffect, useRef} from "react";
 import {useFiltersByStateType, useOneFilterBySearchType, useSearchResultsByStateType, useSearchState} from "@enterprise_search/react_search_state";
 import {lensBuilder} from "@enterprise_search/optics";
+import {useDebug} from "@enterprise_search/react_utils";
 
+export const searchDebug = 'search'
 
 export type DoTheSearchingProps = {
     children: ReactNode
@@ -16,26 +18,35 @@ export type DoTheSearchingProps = {
 const countL = lensBuilder<OneSearch<any>>().focusOn('count')
 
 function useDoSearch(st: SearchType) {
+    const debug = useDebug(searchDebug)
     const [filters] = useFiltersByStateType(st)
     const dataSourcePlugins = useDataSourcePlugins()
     const [searchResults, setSearchResults] = useSearchResultsByStateType(st)
     const countRef = useRef(0)
     useEffect(() => {
+        if (Object.keys(filters).length === 0) return //removes calls at start up, and this isn't a credible search anyway
         const baseCount = countRef.current + 1
         //when we do a new search we increment the count. We then check this in the result and ignore results if count has changed
         //we need it in a ref so that we can use it in the promise.then
         //we put it in the state to help with debugging: we can see it in the debug guis
         countRef.current = baseCount
         setSearchResults(countL.set(searchResults, baseCount))
+        debug(st, baseCount, 'filters', filters)
         const result: DatasourceToPromiseSearchResult = searchAllDataSourcesPage1(dataSourcePlugins, filters)
         for (const [datasourceName, promise] of Object.entries(result)) {
             promise.then(res => {
-                if (baseCount !== countRef.current) return //ignore the result if the count has changed because there is another search on the way already
+                if (baseCount !== countRef.current) return debug(st, baseCount, '!==', countRef.current, 'ignoring result')//ignore the result if the count has changed because there is another search on the way already
                 const lens = lensBuilder<OneSearch<any>>().focusOn('dataSourceToSearchResult').focusOn(datasourceName)
-                setSearchResults(old => lens.set(old, res))
+                setSearchResults(old => {
+                    const result = lens.set(old, res);
+                    debug(st, baseCount, 'result', datasourceName, res, 'old', old, 'new', result)
+                    return result;
+                })
+            }).catch(e => {
+                debug.debugError(e, st, baseCount, 'error') // Note this only logs the error if debug is on. We need a proper error handling system
             })
         }
-    }, [filters,dataSourcePlugins])
+    }, [filters, dataSourcePlugins])
 }
 
 /* This component monitors the state of the search. If changed it triggers a search  and updates the search results */

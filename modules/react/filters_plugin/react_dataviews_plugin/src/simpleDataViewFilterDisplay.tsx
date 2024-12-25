@@ -18,6 +18,7 @@ export function SimpleDataViewFilterDisplay({filterOps, id}: DisplayFilterProps<
             <TranslatedLabel translationKey={selectDataViewsTranslationKey} htmlFor={id}/>
             <TranslatedMultiSelect
                 className="datasource-filter-dropdown"
+                purpose="Filters display"
                 id={id}
                 allowedNames={data.allowedNames}
                 noItemsKey={noDataViewTranslationKey}

@@ -1,9 +1,9 @@
 import React, {useEffect} from "react";
 import {createRoot} from "react-dom/client";
 import {Configuration, PublicClientApplication} from "@azure/msal-browser";
-import {Authenticate, AuthenticationProvider, LoginConfig} from "@enterprise_search/authentication";
+import {authenticateDebug, AuthenticationProvider, emptyUserData, LoginConfig, UserDataProvider} from "@enterprise_search/authentication";
 import {loginUsingMsal} from "@enterprise_search/msal_authentication";
-import {SimpleDisplayLogin, SimpleMustBeLoggedIn, useLoginComponents} from "@enterprise_search/react_login_component";
+import {Authenticate, SimpleDisplayLogin, SimpleMustBeLoggedIn, useLoginComponents} from "@enterprise_search/react_login_component";
 import {emptySearchState} from "@enterprise_search/search_state";
 import {filtersDisplayPurpose, ReactFiltersContextData} from "@enterprise_search/react_filters_plugin";
 import {exampleTimeFilterPlugin, timefilterPluginName, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
@@ -18,12 +18,10 @@ import {IconProvider, simpleIconContext} from "@enterprise_search/icons";
 import {dataViewFilter, dataViewFilterName, DataViewFilters, SimpleDataViewFilterDisplay} from "@enterprise_search/react_data_views_filter_plugin";
 import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResultsLayout} from "@enterprise_search/sovereign_search";
 import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
-import {emptySearchGuiState, SearchGuiStateProvider} from "@enterprise_search/search_gui_state";
-import {DoTheSearching} from "@enterprise_search/search/src/search";
+import {DoTheSearching, searchDebug} from "@enterprise_search/search/src/search";
 import {SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "@enterprise_search/data_views";
-import {ElasticSearchSourceDetails} from "@enterprise_search/search_elastic/src/elastic.search";
-import {DevModeGuiState, DevModeSearchState} from "@enterprise_search/devmode_gui_state";
-
+import {ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
+import {DebugStateProvider} from "@enterprise_search/react_utils";
 
 export const exampleMsalConfig: Configuration = {
     auth: {
@@ -34,7 +32,7 @@ export const exampleMsalConfig: Configuration = {
     },
 };
 const msal = new PublicClientApplication(exampleMsalConfig);
-const login: LoginConfig = loginUsingMsal({msal, debug: false});
+const login: LoginConfig = loginUsingMsal({msal});
 
 
 export type SearchAppFilters = TimeFilters & KeywordsFilter & DataViewFilters
@@ -108,26 +106,34 @@ function SearchApp({}: SearchAppProps) {
     </Authenticate>
 }
 
+const debugState = {
+    [authenticateDebug]: false,
+    [searchDebug]: true,
+};
 
 msal.initialize({}).then(() => {
 //we set up here: how we display the components, how we do state management and how we do authentication
     root.render(<React.StrictMode>
-            <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
-                <SovereignStateProvider initial='start'>
-                    <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
-                        <SearchImportantComponentsProvider components={searchImportantComponents}>
-                            <AuthenticationProvider loginConfig={login}>
-                                <IconProvider icons={simpleIconContext}>
-                                    <DoTheSearching>
-                                        <SearchApp/>
-                                    </DoTheSearching>
-                                </IconProvider>
+            <DebugStateProvider debugState={debugState}>
+                <UserDataProvider userData={emptyUserData}>
+                    <AuthenticationProvider loginConfig={login}>
+                        <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
+                            <SovereignStateProvider initial='start'>
+                                <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
+                                    <SearchImportantComponentsProvider components={searchImportantComponents}>
+                                        <IconProvider icons={simpleIconContext}>
+                                            <DoTheSearching>
+                                                <SearchApp/>
+                                            </DoTheSearching>
+                                        </IconProvider>
 
-                            </AuthenticationProvider>
-                        </SearchImportantComponentsProvider>
-                    </SearchInfoProviderUsingUseState>
-                </SovereignStateProvider>
-            </SovereignStatePluginsProvider>
+                                    </SearchImportantComponentsProvider>
+                                </SearchInfoProviderUsingUseState>
+                            </SovereignStateProvider>
+                        </SovereignStatePluginsProvider>
+                    </AuthenticationProvider>
+                </UserDataProvider>
+            </DebugStateProvider>
         </React.StrictMode>
     );
 })

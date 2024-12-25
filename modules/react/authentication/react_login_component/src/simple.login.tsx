@@ -4,8 +4,8 @@ import React, {ReactElement} from "react";
 
 export const SimpleDisplayLogin: DisplayLogin = (props: DisplayLoginProps) => {
     const {login, logout} = useLogin()
-    const {loggedIn} = useUserData() || {}
-    const {email, isAdmin, isDev} = useUserData() || {}
+    const userData = useUserData()
+    const {loggedIn, email, isAdmin, isDev} = userData
     return <div>
         {loggedIn ? <div>
             <div>Logged in as {email}{isAdmin ? ' - Admin' : ''}{isDev ? ' - Dev' : ''}</div>

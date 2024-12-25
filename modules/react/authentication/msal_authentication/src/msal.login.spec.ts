@@ -1,210 +1,140 @@
-import {chainLogin, fromPreviousRedirectLogin, MsalLogin, popupLogin, redirectLogin, silentLogin} from "./msal.login";
-import {AuthenticationResult, PublicClientApplication} from "@azure/msal-browser";
-
+import {chainLogin, fromPreviousRedirectLogin, silentLogin, popupLogin, redirectLogin, noLogin} from './msal.login';
+import {AuthenticationResult, PublicClientApplication} from '@azure/msal-browser';
+import {createMockDebugLog} from '@enterprise_search/react_utils';
 
 describe('chainLogin', () => {
-    // A "blind" msalInstance mock – no functionality, purely passed for compatibility
-    const blindMsalInstance = {} as any;
-
-    it('should return the first successful result', async () => {
-        const login1: MsalLogin = {
-            name: 'login1',
-            login: () => async () => null, // No result
-        };
-        const login2: MsalLogin = {
-            name: 'login2',
-            login: () => async () => ({account: 'testAccount2'} as any), // Success
-        };
-        const login3: MsalLogin = {
-            name: 'login3',
-            login: () => async () => ({account: 'testAccount3'} as any), // Should not be called
-        };
-
-        const chained = chainLogin(blindMsalInstance, login1, login2, login3);
-        const result = await chained([]);
-
-        expect(result).toEqual({account: 'testAccount2'});
-    });
-
-    it('should call all methods if they fail and return null', async () => {
-        const login1: MsalLogin = {
-            name: 'login1',
-            login: () => async () => {
-                throw new Error('login1 failed');
-            },
-        };
-        const login2: MsalLogin = {
-            name: 'login2',
-            login: () => async () => {
-                throw new Error('login2 failed');
-            },
-        };
-        const login3: MsalLogin = {
-            name: 'login3',
-            login: () => async () => {
-                throw new Error('login3 failed');
-            },
-        };
-
-        const chained = chainLogin(blindMsalInstance, login1, login2, login3);
-        const result = await chained([]);
-
-        expect(result).toBeNull();
-    });
-
-    it('should handle mixed failures and successes', async () => {
-        const login1: MsalLogin = {
-            name: 'login1',
-            login: () => async () => {
-                throw new Error('login1 failed');
-            },
-        };
-        const login2: MsalLogin = {
-            name: 'login2',
-            login: () => async () => ({account: 'testAccount2'} as any), // Success
-        };
-        const login3: MsalLogin = {
-            name: 'login3',
-            login: () => async () => {
-                throw new Error('login3 failed');
-            },
-        };
-
-        const chained = chainLogin(blindMsalInstance, login1, login2, login3);
-        const result = await chained([]);
-
-        expect(result).toEqual({account: 'testAccount2'});
-    });
-
-    it('should return null if all methods return null', async () => {
-        const login1: MsalLogin = {
-            name: 'login1',
-            login: () => async () => null,
-        };
-        const login2: MsalLogin = {
-            name: 'login2',
-            login: () => async () => null,
-        };
-        const login3: MsalLogin = {
-            name: 'login3',
-            login: () => async () => null,
-        };
-
-        const chained = chainLogin(blindMsalInstance, login1, login2, login3);
-        const result = await chained([]);
-
-        expect(result).toBeNull();
-    });
-
-    it('should prioritize the order of acquisitions', async () => {
-        const login1: MsalLogin = {
-            name: 'login1',
-            login: () => async () => ({account: 'testAccount1'} as any), // Success
-        };
-        const login2: MsalLogin = {
-            name: 'login2',
-            login: () => async () => ({account: 'testAccount2'} as any), // Should not be called
-        };
-        const login3: MsalLogin = {
-            name: 'login3',
-            login: () => async () => ({account: 'testAccount3'} as any), // Should not be called
-        };
-
-        const chained = chainLogin(blindMsalInstance, login1, login2, login3);
-        const result = await chained([]);
-
-        expect(result).toEqual({account: 'testAccount1'});
-    });
-});
-
-
-describe('MsalLogin methods', () => {
-    let mockMsalInstance: jest.Mocked<PublicClientApplication>;
+    let msalInstance: PublicClientApplication;
+    let debugLog: ReturnType<typeof createMockDebugLog>;
 
     beforeEach(() => {
-        mockMsalInstance = {
-            handleRedirectPromise: jest.fn(),
+        msalInstance = {
             acquireTokenSilent: jest.fn(),
             acquireTokenPopup: jest.fn(),
             acquireTokenRedirect: jest.fn(),
-        } as unknown as jest.Mocked<PublicClientApplication>;
+            handleRedirectPromise: jest.fn(),
+            setActiveAccount: jest.fn(),
+            getAllAccounts: jest.fn().mockReturnValue([{homeAccountId: 'account-id'}]),
+        } as unknown as PublicClientApplication;
+
+        debugLog = createMockDebugLog();
     });
 
-    const testAcquireMethod = async (
-        acquire: MsalLogin,
-        msalMethod: keyof typeof mockMsalInstance,
-        scopes: string[] = [],
-        prompt?: string,
-        overrideReturnValue?: any
-    ) => {
-        const mockReturnValue = overrideReturnValue === undefined
-            ? ({test: 'result'} as unknown as AuthenticationResult)
-            : overrideReturnValue;
-        (mockMsalInstance[msalMethod] as jest.Mock).mockResolvedValue(mockReturnValue);
+    it('returns the first successful login result', async () => {
+        (msalInstance.acquireTokenSilent as jest.Mock).mockResolvedValue({
+            account: {homeAccountId: 'silent-account'},
+        });
 
-        const result = await acquire.login(scopes)(mockMsalInstance);
+        const login = chainLogin(msalInstance, silentLogin, popupLogin);
+        const result = await login(['user.read'], debugLog);
 
-        expect(mockMsalInstance[msalMethod]).toHaveBeenCalledTimes(1);
-        if (msalMethod === 'handleRedirectPromise') {
-            // Special case: handleRedirectPromise does not use scopes
-            expect(mockMsalInstance[msalMethod]).toHaveBeenCalledWith();
-        } else {
-            if (prompt) {
-                expect(mockMsalInstance[msalMethod]).toHaveBeenCalledWith({scopes, prompt});
-            } else
-                expect(mockMsalInstance[msalMethod]).toHaveBeenCalledWith({scopes});
-        }
-
-        expect(result).toEqual(mockReturnValue);
-    };
-
-    const testAcquireErrorPropagation = async (
-        acquire: MsalLogin,
-        msalMethod: keyof typeof mockMsalInstance,
-        scopes: string[] = []
-    ) => {
-        const mockError = new Error('Test error');
-        (mockMsalInstance[msalMethod] as jest.Mock).mockRejectedValue(mockError);
-
-        await expect(acquire.login(scopes)(mockMsalInstance)).rejects.toThrow(mockError);
-    };
-
-    it('should call handleRedirectPromise for fromPreviousRedirectLogin', async () => {
-        await testAcquireMethod(fromPreviousRedirectLogin, 'handleRedirectPromise');
+        expect(result).toEqual({account: {homeAccountId: 'silent-account'}});
+        expect(msalInstance.acquireTokenSilent).toHaveBeenCalledTimes(1);
+        expect(debugLog).toHaveBeenCalledWith('trying login method', 'acquireSilent');
+        expect(msalInstance.setActiveAccount).toHaveBeenCalledWith({homeAccountId: 'silent-account'});
     });
 
-    it('should propagate errors from handleRedirectPromise in fromPreviousRedirectLogin', async () => {
-        await testAcquireErrorPropagation(fromPreviousRedirectLogin, 'handleRedirectPromise');
+    it('tries all logins if previous ones fail and returns the first success', async () => {
+        (msalInstance.acquireTokenSilent as jest.Mock).mockRejectedValue(new Error('silent failed'));
+        (msalInstance.acquireTokenPopup as jest.Mock).mockResolvedValue({
+            account: {homeAccountId: 'popup-account'},
+        });
+
+        const login = chainLogin(msalInstance, silentLogin, popupLogin);
+        const result = await login(['user.read'], debugLog);
+
+        expect(result).toEqual({account: {homeAccountId: 'popup-account'}});
+        expect(msalInstance.acquireTokenSilent).toHaveBeenCalledTimes(1);
+        expect(msalInstance.acquireTokenPopup).toHaveBeenCalledTimes(1);
+        expect(debugLog.debugError).toHaveBeenCalledWith(expect.any(Error), 'Login failed for method: acquireSilent');
     });
 
-    it('should call acquireTokenSilent for silentLogin', async () => {
-        const scopes = ['user.read'];
-        await testAcquireMethod(silentLogin, 'acquireTokenSilent', scopes);
+    it('returns null if all login methods fail', async () => {
+        (msalInstance.acquireTokenSilent as jest.Mock).mockRejectedValue(new Error('silent failed'));
+        (msalInstance.acquireTokenPopup as jest.Mock).mockRejectedValue(new Error('popup failed'));
+
+        const login = chainLogin(msalInstance, silentLogin, popupLogin);
+        const result = await login(['user.read'], debugLog);
+
+        expect(result).toBeNull();
+        expect(debugLog.debugError).toHaveBeenNthCalledWith(1, expect.any(Error), 'Login failed for method: acquireSilent');
+        expect(debugLog.debugError).toHaveBeenNthCalledWith(2, expect.any(Error), 'Login failed for method: acquirePopup');
+        expect(debugLog.debugError).toHaveBeenNthCalledWith(3, expect.any(Error), 'All acquisition methods failed. acquireSilent, acquirePopup. User is assumed to be not logged in', expect.any(Error));
     });
 
-    it('should propagate errors from acquireTokenSilent in silentLogin', async () => {
-        const scopes = ['user.read'];
-        await testAcquireErrorPropagation(silentLogin, 'acquireTokenSilent', scopes);
+    it('prioritizes login methods in order', async () => {
+        (msalInstance.acquireTokenSilent as jest.Mock).mockResolvedValue({
+            account: {homeAccountId: 'silent-account'},
+        });
+        (msalInstance.acquireTokenPopup as jest.Mock).mockResolvedValue({
+            account: {homeAccountId: 'popup-account'},
+        });
+
+        const login = chainLogin(msalInstance, silentLogin, popupLogin);
+        const result = await login(['user.read'], debugLog);
+
+        expect(result).toEqual({account: {homeAccountId: 'silent-account'}});
+        expect(msalInstance.acquireTokenPopup).not.toHaveBeenCalled();
     });
 
-    it('should call acquireTokenPopup for popupLogin', async () => {
-        const scopes = ['user.read'];
-        await testAcquireMethod(popupLogin, 'acquireTokenPopup', scopes, 'select_account');
-    });
+    it('returns null if noLogin is used as the only method', async () => {
+        const login = chainLogin(msalInstance, noLogin);
+        const result = await login(['user.read'], debugLog);
 
-    it('should propagate errors from acquireTokenPopup in popupLogin', async () => {
-        const scopes = ['user.read'];
-        await testAcquireErrorPropagation(popupLogin, 'acquireTokenPopup', scopes);
-    });
-
-    it('should call acquireTokenRedirect for redirectLogin', async () => {
-        const scopes = ['user.read'];
-        await testAcquireMethod(redirectLogin, 'acquireTokenRedirect', scopes, 'select_account', null);
-    });
-
-    it('should propagate errors from acquireTokenRedirect in redirectLogin', async () => {
-        const scopes = ['user.read'];
-        await testAcquireErrorPropagation(redirectLogin, 'acquireTokenRedirect', scopes);
+        expect(result).toBeNull();
     });
 });
 
+describe('Individual MsalLogin methods', () => {
+    let msalInstance: PublicClientApplication;
+
+    beforeEach(() => {
+        msalInstance = {
+            acquireTokenSilent: jest.fn(),
+            acquireTokenPopup: jest.fn(),
+            acquireTokenRedirect: jest.fn(),
+            handleRedirectPromise: jest.fn(),
+        } as unknown as PublicClientApplication;
+    });
+
+    it('calls handleRedirectPromise for fromPreviousRedirectLogin', async () => {
+        (msalInstance.handleRedirectPromise as jest.Mock).mockResolvedValue(null);
+        const result = await fromPreviousRedirectLogin.login([], createMockDebugLog())(msalInstance);
+
+        expect(msalInstance.handleRedirectPromise).toHaveBeenCalledTimes(1);
+        expect(result).toBeNull();
+    });
+
+    it('calls acquireTokenSilent for silentLogin', async () => {
+        const mockResult = {
+            account: {homeAccountId: 'silent-account'},
+        } as AuthenticationResult;
+
+        (msalInstance.acquireTokenSilent as jest.Mock).mockResolvedValue(mockResult);
+        const result = await silentLogin.login(['user.read'], createMockDebugLog())(msalInstance);
+
+        expect(msalInstance.acquireTokenSilent).toHaveBeenCalledWith({scopes: ['user.read']});
+        expect(result).toEqual(mockResult);
+    });
+
+    it('calls acquireTokenPopup for popupLogin', async () => {
+        const mockResult = {
+            account: {homeAccountId: 'popup-account'},
+        } as AuthenticationResult;
+
+        (msalInstance.acquireTokenPopup as jest.Mock).mockResolvedValue(mockResult);
+        const result = await popupLogin.login(['user.read'], createMockDebugLog())(msalInstance);
+
+        expect(msalInstance.acquireTokenPopup).toHaveBeenCalledWith({scopes: ['user.read'], prompt: 'select_account'});
+        expect(result).toEqual(mockResult);
+    });
+
+    it('calls acquireTokenRedirect for redirectLogin and resolves to null', async () => {
+        const result = await redirectLogin.login(['user.read'], createMockDebugLog())(msalInstance);
+
+        expect(msalInstance.acquireTokenRedirect).toHaveBeenCalledWith({
+            scopes: ['user.read'],
+            prompt: 'select_account',
+        });
+        expect(result).toBeNull();
+    });
+});

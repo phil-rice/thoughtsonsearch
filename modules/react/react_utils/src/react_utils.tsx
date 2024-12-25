@@ -56,7 +56,10 @@ export function makeContextForState<Data, FIELD extends string>(field: FIELD): C
     function useField() {
         const contextValue = useContext(Context);
         const reportError = useReportError();
-        if (contextValue === undefined) reportError('s/w', `use${field} must be used within a ${field}Provider`);
+        if (contextValue === undefined) {
+            const fieldWithCap = capitalizeFirstLetter(field);
+            reportError('s/w', `use${fieldWithCap} must be used within a ${fieldWithCap}Provider`);
+        }
         return contextValue;
     }
 

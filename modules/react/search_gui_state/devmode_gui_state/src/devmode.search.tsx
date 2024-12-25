@@ -5,6 +5,7 @@ import {makeContextFor, makeContextForState, makeUseStateChild} from "@enterpris
 import {useUserData} from "@enterprise_search/authentication";
 import {DevModeSearchState} from "./devModeSearchState";
 import { makeSimpleNavBar, NavBar} from "@enterprise_search/navbar";
+import {DevModeDebug} from "./devmode.debug";
 
 export type DevModeComponent = () => React.ReactElement;
 export type DevModeNavbarComponent = () => ReactElement;
@@ -21,7 +22,8 @@ export type SearchDevModeComponents = {
 const debugComponents = {
     GuiState: DevModeGuiState,
     SearchState: DevModeSearchState,
-    UserData: DevModeUserData
+    UserData: DevModeUserData,
+    Debug:DevModeDebug
 };
 export const simpleDevModeComponents: SearchDevModeComponents = {
     DevModeNavBar: makeSimpleNavBar('devmode', Object.keys(debugComponents)),
@@ -41,5 +43,5 @@ export function DevModeGuiState() {
 
 export function DevModeUserData() {
     const userData = useUserData()
-    return <pre>x{JSON.stringify(userData, null, 2)}</pre>
+    return <pre>{JSON.stringify(userData, null, 2)}</pre>
 }

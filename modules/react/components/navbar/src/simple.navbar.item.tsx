@@ -8,12 +8,13 @@ export const CommonNavBarStyle = {
     cursor: 'pointer',
     transition: 'background-color 0.3s, border-color 0.3s',
 }
-export const DefaultNavBarSelectedStyle: CSSProperties = {
+const DefaultNavBarSelectedStyle: CSSProperties = {
     ...CommonNavBarStyle,
-    border: '2px solid #007bff',
-    backgroundColor: '#007bff',
+    border: '2px solid #0056b3',  // Darker blue border
+    backgroundColor: '#0056b3',    // Darker blue background
     color: '#fff',
 }
+
 export const DefaultNavBarUnselectedStyle: CSSProperties = {
     ...CommonNavBarStyle,
     border: '1px solid #000',

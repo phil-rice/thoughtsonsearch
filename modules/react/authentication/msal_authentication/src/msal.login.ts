@@ -1,8 +1,10 @@
 import {AuthenticationResult, PublicClientApplication} from "@azure/msal-browser";
+import {DebugLog} from "@enterprise_search/react_utils";
+import {debugLog} from "@enterprise_search/recoil_utils";
 
 export type MsalLogin = {
     name: string;
-    login: (scopes: string[], debug: boolean) => (msal: PublicClientApplication) => Promise<AuthenticationResult | null>;
+    login: (scopes: string[], debug: DebugLog) => (msal: PublicClientApplication) => Promise<AuthenticationResult | null>;
 };
 
 
@@ -34,7 +36,7 @@ export const noLogin: MsalLogin = {
     name: "noLogin",
     login: () => async () => null,
 }
-export type MsalLoginFn = (msal: PublicClientApplication) => (scopes: string[], debug: boolean) => Promise<AuthenticationResult | null>;
+export type MsalLoginFn = (msal: PublicClientApplication) => (scopes: string[], debugLog: DebugLog) => Promise<AuthenticationResult | null>;
 
 export const msalLogin: MsalLoginFn =
     (msal: PublicClientApplication) =>
@@ -50,36 +52,30 @@ export const msalRefreshLogin: MsalLoginFn =
  * Attempts each method in order until one succeeds or all fail.
  * Logs the first success or the last failure for debugging.
  */
-export function chainLogin(msal: PublicClientApplication, ...logins: MsalLogin[]): (scopes: string[], debug: boolean) => Promise<AuthenticationResult | null> {
+export function chainLogin(msal: PublicClientApplication, ...logins: MsalLogin[]): (scopes: string[], debug: DebugLog) => Promise<AuthenticationResult | null> {
     let lastError: any = undefined
     return async (scopes, debug) => {
-        const accounts = msal.getAllAccounts();
-        const account0 = accounts[0];
-        if (account0) msal.setActiveAccount(account0);
         for (const acquire of logins) {
             lastError = undefined
             try {
-                if (debug) console.log('trying login method', acquire.name)
+                debug('trying login method', acquire.name)
                 const result = await acquire.login(scopes, debug)(msal);
                 if (result) {
-                    if (debug) console.log(`Login succeeded with method: ${acquire.name}`);
+                    debug(`Login succeeded with method: ${acquire.name}`);
                     msal.setActiveAccount(result.account);
                     return result;
                 }
             } catch (e: any) {
-                if (debug) {
-                    console.error(`Login failed for method: ${acquire.name}`, e);
-                }
+                debug.debugError(e, `Login failed for method: ${acquire.name}`);
                 //we expect errors, if for example we are doing a popup on a mobile... so we just remember the last error
                 lastError = e
             }
         }
+
         const names = logins.map(a => a.name).join(", ");
-        if (debug)
-            if (lastError)
-                console.error(`All acquisition methods failed. ${names}. User is assumed to be not logged in`, lastError);
-            else
-                console.log(`All acquisition methods failed. ${names}. User is assumed to be not logged in`);
+        if (lastError) //Note that debug.debugError only reports the error when the debug is enabled. Usually this is silent as it isn't actually an error just a 'the way things are'
+            debug.debugError(lastError, `All acquisition methods failed. ${names}. User is assumed to be not logged in`, lastError);
+        debugLog(`All acquisition methods failed. ${names}. User is assumed to be not logged in`);
         return null;
     }
 }

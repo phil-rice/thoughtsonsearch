@@ -1,3 +1,3 @@
 export * from './src/devmode.search'
-export {DevModeForSearch} from "./src/devModeForSearch";
+export {DevMode} from "./src/devMode";
 export {DevModeSearchState} from "./src/devModeSearchState";

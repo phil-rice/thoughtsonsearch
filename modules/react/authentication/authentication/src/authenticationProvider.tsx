@@ -1,15 +1,16 @@
 import React, {createContext, useContext, useMemo} from "react";
 import {LoginOps} from "./login.ops";
 import {UserData, UserDataGetter} from "./userData";
+import {DebugLog, makeContextForState, useDebug} from "@enterprise_search/react_utils";
 import {useReportError} from "@enterprise_search/react_error";
 
-export type LoginOutFn = (callback: () => void, debug: boolean) => Promise<void>
+export const authenticateDebug = 'authenticate'
+export type LoginOutFn = (callback: () => void,debugLog:DebugLog) => Promise<void>
 export type LoginConfig = {
     refeshLogin: LoginOutFn
     login: LoginOutFn
     logout: LoginOutFn
     userDataGetter: UserDataGetter
-    debug: boolean
 
 }
 
@@ -30,23 +31,27 @@ export type AuthenticateContextData = {
     userDataGetter: UserDataGetter
 }
 
-export const LoginContext = createContext<AuthenticateContextData | undefined>(undefined)
-export const UserDataContext = createContext<UserData | undefined>(undefined)
+const {use: useUserDataFull, Provider: UserDataProviderPrivate} = makeContextForState<UserData, 'userData'>('userData')
+export const UserDataProvider = UserDataProviderPrivate
 
-export function UserDataProvider({userDataGetter, children}: { userDataGetter: UserDataGetter, children: React.ReactNode }) {
-
+export function useUserData() {
+    const ops = useUserDataFull()
+    return ops[0]
 }
 
+export const LoginContext = createContext<AuthenticateContextData | undefined>(undefined)
+
 export function AuthenticationProvider({loginConfig, children, makeSessionId = defaultMakeSessionId}: LoginProviderProps) {
-    const [userData, setUserData] = React.useState<UserData>({loggedIn: false, email: '', isDev: false, isAdmin: false})
-    const {userDataGetter, logout, refeshLogin, login, debug} = loginConfig
+    const [userData, setUserData] = useUserDataFull()
+    const debug = useDebug(authenticateDebug)
+    const {userDataGetter, logout, refeshLogin, login} = loginConfig
 
     //problem is the useMemo before we have the userDataGetter
 
     const contextData = useMemo(() => {
         const updateUserData = (reason: string,) => () => {
             const userData = userDataGetter();
-            if (debug) console.log('updateUserData', reason, userData)
+            debug('updateUserData', reason, userData)
             setUserData(userData)
         };
 
@@ -58,12 +63,11 @@ export function AuthenticationProvider({loginConfig, children, makeSessionId = d
         };
         return {loginOps, sessionId: makeSessionId(), userDataGetter}
     }, [login, logout, refeshLogin, debug])
-    if (debug) console.log('AuthenticationProvider', contextData)
+    debug('AuthenticationProvider', contextData)
     return <LoginContext.Provider value={contextData}>
-        <UserDataContext.Provider value={userData}>
-            {children}
-        </UserDataContext.Provider>
+        {children}
     </LoginContext.Provider>
+
 }
 
 export function useLogin(): LoginOps {
@@ -73,11 +77,6 @@ export function useLogin(): LoginOps {
     return login.loginOps
 }
 
-export function useUserData(): UserData | undefined {
-    const userData = useContext(UserDataContext)
-    return userData
-}
-
 
 export function useSessionId() {
     const login = useContext(LoginContext)
@@ -85,3 +84,4 @@ export function useSessionId() {
     if (!login) reportError('s/w', 'useSessionId must be used within a LoginProvider')
     return login.sessionId
 }
+

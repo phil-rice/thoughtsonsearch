@@ -3,6 +3,7 @@
   "name": "@enterprise_search/devmode_gui_state",
   "description": "components to support dev mode for gui state",
   "links": [
+    "@enterprise_search/authentication",
     "@enterprise_search/recoil_utils",
     "@enterprise_search/react_datasource_plugin",
     "@enterprise_search/navbar"
