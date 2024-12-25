@@ -3,6 +3,7 @@ import {ErrorsOr} from "@enterprise_search/errors";
 import {NameAnd} from "@laoban/utils";
 import {Authentication} from "@enterprise_search/authentication";
 import {makeContextFor} from "@enterprise_search/react_utils";
+import {useReportError} from "@enterprise_search/react_error";
 
 
 /* This will be extended. It's the information about 'get me this from the data source'.
@@ -32,7 +33,8 @@ export const {Provider: DataSourcePluginProvider, use: useDataSourcePlugins} = m
 
 export function useDatasourcePlugin<Details extends CommonDataSourceDetails, Filters, Paging>(datasourceName: string): DataSourcePlugin<Details, Filters, Paging> {
     const plugins = useDataSourcePlugins()
+    const reportError = useReportError()
     const plugin = plugins[datasourceName]
-    if (!plugin) throw new Error(`No plugin found for datasource ${datasourceName}. Legal values are ${Object.keys(plugins).sort().join(', ')}`)
+    if (!plugin) reportError('s/w', `No plugin found for datasource ${datasourceName}. Legal values are ${Object.keys(plugins).sort().join(', ')}`)
     return plugin;
 }

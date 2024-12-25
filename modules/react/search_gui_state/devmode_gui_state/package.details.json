@@ -1,0 +1,23 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/devmode_gui_state",
+  "description": "components to support dev mode for gui state",
+  "links": [
+    "@enterprise_search/recoil_utils",
+    "@enterprise_search/react_datasource_plugin"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

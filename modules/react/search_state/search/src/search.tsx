@@ -2,7 +2,7 @@ import {DatasourceToPromiseSearchResult, OneSearch, SearchResult, SearchState, S
 import {SearchParser} from "@enterprise_search/react_search_parser";
 import {ErrorsOr} from "@enterprise_search/errors";
 import {DataSourcePlugins, useDataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
-import {useGuiSearchQuery} from "@enterprise_search/search_gui_state";
+import {useGuiFilters, useGuiSearchQuery} from "@enterprise_search/search_gui_state";
 import {KeywordsFilter} from "@enterprise_search/react_keywords_filter_plugin";
 import React, {ReactNode, useEffect, useRef} from "react";
 import {useFiltersByStateType, useOneFilterBySearchType, useSearchResultsByStateType, useSearchState} from "@enterprise_search/react_search_state";
@@ -61,7 +61,7 @@ export function intermediateSearch<Filters extends KeywordsFilter>(plugins: Data
                                                                    searchState: SearchState<any>,) {
     const {searches} = searchState
     const {main, immediate} = searches
-    const [searchQuery] = useGuiSearchQuery()
+    const [searchQuery] = useGuiFilters()
     const newImmediate = parser(searchQuery, main.filters);
     setIntermediateFilters(newImmediate)
     const result: DatasourceToPromiseSearchResult = searchAllDataSourcesPage1(plugins, newImmediate)

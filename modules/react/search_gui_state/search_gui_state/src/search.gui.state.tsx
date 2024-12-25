@@ -21,9 +21,4 @@ export function useGuiFilter<Filters, FilterName extends keyof Filters>(filterNa
         return makeGetterSetter<Filters, Filters[FilterName]>(value, setValue, lensBuilder<Filters>().focusOn(filterName))
     }, [value, setValue, id => id.focusOn(filterName)]); // lens might be stable or not, depends on usage
 }
-export function DebugGuiState() {
-    const [searchState] = useSearchGuiState()
-    return <pre>{JSON.stringify(searchState, null, 2)}</pre>
-}
-
 

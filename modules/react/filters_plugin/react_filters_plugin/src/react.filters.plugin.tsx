@@ -2,6 +2,8 @@ import {NameAnd} from "@enterprise_search/recoil_utils";
 import React from "react";
 import {GetterSetter, makeContextFor, makeGetterSetter} from "@enterprise_search/react_utils";
 import {lensBuilder} from "@enterprise_search/optics";
+import {ReportError} from "@enterprise_search/errors";
+import {useReportError} from "@enterprise_search/react_error";
 
 // Filters are intrinsically bound to many places, and therefore if we aren't very
 // careful with our design they will become complex
@@ -46,9 +48,9 @@ export type ReactFiltersContextData<Filters> = {
 
 export const {Provider: ReactFiltersProvider, use: useReactFilters} = makeContextFor('reactFilters', undefined as ReactFiltersContextData<any>)
 
-function findDisplayFilterFor<Filters, FilterName extends keyof Filters>(plugins: ReactFiltersPlugins<any>, filterName: FilterName, purpose: string) {
+function findDisplayFilterFor<Filters, FilterName extends keyof Filters>(reportErrors: ReportError, plugins: ReactFiltersPlugins<any>, filterName: FilterName, purpose: string) {
     const plugin = plugins[filterName]
-    if (!plugin) throw new Error(`No plugin for '${filterName.toString()}'. Legal values are ${Object.keys(plugins).sort()}`);
+    if (!plugin) reportErrors('s/w', `No plugin for '${filterName.toString()}'. Legal values are ${Object.keys(plugins).sort()}`);
     const DisplayFilter = purpose && purpose in plugin.PurposeToDisplay ? plugin.PurposeToDisplay[purpose] : plugin.DefaultDisplay
     return DisplayFilter;
 }
@@ -62,13 +64,14 @@ export type DisplayAllFiltersOps<Filters> = {
 
 export const SimpleDisplayFilters = (filterPurpose: string) =>
     <Filters extends any>({filtersOps, id}: DisplayFiltersProps<Filters>) => {
+        const reportErrors = useReportError();
         const [filters, setFilters] = filtersOps;
         const {plugins, PurposeToFilterLayout} = useReactFilters()
         const FilterLayout = PurposeToFilterLayout[filterPurpose];
-        if (!FilterLayout) throw new Error(`No FilterLayout for purpose '${filterPurpose}'. Legal values are: ${Object.keys(PurposeToFilterLayout).sort().join(', ')}`);
+        if (!FilterLayout) reportErrors('s/w', `No FilterLayout for purpose '${filterPurpose}'. Legal values are: ${Object.keys(PurposeToFilterLayout).sort().join(', ')}`);
         return <FilterLayout id={id}>
             {Object.keys(plugins).map((filterName) => {
-                const DisplayFilter: DisplayFilter<any> = findDisplayFilterFor<Filters, any>(plugins, filterName, filterPurpose);
+                const DisplayFilter: DisplayFilter<any> = findDisplayFilterFor<Filters, any>(reportErrors, plugins, filterName, filterPurpose);
                 if (!DisplayFilter) return null;
                 const filterOps = makeGetterSetter(filters, setFilters, lensBuilder<Filters>().focusOn(filterName as any));
                 return <DisplayFilter key={filterName} id={`${id}.${filterName}`} filterOps={filterOps}/>;

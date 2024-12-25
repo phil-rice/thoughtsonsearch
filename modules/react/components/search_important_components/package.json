@@ -15,10 +15,10 @@
     ]
   },
   "dependencies": {
+    "@enterprise_search/devmode_gui_state": "0.0.1",
     "@enterprise_search/search_bar": "0.0.1",
     "@enterprise_search/react_keywords_filter_plugin": "0.0.1",
     "@enterprise_search/react_time_filter_plugin": "0.0.1",
-    "@enterprise_search/react_explain_filter_plugin": "0.0.1",
     "@enterprise_search/react_login_component": "0.0.1",
     "@enterprise_search/search_important_components": "0.0.1",
     "debug": "^4.3.4",

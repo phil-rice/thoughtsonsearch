@@ -1,6 +1,7 @@
 import React, {createContext, useContext, useMemo} from "react";
 import {LoginOps} from "./login.ops";
 import {UserData, UserDataGetter} from "./userData";
+import {useReportError} from "@enterprise_search/react_error";
 
 export type LoginOutFn = (callback: () => void, debug: boolean) => Promise<void>
 export type LoginConfig = {
@@ -67,7 +68,8 @@ export function AuthenticationProvider({loginConfig, children, makeSessionId = d
 
 export function useLogin(): LoginOps {
     const login = useContext(LoginContext)
-    if (!login) throw new Error('useLogin must be used within a LoginProvider')
+    const reportError = useReportError()
+    if (!login) reportError('s/w', 'useLogin must be used within a LoginProvider')
     return login.loginOps
 }
 
@@ -79,6 +81,7 @@ export function useUserData(): UserData | undefined {
 
 export function useSessionId() {
     const login = useContext(LoginContext)
-    if (!login) throw new Error('useSessionId must be used within a LoginProvider')
+    const reportError = useReportError()
+    if (!login) reportError('s/w', 'useSessionId must be used within a LoginProvider')
     return login.sessionId
 }

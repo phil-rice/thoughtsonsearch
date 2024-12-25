@@ -7,7 +7,7 @@ import {SearchResults} from "./display.search.results";
 import {DataViewNavBar} from "@enterprise_search/data_views";
 
 
-export function AdvancelSearchSovereignPage<Filters>() {
+export function AdvancedSearchSovereignPage<Filters>() {
     const SearchBar = useSearchBar()
     const {DisplayAllFilters} = useDisplayAllFilters<Filters>()
     const filterOps = useGuiFilters()
@@ -20,5 +20,5 @@ export function AdvancelSearchSovereignPage<Filters>() {
     </>
 }
 
-export const AdvanceSearchPagePlugin = makeSovereignStatePlugin(AdvancelSearchSovereignPage)
+export const AdvanceSearchPagePlugin = makeSovereignStatePlugin(AdvancedSearchSovereignPage)
 

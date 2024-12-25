@@ -4,11 +4,12 @@ import {useSearchResultsByStateType} from "@enterprise_search/react_search_state
 import {DatasourceToSearchResult, SearchType} from "@enterprise_search/search_state";
 import {NameAnd} from "@enterprise_search/recoil_utils";
 import {isValue} from "@enterprise_search/errors";
+import {useReportError} from "@enterprise_search/react_error";
 
 export type DisplaySearchResultsProps = {}
 export type DisplaySearchResults = (props: DisplaySearchResultsProps) => ReactElement
 
-export type DisplaySearchResultsLayoutProps = {children: ReactNode}
+export type DisplaySearchResultsLayoutProps = { children: ReactNode }
 export type DisplaySearchResultsLayout = (props: DisplaySearchResultsLayoutProps) => ReactElement
 
 export type SearchResultsContextType = {
@@ -23,7 +24,6 @@ export type SearchResultsProviderProps = {
 }
 
 export function SearchResultsProvider({children, DisplaySearchResultsLayout}: SearchResultsProviderProps) {
-    if (DisplaySearchResultsLayout === undefined) throw new Error("DisplaySearchResultsLayout is required")
     return <SearchResultsContext.Provider value={{DisplaySearchResultsLayout}}>{children}</SearchResultsContext.Provider>
 }
 
@@ -33,7 +33,8 @@ export type SearchResultsOps = {
 
 export function useSearchResultsLayout(): SearchResultsOps {
     const context = React.useContext(SearchResultsContext)
-    if (!context) throw new Error("useSearchResultsLayout must be used within a SearchResultsProvider")
+    const reportError = useReportError()
+    if (!context) reportError('s/w', "useSearchResultsLayout must be used within a SearchResultsProvider")
     return context
 }
 
@@ -45,13 +46,14 @@ export type SearchResultsProps = {
 export function searchResultsToDataView(dataSourceToSearchResult: DatasourceToSearchResult): NameAnd<any[]> {
     if (dataSourceToSearchResult === undefined) return {}
     const dataPlugins = useDataPlugins()
+    const reportError = useReportError()
     const result: NameAnd<any[]> = {}
     Object.entries(dataSourceToSearchResult).map(([dataSourceName, searchResult]) => {
         if (isValue(searchResult)) {
             for (const item of (searchResult.value.data as any[])) {
                 const dataType = item.type
                 const plugin = dataPlugins[dataType]
-                if (!plugin) throw new Error(`No plugin found for data type ${dataType}. Legal values are ${Object.keys(dataPlugins).sort().join(', ')}`)
+                if (!plugin) reportError('s/w', `No plugin found for data type ${dataType}. Legal values are ${Object.keys(dataPlugins).sort().join(', ')}`)
                 result[dataType] = result[dataType] || []
                 result[dataType].push(item)
             }
@@ -63,13 +65,14 @@ export function searchResultsToDataView(dataSourceToSearchResult: DatasourceToSe
 export function SearchResults<Filters>({st = 'main'}: SearchResultsProps) {
     const {DisplaySearchResultsLayout} = useSearchResultsLayout()
     const dataPlugins = useDataPlugins()
+    const reportError = useReportError()
     const [oneSearch] = useSearchResultsByStateType<Filters>(st)
     const {dataSourceToSearchResult} = oneSearch
     const dataTypeToData = searchResultsToDataView(dataSourceToSearchResult)
     return <DisplaySearchResultsLayout>
         {Object.entries(dataTypeToData).map(([dataType, data]) => {
             const plugin = dataPlugins[dataType]
-            if (!plugin) throw new Error(`No plugin found for data type ${dataType}. Legal values are ${Object.keys(dataPlugins).sort().join(', ')}`)
+            if (!plugin) reportError('s/w', `No plugin found for data type ${dataType}. Legal values are ${Object.keys(dataPlugins).sort().join(', ')}`)
             return plugin.DefaultDisplayData({data})
         })}
     </DisplaySearchResultsLayout>

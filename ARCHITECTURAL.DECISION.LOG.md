@@ -262,8 +262,12 @@ export const MuiSimpleSearchBar: SearchBar = (props) => {
 ```
 
 ### Use the component
-This is the bit that decouples the component from the implementation. We can change the implementation without changing anything.
-Note that here we should have zero css. We can have class names but either really simple layout, or we use a layout component like here 
+
+This is the bit that decouples the component from the implementation. We can change the implementation without changing
+anything.
+Note that here we should have zero css. We can have class names but either really simple layout, or we use a layout
+component like here
+
 ```typescript jsx
 const {MainScreenLayout} = useMainScreenLayout()
 const {SearchBar} = useSearchBar()
@@ -271,26 +275,32 @@ return <MainScreenLayout title='Search'><SearchBar/></MainScreenLayout>
 ```
 
 ### Dependency inject the component using 'important components'
-Add the component to the important components. We have SearchImportantComponents and will probably others like AiAssistantImportantComponents
+
+Add the component to the important components. We have SearchImportantComponents and will probably others like
+AiAssistantImportantComponents
+
 ```typescript jsx
 export interface SearchImportantComponents<Context, Filters> {
-  DataSourceNavBarLayout: DataSourceNavBarLayout
-  DataSourceAllButton: DataSourceAllButton
-  SearchBar: SearchBar
-  displayLogin: DisplayLogin
-  NotLoggedIn?: () => React.ReactElement
-  LoadingDisplay?: LoadingDisplay
+    DataSourceNavBarLayout: DataSourceNavBarLayout
+    DataSourceAllButton: DataSourceAllButton
+    SearchBar: SearchBar
+    displayLogin: DisplayLogin
+    NotLoggedIn?: () => React.ReactElement
+    LoadingDisplay?: LoadingDisplay
     //      ...
 }
 ```
-We have a `SearchImportantComponentsProvider` that takes the important components and provides them to the rest of the app using their individual hooks
+
+We have a `SearchImportantComponentsProvider` that takes the important components and provides them to the rest of the
+app using their individual hooks
+
 ```typescript jsx
 export function SearchImportantComponentsProvider<Context, Filters>({
                                                                         components,
                                                                         children
                                                                     }: SearchImportantComponentsProviderProps<Context, Filters>) {
     const {
-        SearchBar, LoadingDisplay, displayLogin,  NotLoggedIn, DataSourceNavBarLayout, DataSourceAllButton
+        SearchBar, LoadingDisplay, displayLogin, NotLoggedIn, DataSourceNavBarLayout, DataSourceAllButton
     } = components
     const navBarComp: DataSourceNavBarComponents = useMemo(() => ({
         DataSourceAllButton,
@@ -309,21 +319,26 @@ export function SearchImportantComponentsProvider<Context, Filters>({
 ```
 
 # Why Important Components
+
 This is a whole layer. An extra place to wire in every component. We need to understand why we have this.
 
 ## benefits
+
 * We can see at a glance every component we need to implement for a feature
-  * This is quite a big thing in terms of understanding, especially for new developers
+    * This is quite a big thing in terms of understanding, especially for new developers
 * We do all the dependency injection in one place. This makes the main code simpler and much more readable
 * If we have more than one app (mobile app, app for multiple customers) this makes those much simpler
-* Perhaps the most important is when we ask `how is this component implemented` we can open up this file and find it quickly
+* Perhaps the most important is when we ask `how is this component implemented` we can open up this file and find it
+  quickly
 * We can use machine tools to walk over these components and do things to them. Like add in profiling, or metrics...
 * We can easily do A/B testing and old/new under feature flags even when many components are impacted
 
 ## costs
+
 * We need to add the new component to the interface
 
 ## Neutral
+
 * We need to dependency inject this somewhere: this is a cost, but it's a cost we have to pay it somewhere
 
 # Error handling
@@ -362,6 +377,18 @@ export type ErrorsOr<T> = Errors | Value<T>
 ```
 
 There are helpful 'map' functions that allow us to work with these.
+
+## Other errors
+
+When in react we have
+
+```typescript jsx
+import {useReportError} from "@enterprise_search/react_error";
+
+const reportErrors = useReportError()
+if (somethingBad) reportError('theType', 'Something bad happened')
+```
+The default implementation simply throws the message. However, we can change this to send it to a server, or display it
 
 # Asynchronicity and LoadingOr / useKleisli
 

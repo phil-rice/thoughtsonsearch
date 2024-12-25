@@ -6,7 +6,7 @@ export const dataViewFilterName = 'dataviews';
 
 export type DataViewFilterData = {
     allowedNames: string[]
-    selectedNames?: string[]
+    selectedNames?: string[] //if not present then all are selected
 }
 
 export type DataViewFilters = {

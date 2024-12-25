@@ -1,22 +1,20 @@
 import {DataViewNavBarLayout, NavBarItem, useDataViews} from "./data.views";
 import React from "react";
-import {SearchGuiData, useGuiFilter, useGuiSelectedDataView, useSearchGuiState} from "@enterprise_search/search_gui_state";
-import {dataViewFilterName, DataViewFilters} from "@enterprise_search/react_data_views_filter_plugin";
+import {SearchGuiData, useGuiSelectedDataView, useSearchGuiState} from "@enterprise_search/search_gui_state";
+import {dataViewFilterName} from "@enterprise_search/react_data_views_filter_plugin";
 import {lensBuilder} from "@enterprise_search/optics";
 
 
-export const SimpleDataViewNavItem: NavBarItem = <Filters extends DataViewFilters>({name}) => {
-    const idL = lensBuilder<SearchGuiData<Filters>>();
-    const selectedViewAndDataViewL = idL.focusCompose({
-        selectedDataView: idL.focusOn('selectedDataView'),
-        dataView: idL.focusOn('filters').focusOn(dataViewFilterName)
-    })
+const selectedViewAndDataViewL = lensBuilder<SearchGuiData<any>>().focusCompose({
+    selectedDataView: lensBuilder<SearchGuiData<any>>().focusOn('selectedDataView'),
+    dataView: lensBuilder<SearchGuiData<any>>().focusOn('filters').focusOn(dataViewFilterName)
+})
+
+export const SimpleDataViewNavItem: NavBarItem = ({name}) => {
     const dataViews = useDataViews();  // Assuming this is where the available data views are fetched.
     const dataView = dataViews[name];
     const [searchGuiState, setSearchGuiState] = useSearchGuiState()
     const [selectedDataView] = useGuiSelectedDataView();
-    console.log('dataView', dataView, 'selected', selectedDataView)
-    const [dataViewFilter, setDataViewFilter] = useGuiFilter<Filters, 'dataviews'>(dataViewFilterName);
     const isSelected = selectedDataView === name;  // Check if the current item is selected
 
     return (
@@ -32,7 +30,7 @@ export const SimpleDataViewNavItem: NavBarItem = <Filters extends DataViewFilter
             }}
             onClick={() => {
                 const allowedNames = dataView.datasources.flatMap(ds => ds.names);  // Allow all data sources
-                const newState = selectedViewAndDataViewL.set(searchGuiState, {selectedDataView: name, dataView:{selectedNames:[], allowedNames}});
+                const newState = selectedViewAndDataViewL.set(searchGuiState, {selectedDataView: name, dataView: {selectedNames: [], allowedNames}});
                 setSearchGuiState(newState);
             }}
         >

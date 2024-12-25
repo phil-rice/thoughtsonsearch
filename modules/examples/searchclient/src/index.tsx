@@ -7,7 +7,7 @@ import {SimpleDisplayLogin, SimpleMustBeLoggedIn, useLoginComponents} from "@ent
 import {emptySearchState} from "@enterprise_search/search_state";
 import {filtersDisplayPurpose, ReactFiltersContextData} from "@enterprise_search/react_filters_plugin";
 import {exampleTimeFilterPlugin, timefilterPluginName, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
-import {DebugSearchState, SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
+import {SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
 import {SearchImportantComponents, SearchImportantComponentsProvider} from "@enterprise_search/search_important_components";
 import {CommonDataSourceDetails, DataSourceDetails, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPlugins} from "@enterprise_search/react_data/src/react.data";
@@ -18,10 +18,11 @@ import {IconProvider, simpleIconContext} from "@enterprise_search/icons";
 import {dataViewFilter, dataViewFilterName, DataViewFilters, SimpleDataViewFilterDisplay} from "@enterprise_search/react_data_views_filter_plugin";
 import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResultsLayout} from "@enterprise_search/sovereign_search";
 import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
-import {DebugGuiState, emptySearchGuiState, SearchGuiStateProvider} from "@enterprise_search/search_gui_state";
+import {emptySearchGuiState, SearchGuiStateProvider} from "@enterprise_search/search_gui_state";
 import {DoTheSearching} from "@enterprise_search/search/src/search";
 import {SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "@enterprise_search/data_views";
 import {ElasticSearchSourceDetails} from "@enterprise_search/search_elastic/src/elastic.search";
+import {DevModeGuiState, DevModeSearchState} from "@enterprise_search/devmode_gui_state";
 
 
 export const exampleMsalConfig: Configuration = {
@@ -113,22 +114,18 @@ msal.initialize({}).then(() => {
     root.render(<React.StrictMode>
             <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
                 <SovereignStateProvider initial='start'>
-                    <SearchImportantComponentsProvider components={searchImportantComponents}>
-                        <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
+                    <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
+                        <SearchImportantComponentsProvider components={searchImportantComponents}>
                             <AuthenticationProvider loginConfig={login}>
+                                <IconProvider icons={simpleIconContext}>
+                                    <DoTheSearching>
+                                        <SearchApp/>
+                                    </DoTheSearching>
+                                </IconProvider>
 
-                                    <IconProvider icons={simpleIconContext}>
-                                        <DoTheSearching>
-                                            <SearchApp/>
-                                            <hr/>
-                                            <DebugGuiState/>
-                                            <DebugSearchState/>
-                                        </DoTheSearching>
-                                    </IconProvider>
-                           +
                             </AuthenticationProvider>
-                        </SearchInfoProviderUsingUseState>
-                    </SearchImportantComponentsProvider>
+                        </SearchImportantComponentsProvider>
+                    </SearchInfoProviderUsingUseState>
                 </SovereignStateProvider>
             </SovereignStatePluginsProvider>
         </React.StrictMode>

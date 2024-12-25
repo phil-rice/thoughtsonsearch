@@ -2,6 +2,7 @@ import React from "react";
 import {NameAnd} from "@enterprise_search/recoil_utils";
 import {makeContextFor} from "@enterprise_search/react_utils";
 import {CommonDataSourceDetails, DataSourceDetails} from "@enterprise_search/react_datasource_plugin";
+import {useReportError} from "@enterprise_search/react_error";
 
 
 export type DataViewDisplayProps = { itemName: string }
@@ -20,7 +21,7 @@ export type DataView<Details> = {
     datasources: Details[]
 }
 
-export type NavBarItemProps = { name: string,  }
+export type NavBarItemProps = { name: string, }
 export type NavBarItem = (props: NavBarItemProps) => React.ReactElement;
 
 export function dataSourceDetailsToDataView<Details extends CommonDataSourceDetails>(datasources: DataSourceDetails<Details>, ItemFn: NavBarItem): DataViews<Details> {
@@ -49,10 +50,11 @@ export const {Provider: DataViewComponentsProvider, use: useDataViewComponents} 
 
 export function DataViewNavBar() {
     const dataViews = useDataViews();
+    const reportError = useReportError()
     const {NavBarLayout, NavBarItem} = useDataViewComponents();
     return <NavBarLayout>{Object.entries(dataViews).map(([key, dataView]) => {
         const NavItem = dataView.displays.navbar
-        if (!NavItem) throw new Error(`No navbar display for data view ${key}`)
+        if (!NavItem) reportError('s/w', `No navbar display for data view ${key}`)
         return <NavBarItem key={key} name={key}/>
     })}</NavBarLayout>
 
