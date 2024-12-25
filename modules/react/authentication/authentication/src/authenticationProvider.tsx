@@ -1,6 +1,7 @@
 import React, {createContext, useContext, useMemo} from "react";
 import {LoginOps} from "./login.ops";
-import {UserData, UserDataGetter} from "./userData";
+import {emptyUserData, UserData, UserDataGetter} from "./userData";
+import {makeContextForState} from "@enterprise_search/react_utils";
 import {useReportError} from "@enterprise_search/react_error";
 
 export type LoginOutFn = (callback: () => void, debug: boolean) => Promise<void>
@@ -30,15 +31,12 @@ export type AuthenticateContextData = {
     userDataGetter: UserDataGetter
 }
 
+export const {use: useUserData, Provider: UserDataProvider} = makeContextForState<UserData, 'userData'>('userData')
+
 export const LoginContext = createContext<AuthenticateContextData | undefined>(undefined)
-export const UserDataContext = createContext<UserData | undefined>(undefined)
-
-export function UserDataProvider({userDataGetter, children}: { userDataGetter: UserDataGetter, children: React.ReactNode }) {
-
-}
 
 export function AuthenticationProvider({loginConfig, children, makeSessionId = defaultMakeSessionId}: LoginProviderProps) {
-    const [userData, setUserData] = React.useState<UserData>({loggedIn: false, email: '', isDev: false, isAdmin: false})
+    const [userData, setUserData] = useUserData()
     const {userDataGetter, logout, refeshLogin, login, debug} = loginConfig
 
     //problem is the useMemo before we have the userDataGetter
@@ -60,10 +58,9 @@ export function AuthenticationProvider({loginConfig, children, makeSessionId = d
     }, [login, logout, refeshLogin, debug])
     if (debug) console.log('AuthenticationProvider', contextData)
     return <LoginContext.Provider value={contextData}>
-        <UserDataContext.Provider value={userData}>
-            {children}
-        </UserDataContext.Provider>
+        {children}
     </LoginContext.Provider>
+
 }
 
 export function useLogin(): LoginOps {
@@ -73,11 +70,6 @@ export function useLogin(): LoginOps {
     return login.loginOps
 }
 
-export function useUserData(): UserData | undefined {
-    const userData = useContext(UserDataContext)
-    return userData
-}
-
 
 export function useSessionId() {
     const login = useContext(LoginContext)
@@ -85,3 +77,4 @@ export function useSessionId() {
     if (!login) reportError('s/w', 'useSessionId must be used within a LoginProvider')
     return login.sessionId
 }
+

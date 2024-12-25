@@ -41,5 +41,5 @@ export function DevModeGuiState() {
 
 export function DevModeUserData() {
     const userData = useUserData()
-    return <pre>x{JSON.stringify(userData, null, 2)}</pre>
+    return <pre>{JSON.stringify(userData, null, 2)}</pre>
 }

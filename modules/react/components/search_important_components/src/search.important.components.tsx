@@ -7,7 +7,7 @@ import {CommonDataSourceDetails, DataSourceDetails, DataSourcePluginProvider, Da
 import {DataPluginProvider, DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {DisplayLogin, LoginProvider} from "@enterprise_search/react_login_component";
 import {DisplaySearchResultsLayout, SearchResultsProvider} from "@enterprise_search/sovereign_search";
-import {dataSourceDetailsToDataView, DataViewComponentsProvider, DataViewNavBarLayout, DataViews, DataViewsProvider, NavBarItem} from "@enterprise_search/data_views";
+import {dataSourceDetailsToDataView, DataViewNavBarLayout, DataViews, DataViewsProvider, NavBarItem} from "@enterprise_search/data_views";
 import {emptySearchGuiState, SearchGuiData, SearchGuiStateProvider, useSearchGuiState} from "@enterprise_search/search_gui_state";
 import {dataViewFilterName, DataViewFilters} from "@enterprise_search/react_data_views_filter_plugin";
 import {uniqueStrings} from "@enterprise_search/recoil_utils/src/arrays";
@@ -76,15 +76,14 @@ export function SearchImportantComponentsProvider<Context, Details extends Commo
                         <LoginProvider loginComponents={{DisplayLogin: DisplayLogin, NotLoggedIn: NotLoggedIn}}>
                             <SearchResultsProvider DisplaySearchResultsLayout={DisplaySearchResultsLayout}>
                                 <DataViewsProvider dataViews={dataViews}>
-                                    <DataViewComponentsProvider components={{NavBarItem, NavBarLayout: DataViewNavBarLayout}}>
-                                        <SearchGuiStateProvider searchGuiState={emptySearchGuiState}>
-                                            <SetUpStartState dataViewDetails={dataViewDetails}>{
-                                                children
-                                            }
-                                                <DevModeForSearch/>
-                                            </SetUpStartState>
-                                        </SearchGuiStateProvider>
-                                    </DataViewComponentsProvider>
+
+                                    <SearchGuiStateProvider searchGuiState={emptySearchGuiState}>
+                                        <SetUpStartState dataViewDetails={dataViewDetails}>{
+                                            children
+                                        }
+                                            <DevModeForSearch/>
+                                        </SetUpStartState>
+                                    </SearchGuiStateProvider>
                                 </DataViewsProvider>
                             </SearchResultsProvider>
                         </LoginProvider>

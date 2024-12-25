@@ -1,7 +1,7 @@
-import {useLogin, UserDataContext} from "@enterprise_search/authentication";
+import {useLogin, useUserData} from "@enterprise_search/authentication";
 import {LoadingOr} from "@enterprise_search/loading";
 import {delay} from "@enterprise_search/recoil_utils";
-import React, {ReactNode, useContext} from "react";
+import React, {ReactNode} from "react";
 import {useLoginComponents} from "./react.login";
 
 
@@ -32,15 +32,16 @@ export type MustBeLoggedInProps = {
 };
 
 export type MustBeLoggedInDisplay = (props: MustBeLoggedInProps) => React.ReactElement;
-export function MustBeLoggedIn({ children, notLoggedIn }: MustBeLoggedInProps): ReactNode {
+
+export function MustBeLoggedIn({children, notLoggedIn}: MustBeLoggedInProps): ReactNode {
     // Hook is always called
-    const { loggedIn } = useContext(UserDataContext);
+    const [userData] = useUserData()
 
     // Always render one component tree
     // (even though we conditionally show different content inside)
     return (
         <MustBeLoggedInWrapper
-            loggedIn={loggedIn}
+            loggedIn={userData.loggedIn}
             children={children}
             notLoggedIn={notLoggedIn}
         />
