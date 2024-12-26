@@ -4,9 +4,10 @@ import {ErrorInDataSource, ErrorInDataSourceProps} from "./search.results.compon
 export const SimpleErrorInDataSourceDev: ErrorInDataSource = ({dataSourceName, errors}: ErrorInDataSourceProps) => {
     return <div>
         <h1>Error in {dataSourceName}</h1>
-        <p>Reference number {errors.reference}</p>
         <ul>
-            {errors.errors.map((error, i) => <li key={i}>{error}</li>)}
+            <li><p>Reference number: {errors.reference}</p></li>
+            {...errors.errors.map((error, i) => <li key={i}>{error}</li>)}
+            {...Object.entries(errors.extras || {}).map(([key, value]) => <li key={key}><pre>{key}: {JSON.stringify(value)}</pre></li>)}
         </ul>
     </div>;
 };

@@ -2,12 +2,13 @@ import {DatasourceToPromiseSearchResult, OneSearch, SearchResult, SearchState, S
 import {SearchParser} from "@enterprise_search/react_search_parser";
 import {ErrorsOr, ThrowError} from "@enterprise_search/errors";
 import {DataSourcePlugins, useDataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
-import {useGuiFilters, useGuiSearchQuery} from "@enterprise_search/search_gui_state";
+import {useGuiFilters, useGuiSearchQuery, useGuiSelectedDataView} from "@enterprise_search/search_gui_state";
 import {KeywordsFilter} from "@enterprise_search/react_keywords_filter_plugin";
 import React, {ReactNode, useEffect, useRef} from "react";
 import {useFiltersByStateType, useOneFilterBySearchType, useSearchResultsByStateType, useSearchState} from "@enterprise_search/react_search_state";
 import {lensBuilder} from "@enterprise_search/optics";
 import {DebugLog, ErrorReporter, useDebug, useErrorReporter, useThrowError} from "@enterprise_search/react_utils";
+import {DataView, DataViews, useDataViews} from "@enterprise_search/data_views";
 
 export const searchDebug = 'search'
 
@@ -21,12 +22,17 @@ function useDoSearch(st: SearchType) {
     const debug = useDebug(searchDebug)
     const errorReporter = useErrorReporter()
     const throwError = useThrowError()
-    const searchCapabilities: SearchCapabilities = {debug, throwError: throwError, errorReporter}
+    const dataViews = useDataViews()
     const [filters] = useFiltersByStateType(st)
     const dataSourcePlugins = useDataSourcePlugins()
     const [searchResults, setSearchResults] = useSearchResultsByStateType(st)
     const countRef = useRef(0)
+    const [dataViewName] = useGuiSelectedDataView()
+
     useEffect(() => {
+        const dataView = dataViews[dataViewName]
+        const searchCapabilities: SearchCapabilities = {debug, throwError: throwError, errorReporter, dataView}
+
         if (Object.keys(filters).length === 0) return //removes calls at start up, and this isn't a credible search anyway
         const baseCount = countRef.current + 1
         //when we do a new search we increment the count. We then check this in the result and ignore results if count has changed
@@ -49,7 +55,7 @@ function useDoSearch(st: SearchType) {
                 debug.debugError(e, st, baseCount, 'error') // Note this only logs the error if debug is on. We need a proper error handling system
             })
         }
-    }, [filters, dataSourcePlugins])
+    }, [filters, dataSourcePlugins, debug.debug])
 }
 
 /* This component monitors the state of the search. If changed it triggers a search  and updates the search results */
@@ -63,6 +69,7 @@ export type SearchCapabilities = {
     debug: DebugLog
     throwError: ThrowError
     errorReporter: ErrorReporter
+    dataView: DataView<any>
 }
 
 export function searchAllDataSourcesPage1<Filters>(searchCapabilities: SearchCapabilities, searchType: SearchType, plugins: DataSourcePlugins<Filters>, filters: Filters): DatasourceToPromiseSearchResult {

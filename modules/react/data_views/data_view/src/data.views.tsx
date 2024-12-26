@@ -55,7 +55,9 @@ const selectedViewAndDataViewL = lensBuilder<SearchGuiData<any>>().focusCompose(
     dataView: lensBuilder<SearchGuiData<any>>().focusOn('filters').focusOn(dataViewFilterName)
 })
 
-export function DataViewNavBar() {
+export type DataViewNavBarProps = {}
+
+export function DataViewNavBar(props: DataViewNavBarProps) {
     const dataViews = useDataViews();
     const [state, setState] = useSearchGuiState();
     const setSelected: Setter<string> = (name: SetStateAction<string>) => {

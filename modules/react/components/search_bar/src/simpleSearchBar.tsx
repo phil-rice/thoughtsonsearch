@@ -60,21 +60,13 @@ const cssVariables: CSSVariables = {
 
   Count is probably handled by the search logic
  */
-export function SimpleSearchBar<Filters extends KeywordsFilter>({onSearch}: SearchBarProps) {
+export function SimpleSearchBar<Filters extends KeywordsFilter>({immediateSearch, mainSearch}: SearchBarProps) {
     const [searchQuery, setSearchQuery] = useGuiSearchQuery()
     const [guiFilters] = useGuiFilters()
-    const [mainFilters, setMainFilters] = useFiltersByStateType<Filters>('main')
-    const [immediateFilters, setImmediateFilters] = useFiltersByStateType<Filters>('immediate')
-    const parser = useSearchParser()
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)
     useEffect(() => {
-        const newGuiFilters = {...guiFilters, [keywordsFilterName]: searchQuery}
-        setImmediateFilters(parser(newGuiFilters, mainFilters))
+        immediateSearch?.(searchQuery)
     }, [guiFilters, searchQuery]);
-    const search = () => {
-        setMainFilters(immediateFilters);
-        onSearch?.()
-    };
     return (
         <div style={cssVariables.container}>
             <input
@@ -84,7 +76,7 @@ export function SimpleSearchBar<Filters extends KeywordsFilter>({onSearch}: Sear
                 placeholder="Search..."
                 aria-label="Search input"
                 style={cssVariables.input}
-                onKeyUp={(e) => e.key === "Enter" && search()}
+                onKeyUp={(e) => e.key === "Enter" && mainSearch?.()}
                 onFocus={(e) =>
                     Object.assign(e.target.style, cssVariables.inputFocus)
                 }
@@ -93,7 +85,7 @@ export function SimpleSearchBar<Filters extends KeywordsFilter>({onSearch}: Sear
             <button
                 type="button"
                 aria-label="Clear search"
-                onClick={search}
+                onClick={() => mainSearch?.()}
                 style={cssVariables.clearButton}
                 onMouseOver={(e) =>
                     Object.assign(e.currentTarget.style, cssVariables.clearButtonHover)

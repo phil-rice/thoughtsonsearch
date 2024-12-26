@@ -18,7 +18,7 @@ import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResult
 import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
 import {DoTheSearching, searchDebug} from "@enterprise_search/search/src/search";
 import {SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "@enterprise_search/data_views";
-import {elasticSearchDataSourcePlugin, ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
+import {elasticSearchDataSourcePlugin, elasticSearchDsName, ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
 import {FeatureFlags, NonFunctionalsProvider, consoleErrorReporter} from "@enterprise_search/react_utils";
 
 export const exampleMsalConfig: Configuration = {
@@ -52,9 +52,9 @@ const dataPlugins: DataPlugins = {}
 
 type AllDataSourceDetails = ElasticSearchSourceDetails | CommonDataSourceDetails
 
-const allElasticSearchData: ElasticSearchSourceDetails = {type: 'elasticSearch', names: ['jira-prod', 'confluence-prod']}
-const jiraElasicSearchData: ElasticSearchSourceDetails = {type: 'elasticSearch', names: ['jira-prod']}
-const confluenceElasticSearchData: ElasticSearchSourceDetails = {type: 'elasticSearch', names: ['confluence-prod']}
+const allElasticSearchData: ElasticSearchSourceDetails = {type: elasticSearchDsName, names: ['jira-prod', 'confluence-prod']}
+const jiraElasicSearchData: ElasticSearchSourceDetails = {type: elasticSearchDsName, names: ['jira-prod']}
+const confluenceElasticSearchData: ElasticSearchSourceDetails = {type: elasticSearchDsName, names: ['confluence-prod']}
 const graphApiPeopleData: CommonDataSourceDetails = {type: 'graphApiPeople', names: ['people']}
 const sharepointData: CommonDataSourceDetails = {type: 'sharepoint', names: ['sharepoint']}
 const allDetails: AllDataSourceDetails[] = [allElasticSearchData, graphApiPeopleData, sharepointData];

@@ -9,8 +9,8 @@ export type ErrorReporter = (error: Errors) => Promise<Errors>
 export const {use: useErrorReporter, Provider: ErrorReporterProvider} = makeContextFor<ErrorReporter, 'errorReporter'>('errorReporter')
 
 export const consoleErrorReporter: ErrorReporter = async (error: Errors) => {
-    const reference = Math.random().toString(36).substring(7)
+    const reference = Math.random().toString(36).substring(2)
     const result = {...error, reference};
-    console.error(result.errors.join('\n'), result)
+    console.error(result.errors.join('\n'), reference, 'extras', error.extras)
     return result
 }
