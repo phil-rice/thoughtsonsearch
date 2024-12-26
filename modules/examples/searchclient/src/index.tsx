@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {createRoot} from "react-dom/client";
 import {Configuration, PublicClientApplication} from "@azure/msal-browser";
-import {authenticateDebug, AuthenticationProvider, LoginConfig} from "@enterprise_search/authentication";
+import {authenticateDebug, AuthenticationProvider, bearerAuthentication, LoginConfig} from "@enterprise_search/authentication";
 import {loginUsingMsal} from "@enterprise_search/msal_authentication";
 import {Authenticate, SimpleDisplayLogin, SimpleMustBeLoggedIn, useLoginComponents} from "@enterprise_search/react_login_component";
 import {filtersDisplayPurpose, ReactFiltersContextData} from "@enterprise_search/react_filters_plugin";
@@ -18,7 +18,7 @@ import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResult
 import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
 import {DoTheSearching, searchDebug} from "@enterprise_search/search/src/search";
 import {SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "@enterprise_search/data_views";
-import {ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
+import {elasticSearchDataSourcePlugin, ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
 import {FeatureFlags, NonFunctionalsProvider} from "@enterprise_search/react_utils";
 
 export const exampleMsalConfig: Configuration = {
@@ -45,7 +45,7 @@ const reactFiltersContextData: ReactFiltersContextData<SearchAppFilters> = {
     }
 }
 const dataSourcePlugins: DataSourcePlugins<any> = {
-    // elasticSearch: elasticSearchDataSourcePlugin
+    elasticSearch: elasticSearchDataSourcePlugin(bearerAuthentication(''))
 
 }
 const dataPlugins: DataPlugins = {}

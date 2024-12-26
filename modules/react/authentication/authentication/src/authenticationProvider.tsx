@@ -69,7 +69,7 @@ export function JustAuthenticationProvider({loginConfig, children, makeSessionId
 
         };
         return {loginOps, sessionId: makeSessionId(), userDataGetter}
-    }, [login, logout, refeshLogin, debug])
+    }, [login, logout, refeshLogin, debug.debug])
     debug('AuthenticationProvider', contextData)
     return <LoginContext.Provider value={contextData}>
         {children}

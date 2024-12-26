@@ -9,9 +9,7 @@ import {KeywordsFilter} from "@enterprise_search/react_keywords_filter_plugin";
 The indicies are the 'ones that are known'. Filters can trim this down
  */
 
-export type ElasticSearchSourceDetails = CommonDataSourceDetails & {
-
-}
+export type ElasticSearchSourceDetails = CommonDataSourceDetails & {}
 
 export type ElasticSearchContext = SearchByApiContext & {
     elasticSearchUrl: string
@@ -22,8 +20,7 @@ export type ElasticSearchContext = SearchByApiContext & {
 export type ElasticSearchPaging = {}
 export type ElasticSearchFilters = KeywordsFilter & TimeFilters & DataViewFilters
 
-export function elasticSearchDataSourcePlugin(authentication: Authentication,
-                                              allDetails: ElasticSearchSourceDetails[]): DataSourcePlugin<ElasticSearchSourceDetails, ElasticSearchFilters, ElasticSearchPaging> {
+export function elasticSearchDataSourcePlugin(authentication: Authentication): DataSourcePlugin<ElasticSearchSourceDetails, ElasticSearchFilters, ElasticSearchPaging> {
     return {
         plugin: 'datasource',
         datasourceName: 'elasticsearch',
@@ -31,7 +28,6 @@ export function elasticSearchDataSourcePlugin(authentication: Authentication,
         fetch: async (filters, paging) => {
             return undefined as any
         },
-        allDetails
     };
 }
 

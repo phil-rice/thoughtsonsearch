@@ -50,7 +50,7 @@ export function SimpleTimeDisplay({filterOps, id}: DisplayFilterProps<string>) {
                 <option value="yesterday">Yesterday</option>
                 <option value="lastweek">Last Week</option>
                 <option value="lastmonth">Last Month</option>
-                <option disabled aria-hidden="true">
+                <option disabled>
                     ----
                 </option>
                 <option value="" aria-label="Clear all filters">

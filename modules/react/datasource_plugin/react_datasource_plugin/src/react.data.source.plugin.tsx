@@ -23,8 +23,6 @@ export type FetchFromDatasourceFn<Filters, Paging> = (filters: Filters, paging?:
 export type DataSourcePlugin<Details extends CommonDataSourceDetails, Filters, Paging> = {
     plugin: 'datasource'
     datasourceName: string
-    allDetails: Details[]
-
     authentication: Authentication,
     fetch: FetchFromDatasourceFn<Filters, Paging>
 }
