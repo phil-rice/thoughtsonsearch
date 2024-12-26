@@ -1,11 +1,11 @@
-import {FeatureFlags, useDebugState, useFeatureFlag, useFeatureFlags} from "@enterprise_search/react_utils";
+import {FeatureFlags, useDebugState, useFeatureFlag, useFeatureFlagsState} from "@enterprise_search/react_utils";
 import React, {CSSProperties, ChangeEvent} from "react";
 import {checkboxStyles} from "./dev.mode.checkbox.styles";
 import {lensBuilder} from "@enterprise_search/optics";
 
 
 export function DevModeFeatureFlags() {
-    const [featureFlags, setFeatureFlags] = useFeatureFlags();
+    const [featureFlags, setFeatureFlags] = useFeatureFlagsState();
     const {containerStyle, headingStyle, checkboxContainerStyle, labelStyle, checkboxStyle, debugInfoStyle} = checkboxStyles
     const handleCheckboxChange = (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
         const lens = lensBuilder<FeatureFlags>().focusOn(key).focusOn("value");
