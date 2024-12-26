@@ -112,7 +112,7 @@ const debugState = {
 };
 
     const featureFlags:FeatureFlags = {
-        flag1:{value: false, description: 'An example feature flag'},
+        flag1:{value: true, description: 'An example feature flag'},
         flag2:{value: false, description: 'Another feature flag'}
     };
 msal.initialize({}).then(() => {

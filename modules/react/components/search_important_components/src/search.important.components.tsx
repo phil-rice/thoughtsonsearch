@@ -11,7 +11,7 @@ import {dataSourceDetailsToDataView, DataViewNavBarLayout, DataViews, DataViewsP
 import {emptySearchGuiState, SearchGuiData, SearchGuiStateProvider, useSearchGuiState} from "@enterprise_search/search_gui_state";
 import {dataViewFilterName, DataViewFilters} from "@enterprise_search/react_data_views_filter_plugin";
 import {uniqueStrings} from "@enterprise_search/recoil_utils/src/arrays";
-import {DevMode, DevModeForSearchProvider} from "@enterprise_search/devmode_gui_state";
+import {DevMode, DevModeForSearchProvider} from "@enterprise_search/devmode";
 
 
 /* These all need to have an implementation for the search to work

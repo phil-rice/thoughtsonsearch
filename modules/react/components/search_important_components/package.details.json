@@ -3,7 +3,7 @@
   "name": "@enterprise_search/search_important_components",
   "description": "A template for the important components for search",
   "links": [
-    "@enterprise_search/devmode_gui_state",
+    "@enterprise_search/devmode",
     "@enterprise_search/search_bar",
     "@enterprise_search/react_keywords_filter_plugin",
     "@enterprise_search/react_time_filter_plugin",
