@@ -4,8 +4,9 @@ import {NameAnd} from "@enterprise_search/recoil_utils";
 import {makeContextFor, makeContextForState, makeUseStateChild} from "@enterprise_search/react_utils";
 import {useUserData} from "@enterprise_search/authentication";
 import {DevModeSearchState} from "./devModeSearchState";
-import { makeSimpleNavBar, NavBar} from "@enterprise_search/navbar";
+import {makeSimpleNavBar, NavBar} from "@enterprise_search/navbar";
 import {DevModeDebug} from "./devmode.debug";
+import {DevModeFeatureFlags} from "./devmode.feature.flags";
 
 export type DevModeComponent = () => React.ReactElement;
 export type DevModeNavbarComponent = () => ReactElement;
@@ -23,7 +24,8 @@ const debugComponents = {
     GuiState: DevModeGuiState,
     SearchState: DevModeSearchState,
     UserData: DevModeUserData,
-    Debug:DevModeDebug
+    Debug: DevModeDebug,
+    FeatureFlags: DevModeFeatureFlags
 };
 export const simpleDevModeComponents: SearchDevModeComponents = {
     DevModeNavBar: makeSimpleNavBar('devmode', Object.keys(debugComponents)),
@@ -44,4 +46,19 @@ export function DevModeGuiState() {
 export function DevModeUserData() {
     const userData = useUserData()
     return <pre>{JSON.stringify(userData, null, 2)}</pre>
+}
+
+export function DevMode() {
+    const userData = useUserData()
+    const {DevModeNavBar, components} = useDevModeComponents()
+    const selectedOps = useDevModeSelected()
+    const allowed = userData.isDev || userData.isAdmin
+    if (!allowed || window.location.href.indexOf('devMode') === -1) return <></>
+    const [selected] = selectedOps
+    const Component = components[selected] || (() => <></>)
+    return <div className='dev-mode'>
+        <hr/>
+        <DevModeNavBar selectedOps={selectedOps}/>
+        <Component/>
+    </div>
 }

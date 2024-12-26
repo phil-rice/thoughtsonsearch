@@ -1,34 +1,36 @@
-import {useDebugState} from "@enterprise_search/react_utils";
+import {FeatureFlags, useDebugState, useFeatureFlag, useFeatureFlags} from "@enterprise_search/react_utils";
 import React, {CSSProperties, ChangeEvent} from "react";
 import {checkboxStyles} from "./dev.mode.checkbox.styles";
+import {lensBuilder} from "@enterprise_search/optics";
 
 
-export function DevModeDebug() {
-    const [debug, setDebug] = useDebugState();
+export function DevModeFeatureFlags() {
+    const [featureFlags, setFeatureFlags] = useFeatureFlags();
     const {containerStyle, headingStyle, checkboxContainerStyle, labelStyle, checkboxStyle, debugInfoStyle} = checkboxStyles
     const handleCheckboxChange = (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
-        setDebug({...debug, [key]: e.target.checked});
+        const lens = lensBuilder<FeatureFlags>().focusOn(key).focusOn("value");
+        setFeatureFlags(lens.set(featureFlags, e.target.checked));
     };
 
     return (
         <div style={containerStyle}>
-            <h2 style={headingStyle}>Debug</h2>
-            {Object.keys(debug).map((key) => (
+            <h2 style={headingStyle}>Feature flags</h2>
+            {Object.keys(featureFlags).map((key) => (
                 <div key={key} style={checkboxContainerStyle}>
                     <label style={labelStyle}>
                         <input
                             type="checkbox"
-                            checked={debug[key]}
+                            checked={featureFlags[key].value}
                             onChange={handleCheckboxChange(key)}
                             style={checkboxStyle}
                         />
-                        {key}
+                        {key}: {featureFlags[key].description}
                     </label>
                 </div>
             ))}
             <div style={debugInfoStyle}>
-                <strong>Raw Debug State:</strong>
-                <pre>{JSON.stringify(debug, null, 2)}</pre>
+                <strong>Raw Featureflags State:</strong>
+                <pre>{JSON.stringify(featureFlags, null, 2)}</pre>
             </div>
         </div>
     );
