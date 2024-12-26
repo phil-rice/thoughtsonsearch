@@ -12,6 +12,8 @@ import {emptySearchGuiState, SearchGuiData, SearchGuiStateProvider, useSearchGui
 import {dataViewFilterName, DataViewFilters} from "@enterprise_search/react_data_views_filter_plugin";
 import {uniqueStrings} from "@enterprise_search/recoil_utils/src/arrays";
 import {DevMode, DevModeForSearchProvider} from "@enterprise_search/devmode";
+import {emptySearchState} from "@enterprise_search/search_state";
+import {SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
 
 
 /* These all need to have an implementation for the search to work
@@ -68,30 +70,31 @@ export function SearchImportantComponentsProvider<Context, Details extends Commo
     const dataViews: DataViews<Details> = dataSourceDetailsToDataView(dataViewDetails, NavBarItem)
 
 
-    return <SearchBarProvider searchBar={SearchBar}>
-        <DevModeForSearchProvider devModeState={{selected: ''}}>
-            <ReactFiltersProvider reactFilters={reactFiltersContextData}>
-                <DataSourcePluginProvider plugins={dataSourcePlugins}>
-                    <DataPluginProvider dataPlugins={dataPlugins}>
-                        <LoginProvider loginComponents={{DisplayLogin: DisplayLogin, NotLoggedIn: NotLoggedIn}}>
-                            <SearchResultsProvider DisplaySearchResultsLayout={DisplaySearchResultsLayout}>
-                                <DataViewsProvider dataViews={dataViews}>
-
-                                    <SearchGuiStateProvider searchGuiState={emptySearchGuiState}>
-                                        <SetUpStartState dataViewDetails={dataViewDetails}>{
-                                            children
-                                        }
-                                            <DevMode/>
-                                        </SetUpStartState>
-                                    </SearchGuiStateProvider>
-                                </DataViewsProvider>
-                            </SearchResultsProvider>
-                        </LoginProvider>
-                    </DataPluginProvider>
-                </DataSourcePluginProvider>
-            </ReactFiltersProvider>
-        </DevModeForSearchProvider>
-    </SearchBarProvider>
+    return <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
+        <SearchBarProvider searchBar={SearchBar}>
+            <DevModeForSearchProvider devModeState={{selected: ''}}>
+                <ReactFiltersProvider reactFilters={reactFiltersContextData}>
+                    <DataSourcePluginProvider plugins={dataSourcePlugins}>
+                        <DataPluginProvider dataPlugins={dataPlugins}>
+                            <LoginProvider loginComponents={{DisplayLogin: DisplayLogin, NotLoggedIn: NotLoggedIn}}>
+                                <SearchResultsProvider DisplaySearchResultsLayout={DisplaySearchResultsLayout}>
+                                    <DataViewsProvider dataViews={dataViews}>
+                                        <SearchGuiStateProvider searchGuiState={emptySearchGuiState}>
+                                            <SetUpStartState dataViewDetails={dataViewDetails}>{
+                                                children
+                                            }
+                                                <DevMode/>
+                                            </SetUpStartState>
+                                        </SearchGuiStateProvider>
+                                    </DataViewsProvider>
+                                </SearchResultsProvider>
+                            </LoginProvider>
+                        </DataPluginProvider>
+                    </DataSourcePluginProvider>
+                </ReactFiltersProvider>
+            </DevModeForSearchProvider>
+        </SearchBarProvider>
+    </SearchInfoProviderUsingUseState>
 }
 
 

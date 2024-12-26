@@ -1,11 +1,11 @@
 import React, {createContext, useContext, useMemo} from "react";
 import {LoginOps} from "./login.ops";
-import {UserData, UserDataGetter} from "./userData";
+import {emptyUserData, UserData, UserDataGetter} from "./userData";
 import {DebugLog, makeContextForState, useDebug} from "@enterprise_search/react_utils";
 import {useReportError} from "@enterprise_search/react_error";
 
 export const authenticateDebug = 'authenticate'
-export type LoginOutFn = (callback: () => void,debugLog:DebugLog) => Promise<void>
+export type LoginOutFn = (callback: () => void, debugLog: DebugLog) => Promise<void>
 export type LoginConfig = {
     refeshLogin: LoginOutFn
     login: LoginOutFn
@@ -42,6 +42,13 @@ export function useUserData() {
 export const LoginContext = createContext<AuthenticateContextData | undefined>(undefined)
 
 export function AuthenticationProvider({loginConfig, children, makeSessionId = defaultMakeSessionId}: LoginProviderProps) {
+    return <UserDataProvider userData={emptyUserData}>
+        <JustAuthenticationProvider loginConfig={loginConfig} makeSessionId={makeSessionId}>
+            {children}
+        </JustAuthenticationProvider></UserDataProvider>
+}
+
+export function JustAuthenticationProvider({loginConfig, children, makeSessionId = defaultMakeSessionId}: LoginProviderProps) {
     const [userData, setUserData] = useUserDataFull()
     const debug = useDebug(authenticateDebug)
     const {userDataGetter, logout, refeshLogin, login} = loginConfig
