@@ -1,9 +1,8 @@
 import {NameAnd} from "@enterprise_search/recoil_utils";
 import React from "react";
-import {GetterSetter, makeContextFor, makeGetterSetter} from "@enterprise_search/react_utils";
+import {GetterSetter, makeContextFor, makeGetterSetter, useThrowError} from "@enterprise_search/react_utils";
 import {lensBuilder} from "@enterprise_search/optics";
-import {ReportError} from "@enterprise_search/errors";
-import {useReportError} from "@enterprise_search/react_error";
+import {ThrowError} from "@enterprise_search/errors";
 
 // Filters are intrinsically bound to many places, and therefore if we aren't very
 // careful with our design they will become complex
@@ -48,7 +47,7 @@ export type ReactFiltersContextData<Filters> = {
 
 export const {Provider: ReactFiltersProvider, use: useReactFilters} = makeContextFor('reactFilters', undefined as ReactFiltersContextData<any>)
 
-function findDisplayFilterFor<Filters, FilterName extends keyof Filters>(reportErrors: ReportError, plugins: ReactFiltersPlugins<any>, filterName: FilterName, purpose: string) {
+function findDisplayFilterFor<Filters, FilterName extends keyof Filters>(reportErrors: ThrowError, plugins: ReactFiltersPlugins<any>, filterName: FilterName, purpose: string) {
     const plugin = plugins[filterName]
     if (!plugin) reportErrors('s/w', `No plugin for '${filterName.toString()}'. Legal values are ${Object.keys(plugins).sort()}`);
     const DisplayFilter = purpose && purpose in plugin.PurposeToDisplay ? plugin.PurposeToDisplay[purpose] : plugin.DefaultDisplay
@@ -64,7 +63,7 @@ export type DisplayAllFiltersOps<Filters> = {
 
 export const SimpleDisplayFilters = (filterPurpose: string) =>
     <Filters extends any>({filtersOps, id}: DisplayFiltersProps<Filters>) => {
-        const reportErrors = useReportError();
+        const reportErrors = useThrowError();
         const [filters, setFilters] = filtersOps;
         const {plugins, PurposeToFilterLayout} = useReactFilters()
         const FilterLayout = PurposeToFilterLayout[filterPurpose];

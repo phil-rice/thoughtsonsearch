@@ -2,7 +2,7 @@ import React, {Context, Dispatch, ReactElement, ReactNode, SetStateAction, useCo
 import {LensAndPath, lensBuilder, LensBuilder} from "@enterprise_search/optics";
 import {makeGetterSetter} from "./make.getter.setter";
 import {capitalizeFirstLetter} from "@enterprise_search/recoil_utils";
-import {useReportError} from "@enterprise_search/react_error";
+import {useThrowError} from "./react.report.error";
 
 export type Setter<T> = Dispatch<SetStateAction<T>>
 export type GetterSetter<T> = [T, Setter<T>]
@@ -25,7 +25,7 @@ export function makeContextFor<Data, FIELD extends string>(
 
     function useField() {
         const contextValue = useContext(context);
-        const reportError = useReportError();
+        const reportError = useThrowError();
         if (contextValue === undefined) {
             const upperedName = capitalizeFirstLetter(field);
             reportError('s/w', `use${upperedName} must be used within a ${upperedName}Provider`);
@@ -55,7 +55,7 @@ export function makeContextForState<Data, FIELD extends string>(field: FIELD): C
 
     function useField() {
         const contextValue = useContext(Context);
-        const reportError = useReportError();
+        const reportError = useThrowError();
         if (contextValue === undefined) {
             const fieldWithCap = capitalizeFirstLetter(field);
             reportError('s/w', `use${fieldWithCap} must be used within a ${fieldWithCap}Provider`);

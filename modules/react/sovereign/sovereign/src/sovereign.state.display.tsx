@@ -1,11 +1,11 @@
 import {DisplaySovereignPageProps, useSelectedSovereign, useSovereignStatePlugins} from "./sovereign.selection.state";
 import React from "react";
-import {useReportError} from "@enterprise_search/react_error";
+import {useThrowError} from "@enterprise_search/react_utils";
 
 
 export function DisplaySelectedSovereignPage(props: DisplaySovereignPageProps) {
     const [selected] = useSelectedSovereign()
-    const reportError = useReportError()
+    const reportError = useThrowError()
     const plugins = useSovereignStatePlugins()
     const plugin = plugins[selected];
     if (!plugin) reportError('s/w', `No plugin for sovereign ${selected}. Legal plugins are ${Object.keys(plugins).join(", ")}`)

@@ -14,6 +14,7 @@ import {uniqueStrings} from "@enterprise_search/recoil_utils/src/arrays";
 import {DevMode, DevModeForSearchProvider} from "@enterprise_search/devmode";
 import {emptySearchState} from "@enterprise_search/search_state";
 import {SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
+import {SearchResultsComponents, SearchResultsComponentsProvider} from "@enterprise_search/sovereign_search/src/search.results.components";
 
 
 /* These all need to have an implementation for the search to work
@@ -35,6 +36,7 @@ export interface SearchImportantComponents<Context, Details extends CommonDataSo
     DisplaySearchResultsLayout: DisplaySearchResultsLayout
     DataViewNavBarLayout: DataViewNavBarLayout
     NavBarItem: NavBarItem
+    SearchResultsComponents: SearchResultsComponents
 }
 
 
@@ -79,13 +81,15 @@ export function SearchImportantComponentsProvider<Context, Details extends Commo
                             <LoginProvider loginComponents={{DisplayLogin: DisplayLogin, NotLoggedIn: NotLoggedIn}}>
                                 <SearchResultsProvider DisplaySearchResultsLayout={DisplaySearchResultsLayout}>
                                     <DataViewsProvider dataViews={dataViews}>
-                                        <SearchGuiStateProvider searchGuiState={emptySearchGuiState}>
-                                            <SetUpStartState dataViewDetails={dataViewDetails}>{
-                                                children
-                                            }
+                                        <SearchResultsComponentsProvider searchResultsComponents={components.SearchResultsComponents}>
+                                            <SearchGuiStateProvider searchGuiState={emptySearchGuiState}>
+                                                <SetUpStartState dataViewDetails={dataViewDetails}>{
+                                                    children
+                                                }
                                                 <DevMode/>
-                                            </SetUpStartState>
-                                        </SearchGuiStateProvider>
+                                                </SetUpStartState>
+                                            </SearchGuiStateProvider>
+                                        </SearchResultsComponentsProvider>
                                     </DataViewsProvider>
                                 </SearchResultsProvider>
                             </LoginProvider>

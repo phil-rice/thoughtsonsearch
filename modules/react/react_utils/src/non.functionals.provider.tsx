@@ -1,18 +1,21 @@
 import {FeatureFlags, FeatureFlagsProvider} from "./react.feature.flags";
 import {DebugState, DebugStateProvider} from "./react.debug";
 import React, {ReactNode} from "react";
+import {ErrorReporter, ErrorReporterProvider} from "./react.referenced.error";
 
 
 export type NonFunctionalsProviderProps = {
     debugState: DebugState
+    errorReporter: ErrorReporter
     featureFlags: FeatureFlags
     children: ReactNode
 }
 
-export function NonFunctionalsProvider({debugState, featureFlags, children}: NonFunctionalsProviderProps) {
-    return <DebugStateProvider debugState={debugState}>
-        <FeatureFlagsProvider featureFlags={featureFlags}>
-            {children}
-        </FeatureFlagsProvider>
-    </DebugStateProvider>
+export function NonFunctionalsProvider({debugState, featureFlags, errorReporter, children}: NonFunctionalsProviderProps) {
+    return <ErrorReporterProvider errorReporter={errorReporter}>
+        <DebugStateProvider debugState={debugState}>
+            <FeatureFlagsProvider featureFlags={featureFlags}>
+                {children}
+            </FeatureFlagsProvider>
+        </DebugStateProvider></ErrorReporterProvider>
 }

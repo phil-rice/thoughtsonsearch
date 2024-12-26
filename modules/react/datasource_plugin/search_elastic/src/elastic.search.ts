@@ -25,8 +25,10 @@ export function elasticSearchDataSourcePlugin(authentication: Authentication): D
         plugin: 'datasource',
         datasourceName: 'elasticsearch',
         authentication,
-        fetch: async (filters, paging) => {
-            return undefined as any
+        fetch: async ({debug, errorReporter, throwError}, searchType, filters, paging) => {
+            debug('elastic-search', filters, paging)
+            const msg = `not implemented - ${searchType} ${JSON.stringify(filters)}} - Paging (${JSON.stringify(paging)}) - Auth ${authentication.name}`;
+            return await errorReporter({errors: [msg]})
         },
     };
 }

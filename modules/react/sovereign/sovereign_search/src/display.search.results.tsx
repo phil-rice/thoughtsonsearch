@@ -3,8 +3,9 @@ import {useDataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {useSearchResultsByStateType} from "@enterprise_search/react_search_state";
 import {DatasourceToSearchResult, SearchType} from "@enterprise_search/search_state";
 import {NameAnd} from "@enterprise_search/recoil_utils";
-import {isValue} from "@enterprise_search/errors";
-import {useReportError} from "@enterprise_search/react_error";
+import {Errors, isErrors, isValue} from "@enterprise_search/errors";
+import {useThrowError} from "@enterprise_search/react_utils";
+import {ErrorInDataSource} from "./search.results.components";
 
 export type DisplaySearchResultsProps = {}
 export type DisplaySearchResults = (props: DisplaySearchResultsProps) => ReactElement
@@ -33,7 +34,7 @@ export type SearchResultsOps = {
 
 export function useSearchResultsLayout(): SearchResultsOps {
     const context = React.useContext(SearchResultsContext)
-    const reportError = useReportError()
+    const reportError = useThrowError()
     if (!context) reportError('s/w', "useSearchResultsLayout must be used within a SearchResultsProvider")
     return context
 }
@@ -46,7 +47,7 @@ export type SearchResultsProps = {
 export function searchResultsToDataView(dataSourceToSearchResult: DatasourceToSearchResult): NameAnd<any[]> {
     if (dataSourceToSearchResult === undefined) return {}
     const dataPlugins = useDataPlugins()
-    const reportError = useReportError()
+    const reportError = useThrowError()
     const result: NameAnd<any[]> = {}
     Object.entries(dataSourceToSearchResult).map(([dataSourceName, searchResult]) => {
         if (isValue(searchResult)) {
@@ -62,10 +63,22 @@ export function searchResultsToDataView(dataSourceToSearchResult: DatasourceToSe
     return result
 }
 
+export function searchResultsToErrors(dataSourceToSearchResult: DatasourceToSearchResult): NameAnd<Errors> {
+    const result: NameAnd<Errors> = {}
+    if (dataSourceToSearchResult === undefined) return result
+    Object.entries(dataSourceToSearchResult).map(([dataSourceName, searchResult]) => {
+        if (isErrors(searchResult)) {
+            result[dataSourceName] = searchResult
+        }
+    })
+    return result
+
+}
+
 export function SearchResults<Filters>({st = 'main'}: SearchResultsProps) {
     const {DisplaySearchResultsLayout} = useSearchResultsLayout()
     const dataPlugins = useDataPlugins()
-    const reportError = useReportError()
+    const reportError = useThrowError()
     const [oneSearch] = useSearchResultsByStateType<Filters>(st)
     const {dataSourceToSearchResult} = oneSearch
     const dataTypeToData = searchResultsToDataView(dataSourceToSearchResult)
@@ -74,6 +87,9 @@ export function SearchResults<Filters>({st = 'main'}: SearchResultsProps) {
             const plugin = dataPlugins[dataType]
             if (!plugin) reportError('s/w', `No plugin found for data type ${dataType}. Legal values are ${Object.keys(dataPlugins).sort().join(', ')}`)
             return plugin.DefaultDisplayData({data})
+        })}
+        {Object.entries(searchResultsToErrors(dataSourceToSearchResult)).map(([dataSourceName, errors]) => {
+            return <ErrorInDataSource key={dataSourceName} dataSourceName={dataSourceName} errors={errors}/>
         })}
     </DisplaySearchResultsLayout>
 }

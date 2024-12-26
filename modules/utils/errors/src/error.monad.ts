@@ -24,7 +24,7 @@ export function partitionNameAndErrorsOr<T>(es: NameAnd<ErrorsOr<T>>) {
     return {values, errors}
 }
 
-export type Errors = { errors: string[] }
+export type Errors = { errors: string[] , reference?: string}
 
 export function errorsOrThrow<T>(e: ErrorsOr<T>): Errors {
     if (isValue(e)) throw new Error(`Expected errors but got value ${JSON.stringify(e)}`)

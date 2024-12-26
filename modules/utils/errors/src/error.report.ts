@@ -1,2 +1,2 @@
 export type ErrorType = 's/w' | 'validation' | 'network' | 'ui'
-export type ReportError = (type: ErrorType, msg: string, e?: any) => void;
+export type ThrowError = (type: ErrorType, msg: string, e?: any) => unknown;

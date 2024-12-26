@@ -1,7 +1,6 @@
 import React from "react";
 import {NameAnd} from "@enterprise_search/recoil_utils";
-import {makeContextFor} from "@enterprise_search/react_utils";
-import {useReportError} from "@enterprise_search/react_error";
+import {makeContextFor, useThrowError} from "@enterprise_search/react_utils";
 
 
 export type DataOps<Data> = {
@@ -27,7 +26,7 @@ export const {Provider: DataPluginProvider, use: useDataPlugins} = makeContextFo
 
 export function useData<Data>(purpose: string, type: string): DataOps<Data> {
     const dataPlugins = useDataPlugins();
-    const reportError = useReportError();
+    const reportError = useThrowError();
     const plugin: DataPlugin<Data> = dataPlugins[type]
     if (!plugin) reportError('s/w', `Unknown data type ${type}. Legal values are ${Object.keys(plugin).sort()}`)
     const DisplayData = plugin.DisplayDataForPurpose[purpose] || plugin.DefaultDisplayData

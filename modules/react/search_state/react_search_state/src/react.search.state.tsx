@@ -1,8 +1,7 @@
 import React, {useCallback} from "react";
 import {AllSearches, OneSearch, SearchState, SearchType} from "@enterprise_search/search_state";
-import {GetterSetter, makeGetterSetter} from "@enterprise_search/react_utils";
+import {GetterSetter, makeGetterSetter, useThrowError} from "@enterprise_search/react_utils";
 import {lensBuilder} from "@enterprise_search/optics";
-import {useReportError} from "@enterprise_search/react_error";
 
 
 export type SearchStateOps<Filters> = GetterSetter<SearchState<Filters>>
@@ -67,35 +66,35 @@ export const SearchInfoProviderUsingUseState = <Filters, >({allSearchState: init
 }
 
 export function useSearchState<Filters>(): SearchStateOps<Filters> {
-    const reportError = useReportError()
+    const reportError = useThrowError()
     const context = React.useContext(SearchStateContext);
     if (context === undefined) reportError('s/w', 'useSearchState must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
     return context.searchStateOps
 }
 
 export function useAllSearches<Filters>(): AllSearchesOps<Filters> {
-    const reportError = useReportError()
+    const reportError = useThrowError()
     const context = React.useContext(SearchStateContext);
     if (context === undefined) reportError('s/w', 'useAllSearches must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
     return context.allSearchInfoOps
 }
 
 export function useSearchResultsByStateType<Filters>(st: SearchType): OneSearchOps<Filters> {
-    const reportError = useReportError()
+    const reportError = useThrowError()
     const context = React.useContext(SearchStateContext);
     if (context === undefined) reportError('s/w', 'useSearchResultsByStateType must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
     return context.filtersAndResultOps(st)
 }
 
 export function useFiltersByStateType<Filters>(st: SearchType): FiltersOps<Filters> {
-    const reportError = useReportError()
+    const reportError = useThrowError()
     const context = React.useContext(SearchStateContext);
     if (context === undefined) reportError('s/w', 'useFiltersByStateType must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
     return context.filtersOps(st)
 }
 
 export function useOneFilterBySearchType<Filter>(st: SearchType): OneFilterOpsStateAndNameFn<Filter> {
-    const reportError = useReportError()
+    const reportError = useThrowError()
     const context = React.useContext(SearchStateContext);
 
     if (context === undefined) reportError('s/w', 'useOneFilterBySearchType must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');

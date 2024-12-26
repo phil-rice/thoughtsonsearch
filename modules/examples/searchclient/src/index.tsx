@@ -14,12 +14,12 @@ import {simpleLoadingDisplay} from "@enterprise_search/loading";
 import {DisplaySelectedSovereignPage, SovereignStatePlugins, SovereignStatePluginsProvider, SovereignStateProvider} from "@enterprise_search/sovereign";
 import {IconProvider, simpleIconContext} from "@enterprise_search/icons";
 import {dataViewFilter, dataViewFilterName, DataViewFilters, SimpleDataViewFilterDisplay} from "@enterprise_search/react_data_views_filter_plugin";
-import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResultsLayout} from "@enterprise_search/sovereign_search";
+import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResultsLayout, simpleSearchResultComponents} from "@enterprise_search/sovereign_search";
 import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
 import {DoTheSearching, searchDebug} from "@enterprise_search/search/src/search";
 import {SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "@enterprise_search/data_views";
 import {elasticSearchDataSourcePlugin, ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
-import {FeatureFlags, NonFunctionalsProvider} from "@enterprise_search/react_utils";
+import {FeatureFlags, NonFunctionalsProvider, consoleErrorReporter} from "@enterprise_search/react_utils";
 
 export const exampleMsalConfig: Configuration = {
     auth: {
@@ -78,7 +78,8 @@ const searchImportantComponents: SearchImportantComponents<any, AllDataSourceDet
     DisplaySearchResultsLayout: SimpleDisplayResultsLayout,
     DataViewNavBarLayout: SimpleDataViewNavbarLayout,
     NavBarItem: SimpleDataViewNavItem,
-    dataViewDetails
+    dataViewDetails,
+    SearchResultsComponents: simpleSearchResultComponents
 }
 
 const sovereignStatePlugins: SovereignStatePlugins = {
@@ -118,7 +119,7 @@ const featureFlags: FeatureFlags = {
 msal.initialize({}).then(() => {
 //we set up here: how we display the components, how we do state management and how we do authentication
     root.render(<React.StrictMode>
-            <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags}>
+            <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags} errorReporter={consoleErrorReporter}>
                 <AuthenticationProvider loginConfig={login}>
                     <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
                         <SovereignStateProvider initial='start'>

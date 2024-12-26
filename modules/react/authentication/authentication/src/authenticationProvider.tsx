@@ -2,7 +2,7 @@ import React, {createContext, useContext, useMemo} from "react";
 import {LoginOps} from "./login.ops";
 import {emptyUserData, UserData, UserDataGetter} from "./userData";
 import {DebugLog, makeContextForState, useDebug} from "@enterprise_search/react_utils";
-import {useReportError} from "@enterprise_search/react_error";
+import {useThrowError} from "@enterprise_search/react_utils";
 
 export const authenticateDebug = 'authenticate'
 export type LoginOutFn = (callback: () => void, debugLog: DebugLog) => Promise<void>
@@ -79,7 +79,7 @@ export function JustAuthenticationProvider({loginConfig, children, makeSessionId
 
 export function useLogin(): LoginOps {
     const login = useContext(LoginContext)
-    const reportError = useReportError()
+    const reportError = useThrowError()
     if (!login) reportError('s/w', 'useLogin must be used within a LoginProvider')
     return login.loginOps
 }
@@ -87,7 +87,7 @@ export function useLogin(): LoginOps {
 
 export function useSessionId() {
     const login = useContext(LoginContext)
-    const reportError = useReportError()
+    const reportError = useThrowError()
     if (!login) reportError('s/w', 'useSessionId must be used within a LoginProvider')
     return login.sessionId
 }
