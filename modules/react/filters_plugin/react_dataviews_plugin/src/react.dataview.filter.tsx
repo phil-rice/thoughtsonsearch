@@ -1,6 +1,9 @@
 import {DisplayFilter, ReactFiltersPlugin} from "@enterprise_search/react_filters_plugin";
 import {SimpleDataViewFilterDisplay} from "./simpleDataViewFilterDisplay";
 
+import {toArray} from "@laoban/utils";
+import {DebugLog} from "@enterprise_search/react_utils";
+
 export const dataViewFilterName = 'dataviews';
 
 
@@ -18,7 +21,17 @@ export const dataViewFilter =
         plugin: 'filter',
         type: 'dataviews',
         DefaultDisplay: Display,
-        PurposeToDisplay: {}//happy with defaults
+        PurposeToDisplay: {},//happy with defaults
+        addToUrl: (debug: DebugLog, sp: URLSearchParams, data: DataViewFilterData,) => {
+            const selected = toArray(data?.selectedNames).join(' ')
+            debug('dataViewFilter addToUrl', 'selected=', selected, sp.toString())
+            sp.set('selected', selected)
+        },
+        fromUrl: (debug: DebugLog, searchParams, def) => {
+            const selected = searchParams.get('selected')
+            debug('dataViewFilter fromUrl', 'selected=', selected)
+            return selected ? {...def, selectedNames: selected.split(' ')} : def
+        }
     })
 
-export const simpleDataViewFilter=dataViewFilter(SimpleDataViewFilterDisplay);
+export const simpleDataViewFilter = dataViewFilter(SimpleDataViewFilterDisplay);

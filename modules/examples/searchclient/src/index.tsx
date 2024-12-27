@@ -6,12 +6,12 @@ import {loginUsingMsal} from "@enterprise_search/msal_authentication";
 import {Authenticate, SimpleDisplayLogin, SimpleMustBeLoggedIn, useLoginComponents} from "@enterprise_search/react_login_component";
 import {filtersDisplayPurpose, ReactFiltersContextData} from "@enterprise_search/react_filters_plugin";
 import {exampleTimeFilterPlugin, timefilterPluginName, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
-import {SearchImportantComponents, SearchImportantComponentsProvider} from "@enterprise_search/search_important_components";
+import {SearchImportantComponents, SearchImportantComponentsProvider, startStateDebug} from "@enterprise_search/search_important_components";
 import {CommonDataSourceDetails, DataSourceDetails, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {SimpleSearchBar} from "@enterprise_search/search_bar";
 import {simpleLoadingDisplay} from "@enterprise_search/loading";
-import {DisplaySelectedSovereignPage, SovereignStatePlugins, SovereignStatePluginsProvider, SovereignStateProvider} from "@enterprise_search/sovereign";
+import {DisplaySelectedSovereignPage, SovereignStatePlugins, SovereignStateProvider} from "@enterprise_search/sovereign";
 import {IconProvider, simpleIconContext} from "@enterprise_search/icons";
 import {dataViewFilter, dataViewFilterName, DataViewFilters, SimpleDataViewFilterDisplay} from "@enterprise_search/react_data_views_filter_plugin";
 import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResultsLayout, simpleSearchResultComponents} from "@enterprise_search/sovereign_search";
@@ -19,7 +19,14 @@ import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@e
 import {DoTheSearching, searchDebug} from "@enterprise_search/search/src/search";
 import {SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "@enterprise_search/data_views";
 import {elasticSearchDataSourcePlugin, elasticSearchDsName, ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
-import {FeatureFlags, NonFunctionalsProvider, consoleErrorReporter} from "@enterprise_search/react_utils";
+import {consoleErrorReporter, FeatureFlags, NonFunctionalsProvider} from "@enterprise_search/react_utils";
+
+
+const debugState = {
+    [authenticateDebug]: false,
+    [searchDebug]: false,
+    [startStateDebug]: true
+};
 
 export const exampleMsalConfig: Configuration = {
     auth: {
@@ -33,7 +40,7 @@ const msal = new PublicClientApplication(exampleMsalConfig);
 const login: LoginConfig = loginUsingMsal({msal});
 
 
-export type SearchAppFilters = TimeFilters & KeywordsFilter & DataViewFilters
+export type SearchAppFilters = KeywordsFilter & DataViewFilters & TimeFilters
 const reactFiltersContextData: ReactFiltersContextData<SearchAppFilters> = {
     plugins: {
         [keywordsFilterName]: simpleKeywordsFilterPlugin,
@@ -105,10 +112,6 @@ function SearchApp({}: SearchAppProps) {
     </Authenticate>
 }
 
-const debugState = {
-    [authenticateDebug]: false,
-    [searchDebug]: true,
-};
 
 const featureFlags: FeatureFlags = {
     flag1: {value: true, description: 'An example feature flag'},
@@ -116,22 +119,22 @@ const featureFlags: FeatureFlags = {
 };
 
 
+
+
 msal.initialize({}).then(() => {
 //we set up here: how we display the components, how we do state management and how we do authentication
     root.render(<React.StrictMode>
             <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags} errorReporter={consoleErrorReporter}>
                 <AuthenticationProvider loginConfig={login}>
-                    <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
-                        <SovereignStateProvider initial='start'>
-                            <SearchImportantComponentsProvider components={searchImportantComponents}>
-                                <IconProvider icons={simpleIconContext}>
-                                    <DoTheSearching>
-                                        <SearchApp/>
-                                    </DoTheSearching>
-                                </IconProvider>
-                            </SearchImportantComponentsProvider>
+                    <SearchImportantComponentsProvider components={searchImportantComponents}>
+                        <SovereignStateProvider initial='start' plugins={sovereignStatePlugins}>
+                            <IconProvider icons={simpleIconContext}>
+                                <DoTheSearching>
+                                    <SearchApp/>
+                                </DoTheSearching>
+                            </IconProvider>
                         </SovereignStateProvider>
-                    </SovereignStatePluginsProvider>
+                    </SearchImportantComponentsProvider>
                 </AuthenticationProvider>
             </NonFunctionalsProvider>
         </React.StrictMode>

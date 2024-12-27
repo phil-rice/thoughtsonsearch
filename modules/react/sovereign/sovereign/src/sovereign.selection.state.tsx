@@ -1,5 +1,5 @@
 import React, {ReactElement, useContext, useState} from "react";
-import {GetterSetter, makeContextFor, makeContextForState} from "@enterprise_search/react_utils";
+import {DebugLog, GetterSetter, makeContextFor} from "@enterprise_search/react_utils";
 import {NameAnd} from "@enterprise_search/recoil_utils";
 
 
@@ -14,13 +14,15 @@ export type SovereignSelectionState = {
 }
 /** This is the list of all of the sovereign pages that we have. The 'selected' in the above state is for this */
 export type SovereignStatePlugins = NameAnd<SovereignStatePlugin>
+
 export type SovereignStatePlugin = {
     plugin: 'sovereign'
-    display: DisplaySovereignPage
+    display: DisplaySovereignPage,
 }
 
 export type DisplaySovereignPage = (props: DisplaySovereignPageProps) => ReactElement
 export type DisplaySovereignPageProps = {}
+
 
 export function makeSovereignStatePlugin(display: DisplaySovereignPage): SovereignStatePlugin {
     return {plugin: 'sovereign', display}
@@ -28,17 +30,27 @@ export function makeSovereignStatePlugin(display: DisplaySovereignPage): Soverei
 
 export const {use: useSovereignStatePlugins, Provider: SovereignStatePluginsProvider} = makeContextFor<SovereignStatePlugins, 'plugins'>('plugins', undefined)
 
-// export const { } = makeContextForState<string, 'initial'>('initial')
+const selectedSovereignContext = React.createContext<GetterSetter<string> | undefined>(undefined)
 
-const sContext = React.createContext<GetterSetter<string> | undefined>(undefined)
 export function useSelectedSovereign(): GetterSetter<string> {
-    const selected = useContext(sContext)
+    const selected = useContext(selectedSovereignContext)
     return selected!
 }
-export function SovereignStateProvider({initial, children}: { initial: string, children: ReactElement }) {
-    const ops = useState(initial)
-    return <sContext.Provider value={ops}>{children}</sContext.Provider>
 
+export type SoverignStateProviderProps = {
+    initial: string
+    plugins: SovereignStatePlugins
+    children: React.ReactNode
 }
+
+export function SovereignStateProvider({initial, plugins, children}: SoverignStateProviderProps) {
+    const ops = useState(initial)
+    return <SovereignStatePluginsProvider plugins={plugins}>
+        <selectedSovereignContext.Provider value={ops}>
+            {children}
+        </selectedSovereignContext.Provider>
+    </SovereignStatePluginsProvider>
+}
+
 
 

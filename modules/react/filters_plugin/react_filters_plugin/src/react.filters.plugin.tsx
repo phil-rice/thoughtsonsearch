@@ -1,6 +1,6 @@
 import {NameAnd} from "@enterprise_search/recoil_utils";
 import React from "react";
-import {GetterSetter, makeContextFor, makeGetterSetter, useThrowError} from "@enterprise_search/react_utils";
+import {DebugLog, GetterSetter, makeContextFor, makeGetterSetter, useThrowError} from "@enterprise_search/react_utils";
 import {lensBuilder} from "@enterprise_search/optics";
 import {ThrowError} from "@enterprise_search/errors";
 
@@ -27,7 +27,11 @@ export type ReactFiltersPlugin<Filters, FilterName extends keyof Filters> = {
     DefaultDisplay: DisplayFilter<Filters[FilterName]>
     //return null if you don't want to display in that purpose
     PurposeToDisplay: NameAnd<DisplayFilter<Filters[FilterName]> | null>
+    /* When we have a soveriegn page that uses the filters, it uses these methods to interact with the url */
+    fromUrl?: (debug: DebugLog,s: URLSearchParams, def: Filters[FilterName]) => Filters[FilterName]
+    addToUrl?: ( debug: DebugLog,u: URLSearchParams,f: Filters[FilterName],) => void
 }
+
 
 /** Filters may be viewing data pretty much anywhere in the state. So we pass in a getter/setter */
 export type DisplayFilterProps<Filter> = { id?: string, filterOps: GetterSetter<Filter> }

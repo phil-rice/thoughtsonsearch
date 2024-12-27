@@ -7,7 +7,8 @@
     "@enterprise_search/service_caller",
     "@enterprise_search/search_api",
     "@enterprise_search/optics",
-    "@enterprise_search/react_utils"
+    "@enterprise_search/react_utils",
+    "@enterprise_search/url_codec"
   ],
   "packageJson": {
     "files": ["build/"],

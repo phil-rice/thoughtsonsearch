@@ -1,5 +1,5 @@
 import {SearchBar, SearchBarProvider} from "@enterprise_search/search_bar";
-import {ReactFiltersContextData, ReactFiltersProvider} from "@enterprise_search/react_filters_plugin";
+import {ReactFiltersContextData, ReactFiltersPlugin, ReactFiltersProvider, useReactFilters} from "@enterprise_search/react_filters_plugin";
 
 import {LoadingDisplay} from "@enterprise_search/loading";
 import React, {useEffect} from "react";
@@ -15,7 +15,9 @@ import {DevMode, DevModeForSearchProvider} from "@enterprise_search/devmode";
 import {emptySearchState} from "@enterprise_search/search_state";
 import {SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
 import {SearchResultsComponents, SearchResultsComponentsProvider} from "@enterprise_search/sovereign_search/src/search.results.components";
+import {useDebug} from "@enterprise_search/react_utils";
 
+export const startStateDebug = 'startState'
 
 /* These all need to have an implementation for the search to work
 If you add new components to the search, they should really be here so that
@@ -42,6 +44,7 @@ export interface SearchImportantComponents<Context, Details extends CommonDataSo
 
 export type SearchImportantComponentsProviderProps<Context, Details extends CommonDataSourceDetails, Filters> = {
     components: SearchImportantComponents<Context, Details, Filters>
+
     children: React.ReactNode
 }
 
@@ -53,16 +56,31 @@ export type SetupStartStateProps<Filters extends DataViewFilters> = {
 
 export function SetUpStartState<Filters extends DataViewFilters>({dataViewDetails, start = 'all', children}: SetupStartStateProps<Filters>) {
     const [state, setState] = useSearchGuiState()
+    const debug = useDebug(startStateDebug)
+    const filterPlugins = useReactFilters().plugins
     useEffect(() => {
         const startState: SearchGuiData<Filters> = {
-            ...emptySearchGuiState, filters: {
+            ...state,
+            filters: {
                 [dataViewFilterName]: {allowedNames: uniqueStrings(dataViewDetails[start].flatMap(x => x.names)), selectedNames: []}
             } as Filters
         }
+        const url = new URL(window.location.href)
+        for (const [name, plugin] of Object.entries(filterPlugins)) {
+            const filterPlugin: ReactFiltersPlugin<Filters, any> = plugin as unknown as any
+            debug('loading', 'filter', name, filterPlugin.fromUrl)
+            if (filterPlugin.fromUrl) {
+                const newFilter = filterPlugin.fromUrl(debug, url.searchParams, startState.filters[name]);
+                debug('newFilterFor', name, newFilter)
+                startState.filters[name] = newFilter
+            }
+        }
+
         setState(startState)
     }, [])
     return <>{children}</>
 }
+
 
 export function SearchImportantComponentsProvider<Context, Details extends CommonDataSourceDetails, Filters extends DataViewFilters>({components, children}: SearchImportantComponentsProviderProps<Context, Details, Filters>) {
     const {
@@ -70,7 +88,6 @@ export function SearchImportantComponentsProvider<Context, Details extends Commo
         NotLoggedIn, NavBarItem, DataViewNavBarLayout, dataViewDetails
     } = components
     const dataViews: DataViews<Details> = dataSourceDetailsToDataView(dataViewDetails, NavBarItem)
-
 
     return <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
         <SearchBarProvider searchBar={SearchBar}>
@@ -86,7 +103,7 @@ export function SearchImportantComponentsProvider<Context, Details extends Commo
                                                 <SetUpStartState dataViewDetails={dataViewDetails}>{
                                                     children
                                                 }
-                                                <DevMode/>
+                                                    <DevMode/>
                                                 </SetUpStartState>
                                             </SearchGuiStateProvider>
                                         </SearchResultsComponentsProvider>

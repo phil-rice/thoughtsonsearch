@@ -6,7 +6,6 @@ import {keywordsFilterName} from "@enterprise_search/react_keywords_filter_plugi
 import {useFiltersByStateType} from "@enterprise_search/react_search_state";
 import {useSearchParser} from "@enterprise_search/react_search_parser";
 
-
 export function InitialSearchSovereignPage<Filters>() {
     const SearchBar = useSearchBar()
     const [selected, setSelected] = useSelectedSovereign()
