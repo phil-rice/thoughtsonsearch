@@ -1,6 +1,7 @@
-import React, {ReactElement, useContext, useState} from "react";
-import {DebugLog, GetterSetter, makeContextFor} from "@enterprise_search/react_utils";
+import React, {ReactElement} from "react";
+import {GetterSetter, makeContextFor} from "@enterprise_search/react_utils";
 import {NameAnd} from "@enterprise_search/recoil_utils";
+import {makeRoutingSegmentContextFor} from "@enterprise_search/routing";
 
 
 //It feels that this will grow and become more of a plugin
@@ -30,27 +31,6 @@ export function makeSovereignStatePlugin(display: DisplaySovereignPage): Soverei
 
 export const {use: useSovereignStatePlugins, Provider: SovereignStatePluginsProvider} = makeContextFor<SovereignStatePlugins, 'plugins'>('plugins', undefined)
 
-const selectedSovereignContext = React.createContext<GetterSetter<string> | undefined>(undefined)
-
-export function useSelectedSovereign(): GetterSetter<string> {
-    const selected = useContext(selectedSovereignContext)
-    return selected!
-}
-
-export type SoverignStateProviderProps = {
-    initial: string
-    plugins: SovereignStatePlugins
-    children: React.ReactNode
-}
-
-export function SovereignStateProvider({initial, plugins, children}: SoverignStateProviderProps) {
-    const ops = useState(initial)
-    return <SovereignStatePluginsProvider plugins={plugins}>
-        <selectedSovereignContext.Provider value={ops}>
-            {children}
-        </selectedSovereignContext.Provider>
-    </SovereignStatePluginsProvider>
-}
-
+export const {use: useSelectedSovereign, Provider: SovereignStateProvider} = makeRoutingSegmentContextFor('routing0', 0)
 
 

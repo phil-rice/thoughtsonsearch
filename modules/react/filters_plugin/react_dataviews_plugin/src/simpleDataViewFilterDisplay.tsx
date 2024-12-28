@@ -13,6 +13,7 @@ const noDataViewTranslationKey = 'filter.data-view.no-data-sources';
 export function SimpleDataViewFilterDisplay({filterOps, id}: DisplayFilterProps<DataViewFilterData>) {
     const [data, setData] = filterOps
     const selectedNamesOps = makeGetterSetter(data, setData, lensBuilder<DataViewFilterData>().focusOn('selectedNames'))
+    const allowedNames = data?.allowedNames||[];
     return (
         <div className="data-view-filter" id={id ? `${id}-filter-outer` : undefined}>
             <TranslatedLabel translationKey={selectDataViewsTranslationKey} htmlFor={id}/>
@@ -20,7 +21,7 @@ export function SimpleDataViewFilterDisplay({filterOps, id}: DisplayFilterProps<
                 className="datasource-filter-dropdown"
                 purpose="Filters display"
                 id={id}
-                allowedNames={data.allowedNames}
+                allowedNames={allowedNames}
                 noItemsKey={noDataViewTranslationKey}
                 stateOps={selectedNamesOps}
             />

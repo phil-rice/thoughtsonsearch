@@ -10,5 +10,17 @@ export const exampleTimeFilterPlugin: ReactFiltersPlugin<TimeFilters, 'time'> = 
     plugin: 'filter',
     type: timefilterPluginName,
     DefaultDisplay: SimpleTimeDisplay,
-    PurposeToDisplay: {} //happy with defaults
+    PurposeToDisplay: {}, //happy with defaults
+    fromUrl: (debug, searchParams, def) => {
+        const time = searchParams.get(timefilterPluginName)
+        debug('timeFilter fromUrl', 'time=', time)
+        return time || def
+    },
+    addToUrl: (debug, sp, time) => {
+        debug('timeFilter addToUrl', 'time=', time)
+        if (time)
+            sp.set(timefilterPluginName, time)
+        else
+            sp.delete(timefilterPluginName)
+    }
 }

@@ -6,7 +6,7 @@ import {makeContextFor} from "./react_utils";
 //and this is likely to appear on the gui for the user
 export type ErrorReporter = (error: Errors) => Promise<Errors>
 
-export const {use: useErrorReporter, Provider: ErrorReporterProvider} = makeContextFor<ErrorReporter, 'errorReporter'>('errorReporter')
+export const {use: useErrorReporter, Provider: ErrorReporterProvider, context: ErrorReporterContext} = makeContextFor<ErrorReporter, 'errorReporter'>('errorReporter')
 
 export const consoleErrorReporter: ErrorReporter = async (error: Errors) => {
     const reference = Math.random().toString(36).substring(2)

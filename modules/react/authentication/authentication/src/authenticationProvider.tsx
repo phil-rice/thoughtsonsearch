@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useMemo} from "react";
+import React, {createContext, ReactNode, useContext, useMemo} from "react";
 import {LoginOps} from "./login.ops";
 import {emptyUserData, UserData, UserDataGetter} from "./userData";
 import {DebugLog, makeContextForState, useDebug} from "@enterprise_search/react_utils";
@@ -33,6 +33,13 @@ export type AuthenticateContextData = {
 
 const {use: useUserDataFull, Provider: UserDataProviderPrivate} = makeContextForState<UserData, 'userData'>('userData')
 export const UserDataProvider = UserDataProviderPrivate
+
+export type UserDataAccessorProps = {children: (userData: UserData) => ReactNode}
+export function UserDataAccessor({children}: UserDataAccessorProps) {
+    const userData = useUserData()
+    return children(userData)
+}
+
 
 export function useUserData() {
     const ops = useUserDataFull()

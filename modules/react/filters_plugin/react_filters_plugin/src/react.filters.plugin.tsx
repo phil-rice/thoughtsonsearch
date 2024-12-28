@@ -3,6 +3,7 @@ import React from "react";
 import {DebugLog, GetterSetter, makeContextFor, makeGetterSetter, useThrowError} from "@enterprise_search/react_utils";
 import {lensBuilder} from "@enterprise_search/optics";
 import {ThrowError} from "@enterprise_search/errors";
+import {useErrorBoundary} from "@enterprise_search/error_boundary";
 
 // Filters are intrinsically bound to many places, and therefore if we aren't very
 // careful with our design they will become complex
@@ -68,6 +69,7 @@ export type DisplayAllFiltersOps<Filters> = {
 export const SimpleDisplayFilters = (filterPurpose: string) =>
     <Filters extends any>({filtersOps, id}: DisplayFiltersProps<Filters>) => {
         const reportErrors = useThrowError();
+        const ErrorBoundary = useErrorBoundary()
         const [filters, setFilters] = filtersOps;
         const {plugins, PurposeToFilterLayout} = useReactFilters()
         const FilterLayout = PurposeToFilterLayout[filterPurpose];
@@ -77,7 +79,7 @@ export const SimpleDisplayFilters = (filterPurpose: string) =>
                 const DisplayFilter: DisplayFilter<any> = findDisplayFilterFor<Filters, any>(reportErrors, plugins, filterName, filterPurpose);
                 if (!DisplayFilter) return null;
                 const filterOps = makeGetterSetter(filters, setFilters, lensBuilder<Filters>().focusOn(filterName as any));
-                return <DisplayFilter key={filterName} id={`${id}.${filterName}`} filterOps={filterOps}/>;
+                return <ErrorBoundary key={filterName} message={`error.filter.${filterName}`}><DisplayFilter  id={`${id}.${filterName}`} filterOps={filterOps}/></ErrorBoundary>
             })}
         </FilterLayout>
     };

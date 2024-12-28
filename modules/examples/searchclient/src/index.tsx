@@ -11,21 +11,24 @@ import {CommonDataSourceDetails, DataSourceDetails, DataSourcePlugins} from "@en
 import {DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {SimpleSearchBar} from "@enterprise_search/search_bar";
 import {simpleLoadingDisplay} from "@enterprise_search/loading";
-import {DisplaySelectedSovereignPage, SovereignStatePlugins, SovereignStateProvider} from "@enterprise_search/sovereign";
+import {DisplaySelectedSovereignPage, SovereignStatePlugins, SovereignStatePluginsProvider, SovereignStateProvider} from "@enterprise_search/sovereign";
 import {IconProvider, simpleIconContext} from "@enterprise_search/icons";
 import {dataViewFilter, dataViewFilterName, DataViewFilters, SimpleDataViewFilterDisplay} from "@enterprise_search/react_data_views_filter_plugin";
 import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResultsLayout, simpleSearchResultComponents} from "@enterprise_search/sovereign_search";
 import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
 import {DoTheSearching, searchDebug} from "@enterprise_search/search/src/search";
-import {SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "@enterprise_search/data_views";
+import {dataViewDebug, SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "@enterprise_search/data_views";
 import {elasticSearchDataSourcePlugin, elasticSearchDsName, ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
 import {consoleErrorReporter, FeatureFlags, NonFunctionalsProvider} from "@enterprise_search/react_utils";
+import {routingDebug} from "@enterprise_search/routing";
 
 
 const debugState = {
     [authenticateDebug]: false,
     [searchDebug]: false,
-    [startStateDebug]: true
+    [startStateDebug]: true,
+    [dataViewDebug]: true,
+    [routingDebug]: true
 };
 
 export const exampleMsalConfig: Configuration = {
@@ -119,22 +122,22 @@ const featureFlags: FeatureFlags = {
 };
 
 
-
-
 msal.initialize({}).then(() => {
 //we set up here: how we display the components, how we do state management and how we do authentication
     root.render(<React.StrictMode>
             <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags} errorReporter={consoleErrorReporter}>
                 <AuthenticationProvider loginConfig={login}>
-                    <SearchImportantComponentsProvider components={searchImportantComponents}>
-                        <SovereignStateProvider initial='start' plugins={sovereignStatePlugins}>
-                            <IconProvider icons={simpleIconContext}>
-                                <DoTheSearching>
-                                    <SearchApp/>
-                                </DoTheSearching>
-                            </IconProvider>
+                    <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
+                        <SovereignStateProvider>
+                            <SearchImportantComponentsProvider components={searchImportantComponents}>
+                                <IconProvider icons={simpleIconContext}>
+                                    <DoTheSearching>
+                                        <SearchApp/>
+                                    </DoTheSearching>
+                                </IconProvider>
+                            </SearchImportantComponentsProvider>
                         </SovereignStateProvider>
-                    </SearchImportantComponentsProvider>
+                    </SovereignStatePluginsProvider>
                 </AuthenticationProvider>
             </NonFunctionalsProvider>
         </React.StrictMode>

@@ -1,12 +1,13 @@
 import React, {SetStateAction, useCallback} from "react";
 import {NameAnd} from "@enterprise_search/recoil_utils";
-import {GetterSetter, makeContextFor, Setter} from "@enterprise_search/react_utils";
+import {GetterSetter, makeContextFor, Setter, useDebug} from "@enterprise_search/react_utils";
 import {CommonDataSourceDetails, DataSourceDetails} from "@enterprise_search/react_datasource_plugin";
 import {makeSimpleNavBar, NavBar} from "@enterprise_search/navbar";
 import {SearchGuiData, useGuiSelectedDataView, useSearchGuiState} from "@enterprise_search/search_gui_state";
 import {lensBuilder} from "@enterprise_search/optics";
 import {DataViewFilterData, dataViewFilterName} from "@enterprise_search/react_data_views_filter_plugin";
 
+export const dataViewDebug = 'dataView'
 
 export type DataViewDisplayProps = { itemName: string }
 export type DataViewDisplay = (props: DataViewDisplayProps) => React.ReactElement;
@@ -50,25 +51,28 @@ export type DataViewComponents = {
 }
 export const {Provider: DataViewComponentsProvider, use: useDataViewComponents} = makeContextFor('components', undefined as DataViewComponents)
 
-const selectedViewAndDataViewL = lensBuilder<SearchGuiData<any>>().focusCompose({
-    selectedDataView: lensBuilder<SearchGuiData<any>>().focusOn('selectedDataView'),
-    dataView: lensBuilder<SearchGuiData<any>>().focusOn('filters').focusOn(dataViewFilterName)
-})
+const dataViewL = lensBuilder<SearchGuiData<any>>().focusOn('filters').focusOn(dataViewFilterName)
+
 
 export type DataViewNavBarProps = {}
 
 export function DataViewNavBar(props: DataViewNavBarProps) {
     const dataViews = useDataViews();
+    const [selectedDataView, setSelectedDataView] = useGuiSelectedDataView();
     const [state, setState] = useSearchGuiState();
+    const debug = useDebug(dataViewDebug)
     const setSelected: Setter<string> = (name: SetStateAction<string>) => {
-        const selectedDataView = typeof name === 'string' ? name : name(state.selectedDataView)
+        const actualName = typeof name === 'string' ? name : name(selectedDataView)
+        setSelectedDataView(actualName)
         const dataView: DataViewFilterData = {
+            selected: actualName,
             selectedNames: [],
-            allowedNames: dataViews[selectedDataView].datasources.flatMap(ds => ds.names)
+            allowedNames: dataViews[actualName].datasources.flatMap(ds => ds.names)
         }
-        setState(selectedViewAndDataViewL.set(state, {selectedDataView, dataView}))
+        debug('Setting selected data view', actualName, dataView)
+        setState(dataViewL.set(state, dataView))
     };
-    const selectedOps: GetterSetter<string> = [state.selectedDataView, setSelected]
+    const selectedOps: GetterSetter<string> = [selectedDataView, setSelected]
     const NavBar = useCallback(makeSimpleNavBar('Data views', Object.keys(dataViews)), [dataViews])
     return <NavBar selectedOps={selectedOps}/>
 }

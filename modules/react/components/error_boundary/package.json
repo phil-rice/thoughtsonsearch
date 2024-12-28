@@ -1,6 +1,6 @@
 {
-  "name": "@enterprise_search/react_filters_plugin",
-  "description": "A plugin that abstracts over filters: mostly how to display them",
+  "name": "@enterprise_search/error_boundary",
+  "description": "The error boundary component",
   "version": "0.0.1",
   "browserslist": {
     "development": [
@@ -15,10 +15,9 @@
     ]
   },
   "dependencies": {
-    "@enterprise_search/error_boundary": "0.0.1",
-    "@enterprise_search/search_state": "0.0.1",
-    "@enterprise_search/service_caller": "0.0.1",
-    "@enterprise_search/search_api": "0.0.1",
+    "@enterprise_search/authentication": "0.0.1",
+    "@enterprise_search/react_utils": "0.0.1",
+    "@enterprise_search/translation": "0.0.1",
     "debug": "^4.3.4",
     "@focuson/lens": "1.44.3",
     "@focuson/state": "1.44.3",

@@ -1,12 +1,11 @@
 {
   "template": "react_library",
-  "name": "@enterprise_search/react_filters_plugin",
-  "description": "A plugin that abstracts over filters: mostly how to display them",
+  "name": "@enterprise_search/error_boundary",
+  "description": "The error boundary component",
   "links": [
-    "@enterprise_search/error_boundary",
-    "@enterprise_search/search_state",
-    "@enterprise_search/service_caller",
-    "@enterprise_search/search_api"
+    "@enterprise_search/authentication",
+    "@enterprise_search/react_utils",
+    "@enterprise_search/translation"
   ],
   "packageJson": {
     "files": ["build/"],

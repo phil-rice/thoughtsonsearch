@@ -8,7 +8,7 @@
     "@enterprise_search/search_api",
     "@enterprise_search/optics",
     "@enterprise_search/react_utils",
-    "@enterprise_search/url_codec"
+    "@enterprise_search/routing"
   ],
   "packageJson": {
     "files": ["build/"],

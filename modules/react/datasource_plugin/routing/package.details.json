@@ -1,12 +1,9 @@
 {
   "template": "react_library",
-  "name": "@enterprise_search/react_filters_plugin",
-  "description": "A plugin that abstracts over filters: mostly how to display them",
+  "name": "@enterprise_search/routing",
+  "description": "utilities to help routing",
   "links": [
-    "@enterprise_search/error_boundary",
-    "@enterprise_search/search_state",
-    "@enterprise_search/service_caller",
-    "@enterprise_search/search_api"
+    "@enterprise_search/recoil_utils"
   ],
   "packageJson": {
     "files": ["build/"],

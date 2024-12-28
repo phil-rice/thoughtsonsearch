@@ -8,6 +8,8 @@ export const dataViewFilterName = 'dataviews';
 
 
 export type DataViewFilterData = {
+    //It is annoying we need this to communicate with the url, but I've not found a cleaner way yet
+    selected: string
     allowedNames: string[]
     selectedNames?: string[] //if not present then all are selected
 }
@@ -26,11 +28,16 @@ export const dataViewFilter =
             const selected = toArray(data?.selectedNames).join(' ')
             debug('dataViewFilter addToUrl', 'selected=', selected, sp.toString())
             sp.set('selected', selected)
+            debug('dataViewFilter addToUrl - after updating sp',  sp.toString())
         },
         fromUrl: (debug: DebugLog, searchParams, def) => {
-            const selected = searchParams.get('selected')
-            debug('dataViewFilter fromUrl', 'selected=', selected)
-            return selected ? {...def, selectedNames: selected.split(' ')} : def
+            const rawSelectedNames = searchParams.get('selected')
+            debug('dataViewFilter fromUrl', 'selected=', rawSelectedNames)
+            const rawSelected = rawSelectedNames?.split(' ') || [];
+            const allowed = toArray(def?.allowedNames)
+            debug('dataViewFilter fromUrl', 'allowed=', allowed)
+            const selectedNames = rawSelected.filter(s => allowed.includes(s))
+            return rawSelectedNames ? {...def, selectedNames} : def
         }
     })
 

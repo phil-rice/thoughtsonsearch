@@ -1,19 +1,21 @@
-import {GetterSetter, makeContextForState, makeGetterSetter, makeUseStateChild} from "@enterprise_search/react_utils";
+import {GetterSetter, makeContextFor, makeContextForState, makeGetterSetter, makeUseStateChild} from "@enterprise_search/react_utils";
 import React, {useMemo} from "react";
 import {lensBuilder} from "@enterprise_search/optics";
 import {useSearchState} from "@enterprise_search/react_search_state";
+import {SovereignStatePlugins} from "@enterprise_search/sovereign";
+import {makeRoutingSegmentContextFor} from "@enterprise_search/routing";
 
 export type SearchGuiData<Filters> = {
     searchQuery: string
     filters: Filters
-    selectedDataView: string
 }
-export const emptySearchGuiState = {searchQuery: '', filters: {} , selectedDataView: 'all'}
+export const emptySearchGuiState = {searchQuery: '', filters: {}}
 
 export const {Provider: SearchGuiStateProvider, use: useSearchGuiState} = makeContextForState<SearchGuiData<any>, 'searchGuiState'>('searchGuiState')
 export const useGuiSearchQuery = makeUseStateChild(useSearchGuiState, id => id.focusOn('searchQuery'))
 export const useGuiFilters = makeUseStateChild(useSearchGuiState, id => id.focusOn('filters'))
-export const useGuiSelectedDataView = makeUseStateChild(useSearchGuiState, id => id.focusOn('selectedDataView'))
+
+export const {use: useGuiSelectedDataView, Provider: GuiSelectedDataViewProvider} = makeRoutingSegmentContextFor('routing1', 1)
 
 export function useGuiFilter<Filters, FilterName extends keyof Filters>(filterName: FilterName): GetterSetter<Filters[FilterName]> {
     const [value, setValue] = useGuiFilters(); // This is `useField()` behind the scenes
