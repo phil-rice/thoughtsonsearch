@@ -7,15 +7,15 @@ import {uniqueStrings} from "@enterprise_search/recoil_utils/src/arrays";
 import {SetupStartStateProps, startStateDebug} from "./search.important.components";
 import {CommonDataSourceDetails, DataSourceDetails} from "@enterprise_search/react_datasource_plugin";
 import {useSelectedSovereign} from "@enterprise_search/sovereign";
+import {useWindowUrlData, WindowUrlData} from "@enterprise_search/routing";
 
-function calculateStartStateFromUrl<Filters>(debug: DebugLog, dataViewDetails: DataSourceDetails<CommonDataSourceDetails>, filterPlugins: ReactFiltersPlugins<any>, state: SearchGuiData<any>, selectedDataView: string) {
-    const url = new URL(window.location.href)
+function calculateStartStateFromUrl<Filters>(debug: DebugLog, urlData: WindowUrlData, dataViewDetails: DataSourceDetails<CommonDataSourceDetails>, filterPlugins: ReactFiltersPlugins<any>, state: SearchGuiData<any>, selectedDataView: string) {
     const dataViewDetail = dataViewDetails[selectedDataView];
     if (!dataViewDetail) throw new Error(`Cannot find dataViewDetail for ${selectedDataView}. Legal values are ${Object.keys(dataViewDetails).sort()}`)
     const startState: SearchGuiData<Filters> = {
         ...state,
         filters: {
-            [dataViewFilterName]: {allowedNames: uniqueStrings(dataViewDetail.flatMap(x => x.names)), selectedNames: []}
+            [dataViewFilterName]: {allowedNames: uniqueStrings(dataViewDetail.flatMap(x => x.names)), selectedNames: [], selectedDataView: urlData.parts[1]}
         } as Filters,
     }
 
@@ -23,7 +23,7 @@ function calculateStartStateFromUrl<Filters>(debug: DebugLog, dataViewDetails: D
         const filterPlugin: ReactFiltersPlugin<Filters, any> = plugin as unknown as any
         debug('loading', 'filter', name, filterPlugin.fromUrl)
         if (filterPlugin.fromUrl) {
-            const newFilter = filterPlugin.fromUrl(debug, url.searchParams, startState.filters[name]);
+            const newFilter = filterPlugin.fromUrl(debug, urlData, startState.filters[name]);
             debug('newFilterFor', name, newFilter)
             startState.filters[name] = newFilter
         }
@@ -35,11 +35,14 @@ export function UrlManagementForSearch<Filters extends DataViewFilters>({dataVie
     const [selected] = useSelectedSovereign()
     const [state, setState] = useSearchGuiState()
     const [selectedDataView] = useGuiSelectedDataView()
+    const urlData = useWindowUrlData()
     const debug = useDebug(startStateDebug)
     const filterPlugins = useReactFilters().plugins
     useEffect(() => {
         debug('Calculating start state from url')
-        setState(calculateStartStateFromUrl(debug, dataViewDetails, filterPlugins, state, selectedDataView))
+        const newState = calculateStartStateFromUrl(debug, urlData, dataViewDetails, filterPlugins, state, selectedDataView);
+        debug('Calculating start state from url', 'newState', newState)
+        setState(newState)
     }, []);
     useEffect(() => {
         const url = new URL(window.location.href)

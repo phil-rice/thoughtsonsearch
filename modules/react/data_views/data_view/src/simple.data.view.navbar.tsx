@@ -1,20 +1,15 @@
 import {DataViewNavBarLayout, NavBarItem, useDataViews} from "./data.views";
 import React from "react";
-import {SearchGuiData, useGuiSelectedDataView, useSearchGuiState} from "@enterprise_search/search_gui_state";
-import {dataViewFilterName} from "@enterprise_search/react_data_views_filter_plugin";
+import {SearchGuiData, useGuiFilter, useGuiSelectedDataView, useSearchGuiState} from "@enterprise_search/search_gui_state";
+import {DataViewFilterData, dataViewFilterName, DataViewFilters} from "@enterprise_search/react_data_views_filter_plugin";
 import {lensBuilder} from "@enterprise_search/optics";
 
 
-const selectedViewAndDataViewL = lensBuilder<SearchGuiData<any>>().focusCompose({
-    selectedDataView: lensBuilder<SearchGuiData<any>>().focusOn('selectedDataView'),
-    dataView: lensBuilder<SearchGuiData<any>>().focusOn('filters').focusOn(dataViewFilterName)
-})
-
-export const SimpleDataViewNavItem: NavBarItem = ({name}) => {
+export const SimpleDataViewNavItem: NavBarItem = <Filters extends DataViewFilters>({name}) => {
     const dataViews = useDataViews();  // Assuming this is where the available data views are fetched.
     const dataView = dataViews[name];
-    const [searchGuiState, setSearchGuiState] = useSearchGuiState()
-    const [selectedDataView] = useGuiSelectedDataView();
+    const [filter, setFilter] = useGuiFilter<Filters, 'dataviews'>(dataViewFilterName)
+    const [selectedDataView,setSelectedDataView] = useGuiSelectedDataView();
     const isSelected = selectedDataView === name;  // Check if the current item is selected
 
     return (
@@ -30,8 +25,9 @@ export const SimpleDataViewNavItem: NavBarItem = ({name}) => {
             }}
             onClick={() => {
                 const allowedNames = dataView.datasources.flatMap(ds => ds.names);  // Allow all data sources
-                const newState = selectedViewAndDataViewL.set(searchGuiState, {selectedDataView: name, dataView: {selectedNames: [], allowedNames}});
-                setSearchGuiState(newState);
+                const filter: DataViewFilterData = {selectedNames: [], allowedNames, selected: selectedDataView};
+                setFilter(filter);
+                setSelectedDataView(name);
             }}
         >
             {name}

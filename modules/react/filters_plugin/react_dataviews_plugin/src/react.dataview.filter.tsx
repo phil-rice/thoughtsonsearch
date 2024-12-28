@@ -28,9 +28,10 @@ export const dataViewFilter =
             const selected = toArray(data?.selectedNames).join(' ')
             debug('dataViewFilter addToUrl', 'selected=', selected, sp.toString())
             sp.set('selected', selected)
-            debug('dataViewFilter addToUrl - after updating sp',  sp.toString())
+            debug('dataViewFilter addToUrl - after updating sp', sp.toString())
         },
-        fromUrl: (debug: DebugLog, searchParams, def) => {
+        fromUrl: (debug: DebugLog, windowUrlData, def) => {
+            const searchParams = windowUrlData.url.searchParams
             const rawSelectedNames = searchParams.get('selected')
             debug('dataViewFilter fromUrl', 'selected=', rawSelectedNames)
             const rawSelected = rawSelectedNames?.split(' ') || [];

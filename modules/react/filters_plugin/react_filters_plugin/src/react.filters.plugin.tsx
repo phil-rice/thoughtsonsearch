@@ -4,6 +4,7 @@ import {DebugLog, GetterSetter, makeContextFor, makeGetterSetter, useThrowError}
 import {lensBuilder} from "@enterprise_search/optics";
 import {ThrowError} from "@enterprise_search/errors";
 import {useErrorBoundary} from "@enterprise_search/error_boundary";
+import {WindowUrlData} from "@enterprise_search/routing";
 
 // Filters are intrinsically bound to many places, and therefore if we aren't very
 // careful with our design they will become complex
@@ -29,7 +30,7 @@ export type ReactFiltersPlugin<Filters, FilterName extends keyof Filters> = {
     //return null if you don't want to display in that purpose
     PurposeToDisplay: NameAnd<DisplayFilter<Filters[FilterName]> | null>
     /* When we have a soveriegn page that uses the filters, it uses these methods to interact with the url */
-    fromUrl?: (debug: DebugLog,s: URLSearchParams, def: Filters[FilterName]) => Filters[FilterName]
+    fromUrl?: (debug: DebugLog,s: WindowUrlData, def: Filters[FilterName]) => Filters[FilterName]
     addToUrl?: ( debug: DebugLog,u: URLSearchParams,f: Filters[FilterName],) => void
 }
 

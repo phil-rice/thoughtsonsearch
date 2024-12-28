@@ -57,10 +57,11 @@ const dataViewL = lensBuilder<SearchGuiData<any>>().focusOn('filters').focusOn(d
 export type DataViewNavBarProps = {}
 
 export function DataViewNavBar(props: DataViewNavBarProps) {
+    const debug = useDebug(dataViewDebug)
     const dataViews = useDataViews();
     const [selectedDataView, setSelectedDataView] = useGuiSelectedDataView();
     const [state, setState] = useSearchGuiState();
-    const debug = useDebug(dataViewDebug)
+    debug ('Data views','selectedDataView', selectedDataView, 'dataViews', dataViews)
     const setSelected: Setter<string> = (name: SetStateAction<string>) => {
         const actualName = typeof name === 'string' ? name : name(selectedDataView)
         setSelectedDataView(actualName)

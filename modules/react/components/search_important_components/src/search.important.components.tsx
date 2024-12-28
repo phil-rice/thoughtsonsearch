@@ -62,7 +62,7 @@ export function SearchImportantComponentsProvider<Context, Details extends Commo
     const dataViews: DataViews<Details> = dataSourceDetailsToDataView(dataViewDetails, NavBarItem)
 
     return <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
-        <GuiSelectedDataViewProvider>
+        <GuiSelectedDataViewProvider >
             <SearchBarProvider searchBar={SearchBar}>
                 <DevModeForSearchProvider devModeState={{selected: ''}}>
                     <ReactFiltersProvider reactFilters={reactFiltersContextData}>

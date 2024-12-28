@@ -20,7 +20,7 @@ import {DoTheSearching, searchDebug} from "@enterprise_search/search/src/search"
 import {dataViewDebug, SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "@enterprise_search/data_views";
 import {elasticSearchDataSourcePlugin, elasticSearchDsName, ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
 import {consoleErrorReporter, FeatureFlags, NonFunctionalsProvider} from "@enterprise_search/react_utils";
-import {routingDebug} from "@enterprise_search/routing";
+import {routingDebug, WindowUrlProvider} from "@enterprise_search/routing";
 
 
 const debugState = {
@@ -124,20 +124,23 @@ const featureFlags: FeatureFlags = {
 
 msal.initialize({}).then(() => {
 //we set up here: how we display the components, how we do state management and how we do authentication
+
     root.render(<React.StrictMode>
             <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags} errorReporter={consoleErrorReporter}>
                 <AuthenticationProvider loginConfig={login}>
-                    <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
-                        <SovereignStateProvider>
-                            <SearchImportantComponentsProvider components={searchImportantComponents}>
-                                <IconProvider icons={simpleIconContext}>
-                                    <DoTheSearching>
-                                        <SearchApp/>
-                                    </DoTheSearching>
-                                </IconProvider>
-                            </SearchImportantComponentsProvider>
-                        </SovereignStateProvider>
-                    </SovereignStatePluginsProvider>
+                    <WindowUrlProvider>
+                        <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
+                            <SovereignStateProvider >
+                                <SearchImportantComponentsProvider components={searchImportantComponents}>
+                                    <IconProvider icons={simpleIconContext}>
+                                        <DoTheSearching>
+                                            <SearchApp/>
+                                        </DoTheSearching>
+                                    </IconProvider>
+                                </SearchImportantComponentsProvider>
+                            </SovereignStateProvider>
+                        </SovereignStatePluginsProvider>
+                    </WindowUrlProvider>
                 </AuthenticationProvider>
             </NonFunctionalsProvider>
         </React.StrictMode>

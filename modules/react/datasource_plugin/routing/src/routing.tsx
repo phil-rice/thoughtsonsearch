@@ -1,7 +1,7 @@
 import {GetterSetter, useDebug, useThrowError} from "@enterprise_search/react_utils";
 import React, {Context, ReactElement, ReactNode, useContext, useMemo} from "react";
 import {capitalizeFirstLetter} from "@enterprise_search/recoil_utils";
-import {startStateDebug} from "@enterprise_search/search_important_components";
+import {useWindowsPath, useWindowUrlData} from "./path.name.provider";
 
 export const routingDebug = 'routing'
 
@@ -9,9 +9,12 @@ export type RoutingSegmentOps = GetterSetter<string>
 
 export type RoutingContextResults = {
     use: () => RoutingSegmentOps
-    Provider: (props: { children: ReactNode }) => ReactElement
+    Provider: (props: RoutingProviderProps) => ReactElement
     context: Context<RoutingSegmentOps | undefined>
 }
+
+type RoutingProviderProps = { children: ReactNode }
+
 
 export function makeRoutingSegmentContextFor(
     field: string,
@@ -19,8 +22,6 @@ export function makeRoutingSegmentContextFor(
 ): RoutingContextResults {
 
     const context = React.createContext<RoutingSegmentOps | undefined>(undefined);
-
-    type ProviderProps = { children: ReactNode }
 
     function useRouting() {
         const debug = useDebug(routingDebug)
@@ -30,30 +31,24 @@ export function makeRoutingSegmentContextFor(
             const upperedName = capitalizeFirstLetter(field);
             throwError('s/w', `use${upperedName} must be used within a ${upperedName}Provider`);
         }
-        console.log('useRouting', field, contextValue)
+        debug('useRouting', field, contextValue)
         return contextValue!;
     }
 
     // Provider component dynamically named like `${field}Provider`
-    function RoutingProvider(props: ProviderProps) {
-        const debug = useDebug(startStateDebug)
-        const rDebug = useDebug(routingDebug)
-        const url = new URL(window.location.href)
-        const parts = url.pathname.split('/').filter(Boolean);
+    function RoutingProvider(props: RoutingProviderProps) {
+        const debug = useDebug(routingDebug)
+        const {parts, url} = useWindowUrlData()
         const value = parts[segment] || '';
-        const [stored, setStored] = React.useState(value)
-
         debug('RoutingProvider', segment, field, value)
-        rDebug('RoutingProvider', segment, field, value)
-        const ops: GetterSetter<string> = useMemo(() => [stored, name => {
-            const url = new URL(window.location.href)
+        const ops: GetterSetter<string> = useMemo(() => [value, name => {
             const actualName = typeof name === 'function' ? name(value) : name
             const newParts = [...parts];
             newParts[segment] = actualName;
-            url.pathname = `/${newParts.join('/')}`;
-            rDebug('RoutingProvider', segment, actualName, 'pushState', url.toString())
-            setStored(actualName)
-            window.history.pushState(null, '', url.toString());
+            const newUrl = new URL(url.toString());
+            newUrl.pathname = `/${newParts.join('/')}`;  // bit dirty...
+            debug('RoutingProvider', segment, actualName, 'pushState', newUrl.toString())
+            window.history.pushState(null, '', newUrl.toString());
         }], [value])
         return <context.Provider value={ops}>{props.children}</context.Provider>;
     }
