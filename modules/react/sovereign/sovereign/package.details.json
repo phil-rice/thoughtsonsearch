@@ -3,12 +3,13 @@
   "name": "@enterprise_search/sovereign",
   "description": "A sovereign is something that takes up the whole display.",
   "links": [
-    "@enterprise_search/search_state",
-    "@enterprise_search/service_caller",
-    "@enterprise_search/search_api",
     "@enterprise_search/optics",
     "@enterprise_search/react_utils",
-    "@enterprise_search/routing"
+    "@enterprise_search/search_api",
+    "@enterprise_search/search_state",
+    "@enterprise_search/service_caller",
+    "@enterprise_search/routing",
+    "@enterprise_search/translation"
   ],
   "packageJson": {
     "files": ["build/"],

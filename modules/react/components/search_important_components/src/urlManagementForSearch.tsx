@@ -42,7 +42,7 @@ function calculateStartStateFromUrl<Filters extends DataViewFilters & KeywordsFi
 
 export function UrlManagementForSearch<Filters extends DataViewFilters>({dataViewDetails, children}: SetupStartStateProps<Filters>) {
     const [selected] = useSelectedSovereign()
-    const sovereignPlugins = useSovereignStatePlugins();
+    const {plugins: sovereignPlugins} = useSovereignStatePlugins();
     const [state, setState] = useSearchGuiState()
     const [selectedDataView] = useGuiSelectedDataView()
     const urlData = useWindowUrlData()

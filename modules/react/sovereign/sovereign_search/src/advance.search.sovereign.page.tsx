@@ -1,4 +1,4 @@
-import {makeSovereignStatePlugin} from "@enterprise_search/sovereign";
+import {makeSovereignStatePlugin, useSelectedSovereign} from "@enterprise_search/sovereign";
 import {useSearchBar} from "@enterprise_search/search_bar";
 import {useDisplayAllFilters} from "@enterprise_search/react_filters_plugin";
 import React, {useEffect} from "react";
@@ -9,36 +9,18 @@ import {keywordsFilterName} from "@enterprise_search/react_keywords_filter_plugi
 import {useFiltersByStateType} from "@enterprise_search/react_search_state";
 import {useSearchParser} from "@enterprise_search/react_search_parser";
 import {DataViewFilters} from "@enterprise_search/react_data_views_filter_plugin";
+import {CommonSearchSovereignPage} from "./common.search.sovereign.page";
 
 
 export function AdvancedSearchSovereignPage<Filters extends DataViewFilters>() {
-    const SearchBar = useSearchBar()
-    const [mainFilters, setMainFilters] = useFiltersByStateType<Filters>('main')
-    const [immediateFilters, setImmediateFilters] = useFiltersByStateType<Filters>('immediate')
-    const parser = useSearchParser()
     const filterOps = useGuiFilters()
-    const [guiFilters, setGuiFilters] = filterOps
-    const [searchQuery] = useGuiSearchQuery()
     const {DisplayAllFilters} = useDisplayAllFilters<Filters>()
-
-    const immediateSearch = (searchQuery: string) => {
-        const newGuiFilters = {...guiFilters, [keywordsFilterName]: searchQuery}
-        setImmediateFilters(parser(newGuiFilters, immediateFilters))
-    }
-    const mainSearch = () => {
-        setMainFilters(parser({...guiFilters, [keywordsFilterName]: searchQuery}, guiFilters));
-    };
-    useEffect(() => {
-        setMainFilters(parser(guiFilters, mainFilters))
-    }, [guiFilters])
-
-    return <>
-        <h1>Advance search</h1>
-        <SearchBar immediateSearch={immediateSearch} mainSearch={mainSearch}/>
+    return <CommonSearchSovereignPage title={'search.advance.title'}>
         <DataViewNavBar/>
         <SearchResults st='main'/>
         <DisplayAllFilters id='filter' filtersOps={filterOps}/>
-    </>
+    </CommonSearchSovereignPage>
+
 }
 
 export const AdvanceSearchPagePlugin = makeSovereignStatePlugin(AdvancedSearchSovereignPage)

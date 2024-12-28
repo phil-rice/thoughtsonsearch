@@ -22,6 +22,7 @@ import {elasticSearchDataSourcePlugin, elasticSearchDsName, ElasticSearchSourceD
 import {consoleErrorReporter, FeatureFlags, NonFunctionalsProvider} from "@enterprise_search/react_utils";
 import {routingDebug, WindowUrlProvider} from "@enterprise_search/routing";
 import {simpleSearchDropDownComponents} from "@enterprise_search/search_dropdown";
+import {SimpleUnknownDisplay} from "@enterprise_search/sovereign/src/simple.unknown.display";
 
 
 const debugState = {
@@ -95,8 +96,11 @@ const searchImportantComponents: SearchImportantComponents<any, AllDataSourceDet
 }
 
 const sovereignStatePlugins: SovereignStatePlugins = {
-    start: InitialSovereignPagePlugin,
-    advancedSearch: AdvanceSearchPagePlugin
+    plugins: {
+        start: InitialSovereignPagePlugin,
+        advancedSearch: AdvanceSearchPagePlugin
+    },
+    UnknownDisplay: SimpleUnknownDisplay
 }
 
 

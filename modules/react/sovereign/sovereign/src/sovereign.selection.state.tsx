@@ -14,7 +14,11 @@ export type SovereignSelectionState = {
     selected: string
 }
 /** This is the list of all of the sovereign pages that we have. The 'selected' in the above state is for this */
-export type SovereignStatePlugins = NameAnd<SovereignStatePlugin>
+export type SovereignStatePlugins = {
+    plugins:NameAnd<SovereignStatePlugin>,
+    UnknownDisplay: DisplaySovereignPage
+}
+
 
 export type SovereignStatePlugin = {
     plugin: 'sovereign'

@@ -6,9 +6,9 @@ import {useThrowError} from "@enterprise_search/react_utils";
 export function DisplaySelectedSovereignPage(props: DisplaySovereignPageProps) {
     const [selected] = useSelectedSovereign()
     const reportError = useThrowError()
-    const plugins = useSovereignStatePlugins()
+    const {plugins, UnknownDisplay} = useSovereignStatePlugins()
     const plugin = selected ? plugins[selected] : Object.values(plugins)[0];
-    if (!plugin) reportError('s/w', `No plugin for sovereign ${selected}. Legal plugins are ${Object.keys(plugins).join(", ")}`)
+    if (!plugin) return <UnknownDisplay/>
     const Display = plugin.display
     return <Display {...props}/>
 }
