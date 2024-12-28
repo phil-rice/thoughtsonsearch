@@ -4,7 +4,9 @@
   "description": "Sovereign pages that displays search",
   "links": [
     "@enterprise_search/sovereign",
+    "@enterprise_search/translation",
     "@enterprise_search/search_bar",
+    "@enterprise_search/search_dropdown",
     "@enterprise_search/react_filters_plugin",
     "@enterprise_search/react_datasource_plugin",
     "@enterprise_search/search_state",

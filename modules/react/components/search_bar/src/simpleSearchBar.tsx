@@ -1,11 +1,9 @@
-// Define a type for the CSS variables
-import React, {useEffect} from "react";
-import {useFiltersByStateType} from "@enterprise_search/react_search_state";
+import React, {useEffect, useRef} from "react";
+import {useFiltersByStateType, useSearchResultsByStateType} from "@enterprise_search/react_search_state";
 import {useSearchParser} from "@enterprise_search/react_search_parser";
 import {SearchBarProps} from "./search.bar";
 import {KeywordsFilter, keywordsFilterName} from "@enterprise_search/react_keywords_filter_plugin";
-import {useGuiFilters, useGuiSearchQuery, useSearchGuiState} from "@enterprise_search/search_gui_state";
-import {DataSourcePlugin} from "@enterprise_search/react_datasource_plugin";
+import {useGuiFilters, useGuiSearchQuery} from "@enterprise_search/search_gui_state";
 
 type CSSVariables = {
     container: React.CSSProperties;
@@ -14,7 +12,7 @@ type CSSVariables = {
     clearButtonHover: React.CSSProperties;
     inputFocus: React.CSSProperties;
 };
-// CSS variables
+
 const cssVariables: CSSVariables = {
     container: {
         display: "flex",
@@ -31,7 +29,7 @@ const cssVariables: CSSVariables = {
         padding: "10px 12px",
         fontSize: "16px",
         border: "1px solid #ccc",
-        borderRadius: "4px",
+        borderRadius: "4px 0 0 4px",
         outline: "none",
         transition: "border-color 0.2s ease-in-out",
     },
@@ -39,37 +37,52 @@ const cssVariables: CSSVariables = {
         borderColor: "#0078d7",
     },
     clearButton: {
-        background: "none",
-        border: "none",
-        fontSize: "18px",
+        padding: "10px 20px",
+        fontSize: "16px",
+        backgroundColor: "#0078d7",
+        color: "white",
+        border: "1px solid #0078d7",
+        borderRadius: "0 4px 4px 0",
         cursor: "pointer",
-        marginLeft: "8px",
-        color: "#555",
+        transition: "background-color 0.2s ease-in-out, border-color 0.2s ease-in-out",
     },
     clearButtonHover: {
-        color: "#000",
+        backgroundColor: "#005bb5",
+        borderColor: "#005bb5",
     },
 };
 
-
-/* The logic for this method is mainly about the difference between 'main' and 'immediate' searches.
-  The main filters are the main gui driven ones, and keyword is updated when the user presses enter or clicks the search button.
-  The immediate filters are the ones that are updated as the user types in the search bar. So every time we type we copy the main filters to the immediate filters.
-  And this can be part of the parse filter...
-  When we search we just copy the immediate filters to the main filters.
-
-  Count is probably handled by the search logic
- */
 export function SimpleSearchBar<Filters extends KeywordsFilter>({immediateSearch, mainSearch}: SearchBarProps) {
-    const [searchQuery, setSearchQuery] = useGuiSearchQuery()
-    const [guiFilters] = useGuiFilters()
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)
+    const [searchQuery, setSearchQuery] = useGuiSearchQuery();
+    const [guiFilters] = useGuiFilters();
+    const [immediate, setImmediate] = useSearchResultsByStateType('immediate');
+
+    // Create ref for the input field
+    const inputRef = useRef<HTMLInputElement>(null);
+
+
+    //Autofocus on mount
     useEffect(() => {
-        immediateSearch?.(searchQuery)
+        if (inputRef.current)
+            requestAnimationFrame(() => {
+                inputRef.current?.focus();
+            });
+    }, []);
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const searchQuery = e.target.value;
+        if (searchQuery?.trim()) setImmediate(old => ({...old, dataSourceToSearchResult: {}}));
+        setSearchQuery(searchQuery);
+    };
+
+    useEffect(() => {
+        if (searchQuery?.trim()) immediateSearch?.(searchQuery);
     }, [guiFilters, searchQuery]);
+
     return (
         <div style={cssVariables.container}>
             <input
+                ref={inputRef}  // Attach ref to the input
                 type="text"
                 value={searchQuery}
                 onChange={onChange}
@@ -91,7 +104,8 @@ export function SimpleSearchBar<Filters extends KeywordsFilter>({immediateSearch
                     Object.assign(e.currentTarget.style, cssVariables.clearButtonHover)
                 }
                 onMouseOut={(e) => (e.currentTarget.style.color = "#555")}
-            >Search
+            >
+                Search
             </button>
         </div>
     );

@@ -4,11 +4,13 @@
   "description": "A template for the important components for search",
   "links": [
     "@enterprise_search/devmode",
-    "@enterprise_search/search_bar",
+    "@enterprise_search/search_dropdown",
     "@enterprise_search/react_keywords_filter_plugin",
     "@enterprise_search/react_time_filter_plugin",
     "@enterprise_search/react_login_component",
-    "@enterprise_search/search_important_components"
+    "@enterprise_search/search_bar",
+    "@enterprise_search/search_gui_state",
+    "@enterprise_search/sovereign"
   ],
   "packageJson": {
     "files": ["build/"],

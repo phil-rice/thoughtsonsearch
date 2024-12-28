@@ -1,6 +1,6 @@
 {
-  "name": "@enterprise_search/search_important_components",
-  "description": "A template for the important components for search",
+  "name": "@enterprise_search/search_dropdown",
+  "description": "An interface for how we displau the immediate search results",
   "version": "0.0.1",
   "browserslist": {
     "development": [
@@ -15,14 +15,8 @@
     ]
   },
   "dependencies": {
-    "@enterprise_search/devmode": "0.0.1",
-    "@enterprise_search/search_dropdown": "0.0.1",
-    "@enterprise_search/react_keywords_filter_plugin": "0.0.1",
-    "@enterprise_search/react_time_filter_plugin": "0.0.1",
-    "@enterprise_search/react_login_component": "0.0.1",
-    "@enterprise_search/search_bar": "0.0.1",
-    "@enterprise_search/search_gui_state": "0.0.1",
-    "@enterprise_search/sovereign": "0.0.1",
+    "@enterprise_search/search_state": "0.0.1",
+    "@enterprise_search/react_search_state": "0.0.1",
     "debug": "^4.3.4",
     "@focuson/lens": "1.44.3",
     "@focuson/state": "1.44.3",

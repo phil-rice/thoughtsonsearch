@@ -1,8 +1,6 @@
-import {GetterSetter, makeContextFor, makeContextForState, makeGetterSetter, makeUseStateChild} from "@enterprise_search/react_utils";
-import React, {useMemo} from "react";
+import {GetterSetter, makeContextForState, makeGetterSetter, makeUseStateChild} from "@enterprise_search/react_utils";
+import {useMemo} from "react";
 import {lensBuilder} from "@enterprise_search/optics";
-import {useSearchState} from "@enterprise_search/react_search_state";
-import {SovereignStatePlugins} from "@enterprise_search/sovereign";
 import {makeRoutingSegmentContextFor} from "@enterprise_search/routing";
 
 export type SearchGuiData<Filters> = {

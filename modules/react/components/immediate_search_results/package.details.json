@@ -1,0 +1,23 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/search_dropdown",
+  "description": "An interface for how we displau the immediate search results",
+  "links": [
+    "@enterprise_search/search_state",
+    "@enterprise_search/react_search_state"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

@@ -12,7 +12,17 @@ export const keywordsFilterPlugin = (Display: DisplayFilter<string>): ReactFilte
     plugin: 'filter',
     type: keywordsFilterName,
     DefaultDisplay: Display,
-    PurposeToDisplay: {[filtersDisplayPurpose]: null}
+    PurposeToDisplay: {[filtersDisplayPurpose]: null},
+    fromUrl: (debug, windowUrlData, def) => {
+        const searchParams = windowUrlData.url.searchParams
+        const filter = searchParams.get(keywordsFilterName)
+        return filter ? filter : def
+    },
+    addToUrl: (debug, sp, filter) => {
+        debug('keywordsFilter addToUrl', `${keywordsFilterName}=`, filter)
+        if (filter) sp.set(keywordsFilterName, filter);
+        else sp.delete(keywordsFilterName)
+    }
 })
 export const simpleKeywordsFilterPlugin = keywordsFilterPlugin(SimpleKeywordsDisplay)
 

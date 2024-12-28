@@ -21,6 +21,7 @@ import {dataViewDebug, SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "
 import {elasticSearchDataSourcePlugin, elasticSearchDsName, ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
 import {consoleErrorReporter, FeatureFlags, NonFunctionalsProvider} from "@enterprise_search/react_utils";
 import {routingDebug, WindowUrlProvider} from "@enterprise_search/routing";
+import {simpleSearchDropDownComponents} from "@enterprise_search/search_dropdown";
 
 
 const debugState = {
@@ -89,7 +90,8 @@ const searchImportantComponents: SearchImportantComponents<any, AllDataSourceDet
     DataViewNavBarLayout: SimpleDataViewNavbarLayout,
     NavBarItem: SimpleDataViewNavItem,
     dataViewDetails,
-    SearchResultsComponents: simpleSearchResultComponents
+    SearchResultsComponents: simpleSearchResultComponents,
+    SearchDropDownComponents: simpleSearchDropDownComponents
 }
 
 const sovereignStatePlugins: SovereignStatePlugins = {
@@ -130,7 +132,7 @@ msal.initialize({}).then(() => {
                 <AuthenticationProvider loginConfig={login}>
                     <WindowUrlProvider>
                         <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
-                            <SovereignStateProvider >
+                            <SovereignStateProvider>
                                 <SearchImportantComponentsProvider components={searchImportantComponents}>
                                     <IconProvider icons={simpleIconContext}>
                                         <DoTheSearching>

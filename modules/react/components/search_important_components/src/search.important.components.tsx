@@ -15,6 +15,7 @@ import {emptySearchState} from "@enterprise_search/search_state";
 import {SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
 import {SearchResultsComponents, SearchResultsComponentsProvider} from "@enterprise_search/sovereign_search/src/search.results.components";
 import {UrlManagementForSearch} from "./urlManagementForSearch";
+import {SearchDropDownComponents, SearchDropDownProvider} from "@enterprise_search/search_dropdown"
 
 export const startStateDebug = 'startState'
 
@@ -38,6 +39,7 @@ export interface SearchImportantComponents<Context, Details extends CommonDataSo
     DataViewNavBarLayout: DataViewNavBarLayout
     NavBarItem: NavBarItem
     SearchResultsComponents: SearchResultsComponents
+    SearchDropDownComponents: SearchDropDownComponents
 }
 
 
@@ -62,7 +64,7 @@ export function SearchImportantComponentsProvider<Context, Details extends Commo
     const dataViews: DataViews<Details> = dataSourceDetailsToDataView(dataViewDetails, NavBarItem)
 
     return <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
-        <GuiSelectedDataViewProvider >
+        <GuiSelectedDataViewProvider>
             <SearchBarProvider searchBar={SearchBar}>
                 <DevModeForSearchProvider devModeState={{selected: ''}}>
                     <ReactFiltersProvider reactFilters={reactFiltersContextData}>
@@ -71,15 +73,17 @@ export function SearchImportantComponentsProvider<Context, Details extends Commo
                                 <LoginProvider loginComponents={{DisplayLogin: DisplayLogin, NotLoggedIn: NotLoggedIn}}>
                                     <SearchResultsProvider DisplaySearchResultsLayout={DisplaySearchResultsLayout}>
                                         <DataViewsProvider dataViews={dataViews}>
-                                            <SearchResultsComponentsProvider searchResultsComponents={components.SearchResultsComponents}>
-                                                <SearchGuiStateProvider searchGuiState={emptySearchGuiState}>
-                                                    <UrlManagementForSearch dataViewDetails={dataViewDetails}>{
-                                                        children
-                                                    }
-                                                        <DevMode/>
-                                                    </UrlManagementForSearch>
-                                                </SearchGuiStateProvider>
-                                            </SearchResultsComponentsProvider>
+                                            <SearchDropDownProvider searchDropDown={components.SearchDropDownComponents}>
+                                                <SearchResultsComponentsProvider searchResultsComponents={components.SearchResultsComponents}>
+                                                    <SearchGuiStateProvider searchGuiState={emptySearchGuiState}>
+                                                        <UrlManagementForSearch dataViewDetails={dataViewDetails}>{
+                                                            children
+                                                        }
+                                                            <DevMode/>
+                                                        </UrlManagementForSearch>
+                                                    </SearchGuiStateProvider>
+                                                </SearchResultsComponentsProvider>
+                                            </SearchDropDownProvider>
                                         </DataViewsProvider>
                                     </SearchResultsProvider>
                                 </LoginProvider>

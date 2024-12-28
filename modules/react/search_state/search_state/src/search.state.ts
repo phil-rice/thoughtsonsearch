@@ -1,5 +1,7 @@
-import {ErrorsOr} from "@enterprise_search/errors";
+import {Errors, ErrorsOr, isErrors, isValue} from "@enterprise_search/errors";
 import {NameAnd} from "@enterprise_search/recoil_utils";
+import {interleave, interleaveUntilMax} from "@enterprise_search/recoil_utils/src/arrays";
+
 
 export type SearchType = 'main' | 'immediate'
 export const searchTypes: SearchType[] = ['main', 'immediate']
@@ -61,4 +63,38 @@ export type SearchResult<Data, Paging> = {
     aggregates?: Aggregates
     data: Data[]
     paging?: Paging // if undefined we haven't done any paging yet
+}
+
+
+/* Converts the results of a data search into a map of 'data type name' to the data */
+export function searchResultsToDataView(dataSourceToSearchResult: DatasourceToSearchResult): NameAnd<any[]> {
+    if (dataSourceToSearchResult === undefined) return {}
+    const result: NameAnd<any[]> = {}
+    Object.entries(dataSourceToSearchResult).map(([dataSourceName, searchResult]) => {
+        if (isValue(searchResult)) {
+            for (const item of (searchResult.value.data as any[])) {
+                const dataType = item.type
+                result[dataType] = result[dataType] || []
+                result[dataType].push(item)
+            }
+        }
+    })
+    return result
+}
+
+export function searchResultsToInterleavedData(dataSourceToSearchResult: DatasourceToSearchResult, n: number): any[] {
+    const dataView = searchResultsToDataView(dataSourceToSearchResult)
+    return interleaveUntilMax(dataView, (x) => x, n)
+}
+
+export function searchResultsToErrors(dataSourceToSearchResult: DatasourceToSearchResult): NameAnd<Errors> {
+    const result: NameAnd<Errors> = {}
+    if (dataSourceToSearchResult === undefined) return result
+    Object.entries(dataSourceToSearchResult).map(([dataSourceName, searchResult]) => {
+        if (isErrors(searchResult)) {
+            result[dataSourceName] = searchResult
+        }
+    })
+    return result
+
 }

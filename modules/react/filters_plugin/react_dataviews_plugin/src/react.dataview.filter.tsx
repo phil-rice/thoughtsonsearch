@@ -27,7 +27,7 @@ export const dataViewFilter =
         addToUrl: (debug: DebugLog, sp: URLSearchParams, data: DataViewFilterData,) => {
             const selected = toArray(data?.selectedNames).join(' ')
             debug('dataViewFilter addToUrl', 'selected=', selected, sp.toString())
-            sp.set('selected', selected)
+            if (selected) sp.set('selected', selected); else sp.delete('selected')
             debug('dataViewFilter addToUrl - after updating sp', sp.toString())
         },
         fromUrl: (debug: DebugLog, windowUrlData, def) => {
