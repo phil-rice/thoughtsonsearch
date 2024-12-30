@@ -1,6 +1,6 @@
 import {AuthenticationResult, PublicClientApplication} from "@azure/msal-browser";
-import {DebugLog} from "@enterprise_search/react_utils";
-import {debugLog} from "@enterprise_search/recoil_utils";
+import {DebugLog} from "@enterprise_search/recoil_utils";
+
 
 export type MsalLogin = {
     name: string;
@@ -75,7 +75,7 @@ export function chainLogin(msal: PublicClientApplication, ...logins: MsalLogin[]
         const names = logins.map(a => a.name).join(", ");
         if (lastError) //Note that debug.debugError only reports the error when the debug is enabled. Usually this is silent as it isn't actually an error just a 'the way things are'
             debug.debugError(lastError, `All acquisition methods failed. ${names}. User is assumed to be not logged in`, lastError);
-        debugLog(`All acquisition methods failed. ${names}. User is assumed to be not logged in`);
+        debug(`All acquisition methods failed. ${names}. User is assumed to be not logged in`);
         return null;
     }
 }

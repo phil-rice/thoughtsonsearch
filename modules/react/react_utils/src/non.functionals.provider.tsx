@@ -1,7 +1,8 @@
 import {FeatureFlags, FeatureFlagsProvider} from "./react.feature.flags";
-import {DebugState, DebugStateProvider} from "./react.debug";
+import { DebugStateProvider} from "./react.debug";
 import React, {ReactNode} from "react";
 import {ErrorReporter, ErrorReporterProvider} from "./react.referenced.error";
+import {DebugState} from "@enterprise_search/recoil_utils";
 
 
 export type NonFunctionalsProviderProps = {

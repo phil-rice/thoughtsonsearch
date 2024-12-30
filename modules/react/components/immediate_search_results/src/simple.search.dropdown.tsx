@@ -3,7 +3,8 @@ import {SearchDropDown, SearchDropDownProps} from "./search.drop.down";
 import {searchResultsToErrors, searchResultsToInterleavedData, SearchType} from "@enterprise_search/search_state";
 import {useGuiSearchQuery} from "@enterprise_search/search_gui_state";
 import {useSearchResultsByStateType} from "@enterprise_search/react_search_state";
-import {useUserData} from "@enterprise_search/authentication";
+import {useUserData} from "@enterprise_search/react_login_component/src/authenticationProvider";
+
 
 
 export const SimpleSearchDropdown: SearchDropDown = ({st}: SearchDropDownProps) => {

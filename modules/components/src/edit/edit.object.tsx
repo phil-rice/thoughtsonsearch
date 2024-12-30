@@ -1,7 +1,8 @@
 import {useLowlevelEditComponents} from "./use.edit";
 import React from "react";
 import {RecoilState} from "recoil";
-import {useReportError} from "@enterprise_search/react_error";
+import {useErrorReporter} from "@enterprise_search/react_utils";
+
 
 export type EditDropdownDefn<T> = { type: 'dropdown', key: keyof T, options: string[] }
 
@@ -28,7 +29,7 @@ export type EditObjectComponent = <T extends any>(props: FullEditObjectProps<T>)
 
 export const EditObject: EditObjectComponent = <T extends any>({atom, rootId, defns}: FullEditObjectProps<T>) => {
     const {EditLayout, EditStringInput, EditStringDropdown, Title} = useLowlevelEditComponents()
-    const reportError = useReportError()
+    const reporter = useErrorReporter()
     return <EditLayout>
         {defns.map((defn, index) => {
             if (typeof defn === 'string') {
@@ -39,7 +40,7 @@ export const EditObject: EditObjectComponent = <T extends any>({atom, rootId, de
             if (isTitleDefn(defn)) {
                 return <Title key={defn.title} title={defn.title}/>
             } else {
-                reportError('s/w', `Unknown defn type. ${typeof defn} ${JSON.stringify(defn)}`)
+                reporter({errors: [`Unknown defn type. ${typeof defn} ${JSON.stringify(defn)}`], extras: {rootId}})
             }
         })}
     </EditLayout>

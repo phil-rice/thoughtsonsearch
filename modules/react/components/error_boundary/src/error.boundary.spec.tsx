@@ -1,15 +1,16 @@
 // ErrorBoundary.test.tsx
 
-import React, { ReactNode } from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import React, {ReactNode} from 'react';
+import {fireEvent, render, screen} from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { ErrorReporter, ErrorReporterProvider } from "@enterprise_search/react_utils";
-import { UserData, UserDataAccessor, UserDataProvider } from "@enterprise_search/authentication";
-import { TranslationContext, TranslationFn } from "@enterprise_search/translation";
+import {ErrorReporter, ErrorReporterProvider} from "@enterprise_search/react_utils";
+import {UserData,} from "@enterprise_search/authentication";
+import {TranslationContext, TranslationFn} from "@enterprise_search/translation";
 
-import { ErrorBoundary, makeErrorBoundary, SimpleErrorBoundary } from "./error.boundary"; // Adjust the import path as necessary
-import { ErrorBoundaryStyles } from "./defaultErrorBoundaryStyles"; // Adjust the import path as necessary
+import {ErrorBoundary, makeErrorBoundary, SimpleErrorBoundary} from "./error.boundary";
+import {ErrorBoundaryStyles} from "./defaultErrorBoundaryStyles";
+import {UserDataProvider} from "@enterprise_search/react_login_component"
 
 // 1. Problematic Component that throws an error
 const ProblemChild: () => ReactNode = () => {
@@ -38,7 +39,7 @@ const mockTranslation: TranslationFn = (key: string) => `${key}_translated`;
 
 // 4. Helper functions for ErrorReporter
 const successfulErrorReporter: ErrorReporter = (errors: any) => {
-    return Promise.resolve({ errors, reference: 'ABC123' });
+    return Promise.resolve({errors, reference: 'ABC123'});
 };
 
 const failedErrorReporter: ErrorReporter = (errors: any) => {
@@ -87,7 +88,7 @@ describe('ErrorBoundary', () => {
                 <MockUserDataAccessor isDev={true}>
                     <TranslationContext.Provider value={mockTranslation}>
                         <SimpleErrorBoundary message="errors.mainErrorMessage">
-                            <ProblemChild />
+                            <ProblemChild/>
                         </SimpleErrorBoundary>
                     </TranslationContext.Provider>
                 </MockUserDataAccessor>
@@ -126,7 +127,7 @@ describe('ErrorBoundary', () => {
                 <MockUserDataAccessor isDev={false}>
                     <TranslationContext.Provider value={mockTranslation}>
                         <SimpleErrorBoundary message="errors.mainErrorMessage">
-                            <ProblemChild />
+                            <ProblemChild/>
                         </SimpleErrorBoundary>
                     </TranslationContext.Provider>
                 </MockUserDataAccessor>
@@ -156,7 +157,7 @@ describe('ErrorBoundary', () => {
                 <MockUserDataAccessor isDev={false}>
                     <TranslationContext.Provider value={mockTranslation}>
                         <SimpleErrorBoundary message="errors.mainErrorMessage">
-                            <ProblemChild />
+                            <ProblemChild/>
                         </SimpleErrorBoundary>
                     </TranslationContext.Provider>
                 </MockUserDataAccessor>
@@ -186,7 +187,7 @@ describe('ErrorBoundary', () => {
                 <MockUserDataAccessor isDev={false}>
                     <TranslationContext.Provider value={mockTranslation}>
                         <SimpleErrorBoundary message="errors.mainErrorMessage">
-                            <ProblemChild />
+                            <ProblemChild/>
                         </SimpleErrorBoundary>
                     </TranslationContext.Provider>
                 </MockUserDataAccessor>
@@ -223,7 +224,7 @@ describe('ErrorBoundary', () => {
                             message="errors.mainErrorMessage"
                             fallback={customFallback}
                         >
-                            <ProblemChild />
+                            <ProblemChild/>
                         </SimpleErrorBoundary>
                     </TranslationContext.Provider>
                 </UserDataProvider>
@@ -274,7 +275,7 @@ describe('ErrorBoundary', () => {
                 <MockUserDataAccessor isDev={true}>
                     <TranslationContext.Provider value={mockTranslation}>
                         <CustomErrorBoundary message="errors.mainErrorMessage">
-                            <ProblemChild />
+                            <ProblemChild/>
                         </CustomErrorBoundary>
                     </TranslationContext.Provider>
                 </MockUserDataAccessor>
@@ -312,7 +313,7 @@ describe('ErrorBoundary', () => {
                 <MockUserDataAccessor isDev={true}>
                     <TranslationContext.Provider value={mockTranslation}>
                         <SimpleErrorBoundary message="errors.mainErrorMessage">
-                            <ProblemChild />
+                            <ProblemChild/>
                         </SimpleErrorBoundary>
                     </TranslationContext.Provider>
                 </MockUserDataAccessor>
@@ -334,7 +335,7 @@ describe('ErrorBoundary', () => {
                 <MockUserDataAccessor isDev={true}>
                     <TranslationContext.Provider value={mockTranslation}>
                         <SimpleErrorBoundary message="errors.mainErrorMessage">
-                            <ProblemChild />
+                            <ProblemChild/>
                         </SimpleErrorBoundary>
                     </TranslationContext.Provider>
                 </MockUserDataAccessor>

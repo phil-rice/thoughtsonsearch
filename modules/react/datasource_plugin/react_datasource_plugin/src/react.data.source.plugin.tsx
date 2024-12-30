@@ -18,21 +18,20 @@ export type DataSourceDetails<Details extends CommonDataSourceDetails> = NameAnd
 //Maps from a data source name to the plugin that fetches data from that source
 export type DataSourcePlugins<Filters> = NameAnd<DataSourcePlugin<any, Filters, any>>
 
-export type FetchFromDatasourceFn<Filters, Paging> = (searchCapabilities: SearchCapabilities, searchType: SearchType,filters: Filters, paging?: Paging) => Promise<ErrorsOr<SearchResult<any, any>>>;
+export type FetchFromDatasourceFn<Filters, Paging> = (searchCapabilities: SearchCapabilities, searchType: SearchType,filters: Filters,resultSize: number, paging?: Paging) => Promise<ErrorsOr<SearchResult<any, any>>>;
 
 export type DataSourcePlugin<Details extends CommonDataSourceDetails, Filters, Paging> = {
     plugin: 'datasource'
     datasourceName: string
-    authentication: Authentication,
     fetch: FetchFromDatasourceFn<Filters, Paging>
 }
 
-export const {Provider: DataSourcePluginProvider, use: useDataSourcePlugins} = makeContextFor('plugins', undefined as DataSourcePlugins<any>)
+export const {Provider: DataSourcePluginProvider, use: useDataSourcePlugins} = makeContextFor<DataSourcePlugins<any>,'plugins'>('plugins')
 
 export function useDatasourcePlugin<Details extends CommonDataSourceDetails, Filters, Paging>(datasourceName: string): DataSourcePlugin<Details, Filters, Paging> {
     const plugins = useDataSourcePlugins()
-    const reportError = useThrowError()
-    const plugin = plugins[datasourceName]
-    if (!plugin) reportError('s/w', `No plugin found for datasource ${datasourceName}. Legal values are ${Object.keys(plugins).sort().join(', ')}`)
+    const throwError = useThrowError()
+    const plugin = plugins[datasourceName as any] as DataSourcePlugin<Details, Filters, Paging>
+    if (!plugin)  return throwError('s/w', `No plugin found for datasource ${datasourceName}. Legal values are ${Object.keys(plugins).sort().join(', ')}`)
     return plugin;
 }

@@ -2,7 +2,7 @@ import {DisplayFilter, ReactFiltersPlugin} from "@enterprise_search/react_filter
 import {SimpleDataViewFilterDisplay} from "./simpleDataViewFilterDisplay";
 
 import {toArray} from "@laoban/utils";
-import {DebugLog} from "@enterprise_search/react_utils";
+import {DebugLog} from "@enterprise_search/recoil_utils";
 
 export const dataViewFilterName = 'dataviews';
 

@@ -1,6 +1,5 @@
 import {EditStringDropdown, EditStringDropdownComponent} from "./edit.string.dropdown";
 import {EditStringInput, EditStringInputComponent} from "./edit.string";
-import {createContext, useContext} from "react";
 import {EditLayout, EditLayoutComponent} from "./edit.layout";
 import {makeContextFor} from "@enterprise_search/react_utils";
 

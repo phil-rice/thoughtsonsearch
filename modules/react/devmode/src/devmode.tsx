@@ -2,11 +2,12 @@ import {useSearchGuiState} from "@enterprise_search/search_gui_state";
 import React, {ReactElement} from "react";
 import {NameAnd} from "@enterprise_search/recoil_utils";
 import {makeContextFor, makeContextForState, makeUseStateChild} from "@enterprise_search/react_utils";
-import {useUserData} from "@enterprise_search/authentication";
+
 import {DevModeSearchState} from "./devModeSearchState";
 import {makeSimpleNavBar, NavBar} from "@enterprise_search/navbar";
 import {DevModeDebug} from "./devmode.debug";
 import {DevModeFeatureFlags} from "./devmode.feature.flags";
+import {useUserData} from "@enterprise_search/react_login_component/src/authenticationProvider";
 
 export type DevModeComponent = () => React.ReactElement;
 export type DevModeNavbarComponent = () => ReactElement;

@@ -3,7 +3,9 @@ import {useFiltersByStateType, useSearchResultsByStateType} from "@enterprise_se
 import {useSearchParser} from "@enterprise_search/react_search_parser";
 import {SearchBarProps} from "./search.bar";
 import {KeywordsFilter, keywordsFilterName} from "@enterprise_search/react_keywords_filter_plugin";
-import {useGuiFilters, useGuiSearchQuery} from "@enterprise_search/search_gui_state";
+import {emptySearchGuiState, useGuiFilters, useGuiSearchQuery, useSearchGuiState} from "@enterprise_search/search_gui_state";
+import {useDebug} from "@enterprise_search/react_utils";
+import {searchDebug} from "@enterprise_search/search";
 
 type CSSVariables = {
     container: React.CSSProperties;

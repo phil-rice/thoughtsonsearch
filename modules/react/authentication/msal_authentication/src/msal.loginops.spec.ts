@@ -1,8 +1,8 @@
-import { MsalLoginFn } from "./msal.login";
-import { AccountInfo, AuthenticationResult, PublicClientApplication } from "@azure/msal-browser";
-import { MsalLogout } from "./msal.logout";
-import { loginUsingMsal } from "./msal.loginops";
-import { createMockDebugLog } from "@enterprise_search/react_utils";
+import {MsalLoginFn} from "./msal.login";
+import {AccountInfo, AuthenticationResult, PublicClientApplication} from "@azure/msal-browser";
+import {MsalLogout} from "./msal.logout";
+import {loginUsingMsal} from "./msal.loginops";
+import {createMockDebugLog} from "@enterprise_search/recoil_utils";
 
 describe("loginUsingMsal", () => {
     let mockMsalInstance: jest.Mocked<PublicClientApplication>;

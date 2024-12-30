@@ -23,14 +23,14 @@ export function makeContextFor<Data, FIELD extends string>(
 
     type ProviderProps = { children: ReactNode } & Record<FIELD, Data>;
 
-    function useField() {
+    function useField():Data {
         const contextValue = useContext(context);
         const reportError = useThrowError();
         if (contextValue === undefined) {
             const upperedName = capitalizeFirstLetter(field);
             reportError('s/w', `use${upperedName} must be used within a ${upperedName}Provider`);
         }
-        return contextValue;
+        return contextValue!;
     }
 
     // Provider component dynamically named like `${field}Provider`
@@ -60,7 +60,7 @@ export function makeContextForState<Data, FIELD extends string>(field: FIELD): C
             const fieldWithCap = capitalizeFirstLetter(field);
             reportError('s/w', `use${fieldWithCap} must be used within a ${fieldWithCap}Provider`);
         }
-        return contextValue;
+        return contextValue!
     }
 
 

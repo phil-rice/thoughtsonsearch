@@ -1,6 +1,7 @@
 import {chainLogin, fromPreviousRedirectLogin, silentLogin, popupLogin, redirectLogin, noLogin} from './msal.login';
 import {AuthenticationResult, PublicClientApplication} from '@azure/msal-browser';
-import {createMockDebugLog} from '@enterprise_search/react_utils';
+import {createMockDebugLog} from "@enterprise_search/recoil_utils";
+
 
 describe('chainLogin', () => {
     let msalInstance: PublicClientApplication;

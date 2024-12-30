@@ -1,4 +1,4 @@
-export function uniqueStrings<T>(arr: T[]): T[] {
+export function uniqueStrings<T extends { toString(): string }>(arr: T[]): T[] {
     const result: T[] = [];
     const set = new Set<string>();
     for (const item of arr) {

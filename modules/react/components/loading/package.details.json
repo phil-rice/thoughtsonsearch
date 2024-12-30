@@ -3,12 +3,6 @@
   "name": "@enterprise_search/loading",
   "description": "How we handle asynchronicity in our components",
   "links": [
-    "@enterprise_search/search_state",
-    "@enterprise_search/service_caller",
-    "@enterprise_search/search_api",
-    "@enterprise_search/react_search_state",
-    "@enterprise_search/react_search_parser",
-    "@enterprise_search/react_keywords_filter_plugin"
   ],
   "packageJson": {
     "files": ["build/"],

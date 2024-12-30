@@ -38,7 +38,8 @@ export function makeRoutingSegmentContextFor(
     // Provider component dynamically named like `${field}Provider`
     function RoutingProvider(props: RoutingProviderProps) {
         const debug = useDebug(routingDebug)
-        const {parts, url} = useWindowUrlData()
+        const [urlData] = useWindowUrlData()
+        const {parts, url} = urlData
         const value = parts[segment] || '';
         debug('RoutingProvider', segment, field, value)
         const ops: GetterSetter<string> = useMemo(() => [value, name => {

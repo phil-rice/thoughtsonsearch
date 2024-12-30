@@ -15,7 +15,6 @@
     ]
   },
   "dependencies": {
-    "@enterprise_search/debug": "0.0.1",
     "@enterprise_search/search_state": "0.0.1",
     "@enterprise_search/react_datasource_plugin": "0.0.1",
     "@enterprise_search/react_keywords_filter_plugin": "0.0.1",

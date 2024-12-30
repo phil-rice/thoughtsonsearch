@@ -1,11 +1,11 @@
-import {DataViewNavBarLayout, NavBarItem, useDataViews} from "./data.views";
+import {DataViewNavBarLayout, NavBarItem, NavBarItemProps, useDataViews} from "./data.views";
 import React from "react";
 import {SearchGuiData, useGuiFilter, useGuiSelectedDataView, useSearchGuiState} from "@enterprise_search/search_gui_state";
 import {DataViewFilterData, dataViewFilterName, DataViewFilters} from "@enterprise_search/react_data_views_filter_plugin";
 import {lensBuilder} from "@enterprise_search/optics";
 
 
-export const SimpleDataViewNavItem: NavBarItem = <Filters extends DataViewFilters>({name}) => {
+export const SimpleDataViewNavItem: NavBarItem = <Filters extends DataViewFilters>({name}:NavBarItemProps) => {
     const dataViews = useDataViews();  // Assuming this is where the available data views are fetched.
     const dataView = dataViews[name];
     const [filter, setFilter] = useGuiFilter<Filters, 'dataviews'>(dataViewFilterName)

@@ -3,7 +3,10 @@ import {keySelector} from "./selector";
 
 import {ChangeEventHandler, ReactElement} from "react";
 import {useTranslation} from "@enterprise_search/translation";
-import {debugLog} from "@enterprise_search/recoil_utils";
+
+import {useDebug} from "@enterprise_search/react_utils"
+import {editComponentDebug} from "./editComponentDebug";
+
 
 export type StringValueProps<T> = {
     atom: RecoilState<T>;
@@ -21,7 +24,8 @@ export const EditStringInput: EditStringInputComponent = <T, >({atom, atomKey, r
     const translate = useTranslation();
     const inputId = `${rootId}.${atomKey as string}`;
     const computedLabel = translate(inputId);
-    debugLog('rerendering attribute value', inputId, computedLabel);
+    const debug=useDebug(editComponentDebug)
+    debug('rerendering attribute value', inputId, computedLabel);
     const onChange: ChangeEventHandler<HTMLInputElement> =
         (e) => setValue(e.target.value as T[typeof atomKey]);
     return (

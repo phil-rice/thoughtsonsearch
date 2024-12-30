@@ -7,13 +7,13 @@
     "@enterprise_search/errors",
     "@enterprise_search/icons",
     "@enterprise_search/msal_authentication",
-    "@enterprise_search/search_api",
     "@enterprise_search/search_important_components",
     "@enterprise_search/sovereign",
     "@enterprise_search/sovereign_search",
     "@enterprise_search/service_caller",
     "@enterprise_search/search_state",
-    "@enterprise_search/react_utils"
+    "@enterprise_search/react_utils",
+    "@enterprise_search/recoil_components"
   ],
   "packageJson": {
     "files": ["build/"],

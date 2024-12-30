@@ -30,11 +30,11 @@ export type SearchResultsOps = {
     DisplaySearchResultsLayout: ({children}: { children: React.ReactNode }) => React.ReactElement
 }
 
-export function useSearchResultsLayout(): SearchResultsOps {
+export function useSearchResultsLayout(): SearchResultsContextType {
     const context = React.useContext(SearchResultsContext)
     const reportError = useThrowError()
     if (!context) reportError('s/w', "useSearchResultsLayout must be used within a SearchResultsProvider")
-    return context
+    return context!
 }
 
 export type SearchResultsProps = {

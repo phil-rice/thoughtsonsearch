@@ -1,5 +1,5 @@
 {
-  "template": "react_library",
+  "template": "typescript",
   "name": "@enterprise_search/errors",
   "description": "How errors are represented",
   "links": [

@@ -1,11 +1,10 @@
 import React, {useEffect} from "react";
 import {createRoot} from "react-dom/client";
 import {Configuration, PublicClientApplication} from "@azure/msal-browser";
-import {authenticateDebug, AuthenticationProvider, bearerAuthentication, LoginConfig} from "@enterprise_search/authentication";
 import {loginUsingMsal} from "@enterprise_search/msal_authentication";
 import {Authenticate, SimpleDisplayLogin, SimpleMustBeLoggedIn, useLoginComponents} from "@enterprise_search/react_login_component";
 import {filtersDisplayPurpose, ReactFiltersContextData} from "@enterprise_search/react_filters_plugin";
-import {exampleTimeFilterPlugin, timefilterPluginName, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
+
 import {SearchImportantComponents, SearchImportantComponentsProvider, startStateDebug} from "@enterprise_search/search_important_components";
 import {CommonDataSourceDetails, DataSourceDetails, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPlugins} from "@enterprise_search/react_data/src/react.data";
@@ -16,21 +15,27 @@ import {IconProvider, simpleIconContext} from "@enterprise_search/icons";
 import {dataViewFilter, dataViewFilterName, DataViewFilters, SimpleDataViewFilterDisplay} from "@enterprise_search/react_data_views_filter_plugin";
 import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResultsLayout, simpleSearchResultComponents} from "@enterprise_search/sovereign_search";
 import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
-import {DoTheSearching, searchDebug} from "@enterprise_search/search/src/search";
+import {DoTheSearching, searchDebug} from "@enterprise_search/search";
 import {dataViewDebug, SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "@enterprise_search/data_views";
-import {elasticSearchDataSourcePlugin, elasticSearchDsName, ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
+import {ElasticSearchContext, elasticSearchDataSourcePlugin, elasticSearchDsName, ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
 import {consoleErrorReporter, FeatureFlags, NonFunctionalsProvider} from "@enterprise_search/react_utils";
 import {routingDebug, WindowUrlProvider} from "@enterprise_search/routing";
 import {simpleSearchDropDownComponents} from "@enterprise_search/search_dropdown";
-import {SimpleUnknownDisplay} from "@enterprise_search/sovereign/src/simple.unknown.display";
+import {SimpleUnknownDisplay} from "@enterprise_search/sovereign";
+import {authenticateDebug, AuthenticationProvider, LoginConfig} from "@enterprise_search/react_login_component";
+import {bearerAuthentication} from "@enterprise_search/authentication";
+import {axiosServiceCaller} from "@enterprise_search/axios_service_caller";
+import {editComponentDebug} from "@enterprise_search/recoil_components";
+import {exampleTimeFilterPlugin, timefilterPluginName, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
 
 
 const debugState = {
     [authenticateDebug]: false,
-    [searchDebug]: false,
-    [startStateDebug]: true,
-    [dataViewDebug]: true,
-    [routingDebug]: true
+    [searchDebug]: true,
+    [startStateDebug]: false,
+    [dataViewDebug]: false,
+    [routingDebug]: false,
+    [editComponentDebug]: true
 };
 
 export const exampleMsalConfig: Configuration = {
@@ -56,9 +61,14 @@ const reactFiltersContextData: ReactFiltersContextData<SearchAppFilters> = {
         [filtersDisplayPurpose]: ({children}) => <div><h3>Filters</h3>{children}</div>
     }
 }
+export const elasticSearchContext: ElasticSearchContext = {
+    knownIndicies: ['jira-prod', 'confluence-prod'],
+    elasticSearchUrl: process.env['REACT_APP_ELASTIC_SEARCH_URL']!,
+    serviceCaller: axiosServiceCaller,
+    authentication: bearerAuthentication(process.env['REACT_APP_ELASTIC_SEARCH_API_KEY']!)
+}
 const dataSourcePlugins: DataSourcePlugins<any> = {
-    elasticSearch: elasticSearchDataSourcePlugin(bearerAuthentication(''))
-
+    elasticSearch: elasticSearchDataSourcePlugin(elasticSearchContext)
 }
 const dataPlugins: DataPlugins = {}
 
@@ -139,7 +149,7 @@ msal.initialize({}).then(() => {
                             <SovereignStateProvider>
                                 <SearchImportantComponentsProvider components={searchImportantComponents}>
                                     <IconProvider icons={simpleIconContext}>
-                                        <DoTheSearching>
+                                        <DoTheSearching resultSize={20}>
                                             <SearchApp/>
                                         </DoTheSearching>
                                     </IconProvider>

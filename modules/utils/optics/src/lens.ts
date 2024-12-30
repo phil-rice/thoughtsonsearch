@@ -43,7 +43,8 @@ export function index<Main, T>(
     idx: number
 ): T extends Array<infer U> ? LensAndPath<Main, U> : never {
     return {
-        get: (main: Main) => lens.get(main)?.[idx], // Get the array element
+        //@ts-ignore the typechecker doesn't know that T extends Array<infer U> here
+        get: (main: Main) => lens.get(main)?.[idx] , // Get the array element. The any is needed to satisfy the type checker
         set: (main: Main, child: any) => {
             const parent = lens.get(main) || []; // Default parent to an empty array if undefined
             const updatedParent = [...(parent as Array<any>)]; // Clone the array
@@ -118,7 +119,7 @@ export class LensBuilder<Main, Child> implements LensAndPath<Main, Child> {
     set(main: Main, child: Child): Main { return this._lens.set(main, child); }
 
     map(fn: (child: Child | undefined) => Child) {
-        return main => this._lens.set(main, fn(this._lens.get(main)))
+        return (main: Main) => this._lens.set(main, fn(this._lens.get(main)))
     }
 
     // Delegate `path` to the embedded `_lens`
@@ -131,7 +132,11 @@ export class LensBuilder<Main, Child> implements LensAndPath<Main, Child> {
 
     chain<Child2>(lens: LensAndPath<Child, Child2>): LensBuilder<Main, Child2> {
         return new LensBuilder({
-            get: (main: Main) => lens.get(this._lens.get(main)),
+            get: (main: Main) => {
+                const child = this._lens.get(main);
+                if (child === undefined) return undefined
+                return lens.get(child);
+            },
             set: (main: Main, child: Child2) => {
                 const parent = this._lens.get(main) || ({} as Child);
                 const updatedParent = lens.set(parent, child);
@@ -185,7 +190,7 @@ export class LensBuilder<Main, Child> implements LensAndPath<Main, Child> {
             const updatedChildValue = {...childValue, [part]: newPartValue};
             return this._lens.set(main, updatedChildValue);
         }
-        return new LensBuilder({get, set, path});
+        return new LensBuilder({get, set, path}) as any; // the typechecker is brutal here...
     }
 
     // Return the built lens

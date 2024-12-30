@@ -68,37 +68,37 @@ export const SearchInfoProviderUsingUseState = <Filters, >({allSearchState: init
 export function useSearchState<Filters>(): SearchStateOps<Filters> {
     const reportError = useThrowError()
     const context = React.useContext(SearchStateContext);
-    if (context === undefined) reportError('s/w', 'useSearchState must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
-    return context.searchStateOps
+    if (context === undefined) return reportError('s/w', 'useSearchState must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
+    else return context.searchStateOps!
 }
 
 export function useAllSearches<Filters>(): AllSearchesOps<Filters> {
     const reportError = useThrowError()
     const context = React.useContext(SearchStateContext);
-    if (context === undefined) reportError('s/w', 'useAllSearches must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
-    return context.allSearchInfoOps
+    if (context === undefined) return reportError('s/w', 'useAllSearches must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
+    else return context.allSearchInfoOps!
 }
 
 export function useSearchResultsByStateType<Filters>(st: SearchType): OneSearchOps<Filters> {
     const reportError = useThrowError()
     const context = React.useContext(SearchStateContext);
-    if (context === undefined) reportError('s/w', 'useSearchResultsByStateType must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
-    return context.filtersAndResultOps(st)
+    if (context === undefined) return reportError('s/w', 'useSearchResultsByStateType must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
+    else return context.filtersAndResultOps(st)!
 }
 
 export function useFiltersByStateType<Filters>(st: SearchType): FiltersOps<Filters> {
     const reportError = useThrowError()
     const context = React.useContext(SearchStateContext);
-    if (context === undefined) reportError('s/w', 'useFiltersByStateType must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
-    return context.filtersOps(st)
+    if (context === undefined) return reportError('s/w', 'useFiltersByStateType must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
+    else return context.filtersOps(st)!
 }
 
 export function useOneFilterBySearchType<Filter>(st: SearchType): OneFilterOpsStateAndNameFn<Filter> {
     const reportError = useThrowError()
     const context = React.useContext(SearchStateContext);
 
-    if (context === undefined) reportError('s/w', 'useOneFilterBySearchType must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
-    return context.oneFilterOps
+    if (context === undefined) return reportError('s/w', 'useOneFilterBySearchType must be used within a SearchStateProvider or SearchInfoProviderUsingUseState');
+    else return context.oneFilterOps!
 }
 
 export type SearchTypeContextData<Filters> = {

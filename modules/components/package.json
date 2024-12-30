@@ -79,6 +79,7 @@
   "license": "MIT",
   "links": [
     "@enterprise_search/recoil_utils",
+    "@enterprise_search/react_utils",
     "@enterprise_search/translation"
   ],
   "peerDependencies": {},

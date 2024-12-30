@@ -1,5 +1,5 @@
 {
-  "template": "react_library",
+  "template": "typescript",
   "name": "@enterprise_search/authentication",
   "description": "An interface that abstracts over authentication",
   "links": [

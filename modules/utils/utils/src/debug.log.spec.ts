@@ -1,41 +1,79 @@
-import {debugLog} from "./debug";
 
-describe('debugLog', () => {
-    let consoleSpy: jest.SpyInstance;
 
-    beforeEach(() => {
-        consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {}); // Mock console.log
-    });
+// Mock console methods
+import {DebugState, makeDebugLog} from "./debug";
 
+const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+describe('makeDebugLog', () => {
     afterEach(() => {
-        consoleSpy.mockRestore(); // Restore console.log after each test
+        jest.clearAllMocks();
     });
 
-    it('logs messages in development environment', () => {
-        process.env.NODE_ENV = 'development';
-        debugLog('Test message', 42);
+    it('logs messages when debug is enabled', () => {
+        const debugState: DebugState = { componentA: true };
+        const log = makeDebugLog(debugState, 'componentA');
 
-        expect(consoleSpy).toHaveBeenCalledWith('Test message', 42);
+        log('Test message');
+        expect(consoleLogSpy).toHaveBeenCalledWith('componentA', 'Test message');
     });
 
-    it('does not log messages in production environment', () => {
-        process.env.NODE_ENV = 'production';
-        debugLog('This should not be logged');
+    it('does not log messages when debug is disabled', () => {
+        const debugState: DebugState = { componentA: false };
+        const log = makeDebugLog(debugState, 'componentA');
 
-        expect(consoleSpy).not.toHaveBeenCalled();
+        log('Test message');
+        expect(consoleLogSpy).not.toHaveBeenCalled();
     });
 
-    it('handles undefined NODE_ENV as nothing', () => {
-        delete process.env.NODE_ENV; // Simulate undefined NODE_ENV
-        debugLog('Default to nothing');
+    it('logs errors when debug is enabled', () => {
+        const debugState: DebugState = { componentA: true };
+        const log = makeDebugLog(debugState, 'componentA');
+        const error = new Error('Test error');
 
-        expect(consoleSpy).not.toHaveBeenCalled();
+        log.debugError(error, 'Additional info');
+        expect(consoleErrorSpy).toHaveBeenCalledWith('[ERROR] componentA', error, 'Additional info');
     });
 
-    it('logs multiple arguments correctly', () => {
-        process.env.NODE_ENV = 'development';
-        debugLog('Test', {key: 'value'}, [1, 2, 3]);
+    it('does not log errors when debug is disabled', () => {
+        const debugState: DebugState = { componentA: false };
+        const log = makeDebugLog(debugState, 'componentA');
+        const error = new Error('Test error');
 
-        expect(consoleSpy).toHaveBeenCalledWith('Test', {key: 'value'}, [1, 2, 3]);
+        log.debugError(error, 'Additional info');
+        expect(consoleErrorSpy).not.toHaveBeenCalled();
+    });
+
+    it('defaults to no logging if debug state is undefined', () => {
+        const debugState: DebugState = {};
+        const log = makeDebugLog(debugState, 'componentB');
+
+        log('Should not log');
+        expect(consoleLogSpy).not.toHaveBeenCalled();
+    });
+
+    it('logs correctly for multiple components with different states', () => {
+        const debugState: DebugState = { componentA: true, componentB: false };
+        const logA = makeDebugLog(debugState, 'componentA');
+        const logB = makeDebugLog(debugState, 'componentB');
+
+        logA('Message A');
+        logB('Message B');
+
+        expect(consoleLogSpy).toHaveBeenCalledWith('componentA', 'Message A');
+        expect(consoleLogSpy).not.toHaveBeenCalledWith('componentB', 'Message B');
+    });
+
+    it('preserves stack trace when logging', () => {
+        const debugState: DebugState = { componentA: true };
+        const log = makeDebugLog(debugState, 'componentA');
+
+        function logTest() {
+            log('Trace message');
+        }
+
+        logTest();
+        expect(consoleLogSpy.mock.calls[0][1]).toBe('Trace message');
     });
 });

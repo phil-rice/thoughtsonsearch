@@ -5,10 +5,7 @@
   "links": [
     "@enterprise_search/authentication",
     "@enterprise_search/react_data_views_filter_plugin",
-    "@enterprise_search/react_search_state",
-    "@enterprise_search/search_api",
-    "@enterprise_search/service_caller",
-    "@enterprise_search/search_state"
+    "@enterprise_search/react_search_state"
   ],
   "packageJson": {
     "files": ["build/"],

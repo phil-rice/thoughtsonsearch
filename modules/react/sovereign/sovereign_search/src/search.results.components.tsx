@@ -1,7 +1,8 @@
 import React, {ReactElement} from "react";
 import {makeContextFor} from "@enterprise_search/react_utils";
-import {useUserData} from "@enterprise_search/authentication";
+
 import {Errors} from "@enterprise_search/errors";
+import {useUserData} from "@enterprise_search/react_login_component/src/authenticationProvider";
 
 export type SearchResultsComponents = {
     ErrorInDataSourceDev: ErrorInDataSource

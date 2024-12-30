@@ -15,11 +15,10 @@
     ]
   },
   "dependencies": {
-    "@enterprise_search/search_state": "0.0.1",
-    "@enterprise_search/service_caller": "0.0.1",
-    "@enterprise_search/search_api": "0.0.1",
     "@enterprise_search/optics": "0.0.1",
     "@enterprise_search/react_utils": "0.0.1",
+    "@enterprise_search/search_state": "0.0.1",
+    "@enterprise_search/service_caller": "0.0.1",
     "@enterprise_search/routing": "0.0.1",
     "@enterprise_search/translation": "0.0.1",
     "debug": "^4.3.4",

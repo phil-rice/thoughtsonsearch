@@ -44,11 +44,14 @@ export function SimpleUnknownDisplay() {
                 onMouseOver={(e) => Object.assign(e.currentTarget.style, styles.buttonHover)}
                 onMouseOut={(e) => Object.assign(e.currentTarget.style, styles.button)}
                 onClick={() => {
-                    setSelected(Object.keys(plugins)[0]);
+                    const name = Object.keys(plugins)[0];
+                    console.log('trying to reload',name);
+                    setSelected(name);
                 }}
             >
                 Reload
             </button>
+
         </div>
     );
 }

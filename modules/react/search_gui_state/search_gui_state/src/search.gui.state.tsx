@@ -19,6 +19,6 @@ export function useGuiFilter<Filters, FilterName extends keyof Filters>(filterNa
     const [value, setValue] = useGuiFilters(); // This is `useField()` behind the scenes
     return useMemo(() => {
         return makeGetterSetter<Filters, Filters[FilterName]>(value, setValue, lensBuilder<Filters>().focusOn(filterName))
-    }, [value, setValue, id => id.focusOn(filterName)]); // lens might be stable or not, depends on usage
+    }, [value, setValue]);
 }
 

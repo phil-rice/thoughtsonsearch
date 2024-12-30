@@ -2,7 +2,10 @@ import {useRecoilState} from "recoil";
 import {StringValueProps} from "./edit.string";
 import {keySelector} from "./selector";
 import {useTranslation} from "@enterprise_search/translation";
-import {debugLog} from "@enterprise_search/recoil_utils";
+import {useDebug} from "@enterprise_search/react_utils";
+
+import {editComponentDebug} from "./editComponentDebug";
+
 
 export type DropdownValueProps<T> = StringValueProps<T> & {
     options: string[];
@@ -14,10 +17,11 @@ export const EditStringDropdown: EditStringDropdownComponent =
     <T, >({atom, atomKey, rootId, options, labelPrefix = '',}: DropdownValueProps<T>) => {
         const [value, setValue] = useRecoilState(keySelector({atom, key: atomKey}));
         const translate = useTranslation();
+        const debug = useDebug(editComponentDebug)
 
         const inputId = `${rootId}.${atomKey.toString()}`;
         const computedLabel = translate(`${labelPrefix}${inputId}`);
-        debugLog('rerendering dropdown', inputId, computedLabel);
+        debug('rerendering dropdown', inputId, computedLabel);
 
         const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
             setValue(event.target.value as T[typeof atomKey]);

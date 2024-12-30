@@ -3,9 +3,11 @@
 import React, {Component, ReactNode} from 'react';
 import {ErrorReporterContext, makeContextFor} from "@enterprise_search/react_utils";
 import {Errors} from "@enterprise_search/errors";
-import {UserData, UserDataAccessor} from "@enterprise_search/authentication";
+
 import {TranslationContext, TranslationFn} from "@enterprise_search/translation";
 import {defaultErrorBoundaryStyles, ErrorBoundaryStyles} from "./defaultErrorBoundaryStyles";
+import {UserData} from "@enterprise_search/authentication";
+import {UserDataAccessor} from "@enterprise_search/react_login_component/src/authenticationProvider";
 
 interface ErrorBoundaryProps {
     message: string;

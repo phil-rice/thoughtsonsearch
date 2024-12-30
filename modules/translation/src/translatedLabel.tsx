@@ -3,7 +3,7 @@ import {useTranslation} from "./translation";
 
 export type TranslatedLabelProps = {
     translationKey: string;
-    htmlFor: string;
+    htmlFor: string | undefined;
 
 }
 export const TranslatedLabel: React.FC<TranslatedLabelProps> = ({translationKey, htmlFor}) => {

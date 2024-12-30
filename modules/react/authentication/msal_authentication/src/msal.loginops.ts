@@ -1,7 +1,8 @@
 import {PublicClientApplication} from "@azure/msal-browser";
 import {msalLogin, MsalLoginFn, msalRefreshLogin} from "./msal.login";
 import {MsalLogout, msalLogout} from "./msal.logout";
-import {LoginConfig, LoginOutFn, UserDataGetter} from "@enterprise_search/authentication";
+import {UserData, UserDataGetter} from "@enterprise_search/authentication";
+import {LoginConfig, LoginOutFn} from "@enterprise_search/react_login_component";
 
 
 /**
@@ -52,7 +53,7 @@ export function loginUsingMsal({
         debug('loginUsingMsal after callback')
     };
 
-    const refeshLogin = async (callback, debug) => {
+    const refeshLogin: LoginOutFn = async (callback, debug) => {
         debug('loginUsingMsal.refeshLogin')
         await msalRefreshLogin(msal)(scopes, debug)
         callback()
@@ -63,10 +64,11 @@ export function loginUsingMsal({
         const accounts = msal.getAllAccounts();
         const account = accounts[0];
         const loggedIn = !!account;
-        const email = account ? account.username : undefined;
+        const email = account ? account.username : '';
         const isDev = window.location.href.includes("devMode=true");
         const isAdmin = window.location.href.includes("admin=true");
-        return {email, isDev, isAdmin, loggedIn};
+        const userData: UserData = {email, isDev, isAdmin, loggedIn};
+        return userData;
     }
     return {login, logout, refeshLogin, userDataGetter};
 }

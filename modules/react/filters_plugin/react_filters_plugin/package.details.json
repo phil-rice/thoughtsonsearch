@@ -4,9 +4,7 @@
   "description": "A plugin that abstracts over filters: mostly how to display them",
   "links": [
     "@enterprise_search/error_boundary",
-    "@enterprise_search/search_state",
-    "@enterprise_search/service_caller",
-    "@enterprise_search/search_api"
+    "@enterprise_search/search_state"
   ],
   "packageJson": {
     "files": ["build/"],

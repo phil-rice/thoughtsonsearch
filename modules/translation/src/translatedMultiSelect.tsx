@@ -5,7 +5,7 @@ import {GetterSetter} from "@enterprise_search/react_utils";
 
 interface CheckboxItemProps {
     name: string;
-    rootId: string;
+    rootId: string|undefined
     isChecked: boolean;
     onChange: (name: string) => void;
 }
@@ -67,7 +67,7 @@ const CheckboxItem: React.FC<CheckboxItemProps> = ({rootId, name, isChecked, onC
 
 
 export interface TranslatedMultiSelectProps {
-    id: string;
+    id: string|undefined;
     purpose: string;
     allowedNames: string[];
     stateOps: GetterSetter<string[]>;

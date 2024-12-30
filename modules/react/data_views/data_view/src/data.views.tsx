@@ -39,17 +39,17 @@ export function dataSourceDetailsToDataView<Details extends CommonDataSourceDeta
 }
 
 
-export const {Provider: DataViewsProvider, use: useDataViews} = makeContextFor('dataViews', undefined as DataViews<CommonDataSourceDetails>)
+export const {Provider: DataViewsProvider, use: useDataViews} = makeContextFor<DataViews<any>, 'dataViews'>('dataViews')
 
 
-export type NavBarItemProps = { name: string, }
+export type NavBarItemProps = { name: any, } //really is a key of the data views, but the damage propogating that is too high
 export type NavBarItem = (props: NavBarItemProps) => React.ReactElement;
 export type DataViewNavVarLayoutProps = { children: React.ReactNode }
 export type DataViewNavBarLayout = (props: DataViewNavVarLayoutProps) => React.ReactElement;
 export type DataViewComponents = {
     DataViewNavbar: NavBar
 }
-export const {Provider: DataViewComponentsProvider, use: useDataViewComponents} = makeContextFor('components', undefined as DataViewComponents)
+export const {Provider: DataViewComponentsProvider, use: useDataViewComponents} = makeContextFor('components')
 
 const dataViewL = lensBuilder<SearchGuiData<any>>().focusOn('filters').focusOn(dataViewFilterName)
 
@@ -61,7 +61,7 @@ export function DataViewNavBar(props: DataViewNavBarProps) {
     const dataViews = useDataViews();
     const [selectedDataView, setSelectedDataView] = useGuiSelectedDataView();
     const [state, setState] = useSearchGuiState();
-    debug ('Data views','selectedDataView', selectedDataView, 'dataViews', dataViews)
+    debug('Data views', 'selectedDataView', selectedDataView, 'dataViews', dataViews)
     const setSelected: Setter<string> = (name: SetStateAction<string>) => {
         const actualName = typeof name === 'string' ? name : name(selectedDataView)
         setSelectedDataView(actualName)

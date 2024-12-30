@@ -43,6 +43,6 @@ export function FeatureFlagsProvider({children, featureFlags}: { children: React
 }
 
 export function useFeatureFlag(name: string): boolean {
-    const flags = useFeatureFlagsState();
+    const [flags] = useFeatureFlagsState();
     return flags[name]?.value ?? false;
 }

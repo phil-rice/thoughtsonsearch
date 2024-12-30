@@ -1,16 +1,20 @@
 {
   "template": "typescript",
-  "name": "@enterprise_search/search_api",
-  "description": "implements searching by means of a call to an api",
+  "name": "@enterprise_search/axios_service_caller",
+  "description": "Implements service caller for axios",
   "links": [
-    "@enterprise_search/search_state",
+    "@enterprise_search/authentication" ,
+    "@enterprise_search/errors",
+    "@enterprise_search/recoil_utils",
     "@enterprise_search/service_caller"
   ],
   "packageJson": {
     "files": ["build/"],
     "dependencies": {
+      "axios": "1.7.9"
     },
     "devDependencies": {
+      "axios-mock-adapter": "^2.1.0",
       "ts-jest": "^29.2.5"
     },
     "guards": {

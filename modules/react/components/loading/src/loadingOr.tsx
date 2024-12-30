@@ -77,7 +77,7 @@ function LoadingOrWrapper<Input, Output>({
                                          }: {
     state: any;  // Replace `any` with your actual state type
     Loading?: React.ComponentType | null;
-    Error?: React.ComponentType<{ error: unknown }> | null;
+    Error?: LoadingOrErrorFn
     childrenFn: (data: Output) => React.ReactNode;
 }) {
     // Conditionally render the content *within* a stable component structure:
@@ -85,7 +85,7 @@ function LoadingOrWrapper<Input, Output>({
         return <Loading />;
     }
     if (hasError(state)) {
-        return Error === null ? <></> : <Error error={state.error} />;
+        return Error ?  <Error error={state.error} />:<></> ;
     }
     if (hasData(state)) {
         return <>{childrenFn(state.data as Output)}</>;

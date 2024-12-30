@@ -1,12 +1,13 @@
 import React, {createContext, useEffect, useState} from "react";
-import {useThrowError} from "@enterprise_search/react_utils";
+import {GetterSetter, useThrowError} from "@enterprise_search/react_utils";
+import {Getter} from "@focuson/lens";
 
 export type WindowUrlData = {
     url: URL
     parts: string[]
 }
 
-export const WindowUrlContext = createContext<WindowUrlData | undefined>(undefined)
+export const WindowUrlContext = createContext<GetterSetter<WindowUrlData> | undefined>(undefined)
 
 export type WindowUrlProviderProps = {
     children: React.ReactNode
@@ -36,7 +37,8 @@ function overrideHistoryMethod(method: 'pushState' | 'replaceState') {
 }
 
 export const WindowUrlProvider = ({children}: WindowUrlProviderProps) => {
-    const [windowUrlData, setWindowUrlData] = useState<WindowUrlData>(makeWindowUrlData)
+    const ops = useState<WindowUrlData>(makeWindowUrlData)
+    const [windowUrlData, setWindowUrlData] = ops
 
     useEffect(() => {
         // Update state when the URL changes
@@ -60,13 +62,13 @@ export const WindowUrlProvider = ({children}: WindowUrlProviderProps) => {
     }, [])
 
     return (
-        <WindowUrlContext.Provider value={windowUrlData}>
+        <WindowUrlContext.Provider value={ops}>
             {children}
         </WindowUrlContext.Provider>
     )
 }
 
-export function useWindowUrlData(): WindowUrlData {
+export function useWindowUrlData(): GetterSetter<WindowUrlData> {
     const result = React.useContext(WindowUrlContext);
     const throwError = useThrowError()
     if (result === undefined) throwError('s/w', 'useWindowUrlData must be used within a WindowUrlProvider')
@@ -74,9 +76,9 @@ export function useWindowUrlData(): WindowUrlData {
 }
 
 export function useWindowsUrl(): URL {
-    return useWindowUrlData().url
+    return useWindowUrlData()[0].url
 }
 
 export function useWindowsPath() {
-    return useWindowUrlData().parts
+    return useWindowUrlData()[0].parts
 }

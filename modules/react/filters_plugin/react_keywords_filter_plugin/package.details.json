@@ -4,9 +4,7 @@
   "description": "How we search using text",
   "links": [
     "@enterprise_search/react_filters_plugin",
-    "@enterprise_search/search_state",
-    "@enterprise_search/service_caller",
-    "@enterprise_search/search_api"
+    "@enterprise_search/search_state"
   ],
   "packageJson": {
     "files": ["build/"],

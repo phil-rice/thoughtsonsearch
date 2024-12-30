@@ -1,6 +1,6 @@
-import {NameAnd} from "@enterprise_search/recoil_utils";
+import {DebugLog, NameAnd} from "@enterprise_search/recoil_utils";
 import React from "react";
-import {DebugLog, GetterSetter, makeContextFor, makeGetterSetter, useThrowError} from "@enterprise_search/react_utils";
+import {GetterSetter, makeContextFor, makeGetterSetter, useThrowError} from "@enterprise_search/react_utils";
 import {lensBuilder} from "@enterprise_search/optics";
 import {ThrowError} from "@enterprise_search/errors";
 import {useErrorBoundary} from "@enterprise_search/error_boundary";
@@ -30,8 +30,8 @@ export type ReactFiltersPlugin<Filters, FilterName extends keyof Filters> = {
     //return null if you don't want to display in that purpose
     PurposeToDisplay: NameAnd<DisplayFilter<Filters[FilterName]> | null>
     /* When we have a soveriegn page that uses the filters, it uses these methods to interact with the url */
-    fromUrl?: (debug: DebugLog,s: WindowUrlData, def: Filters[FilterName]) => Filters[FilterName]
-    addToUrl?: ( debug: DebugLog,u: URLSearchParams,f: Filters[FilterName],) => void
+    fromUrl?: (debug: DebugLog, s: WindowUrlData, def: Filters[FilterName]) => Filters[FilterName]
+    addToUrl?: (debug: DebugLog, u: URLSearchParams, f: Filters[FilterName],) => void
 }
 
 
@@ -51,7 +51,7 @@ export type ReactFiltersContextData<Filters> = {
     PurposeToFilterLayout: NameAnd<FilterLayout>
 }
 
-export const {Provider: ReactFiltersProvider, use: useReactFilters} = makeContextFor('reactFilters', undefined as ReactFiltersContextData<any>)
+export const {Provider: ReactFiltersProvider, use: useReactFilters} = makeContextFor<ReactFiltersContextData<any>, 'reactFilters'>('reactFilters')
 
 function findDisplayFilterFor<Filters, FilterName extends keyof Filters>(reportErrors: ThrowError, plugins: ReactFiltersPlugins<any>, filterName: FilterName, purpose: string) {
     const plugin = plugins[filterName]
@@ -77,10 +77,10 @@ export const SimpleDisplayFilters = (filterPurpose: string) =>
         if (!FilterLayout) reportErrors('s/w', `No FilterLayout for purpose '${filterPurpose}'. Legal values are: ${Object.keys(PurposeToFilterLayout).sort().join(', ')}`);
         return <FilterLayout id={id}>
             {Object.keys(plugins).map((filterName) => {
-                const DisplayFilter: DisplayFilter<any> = findDisplayFilterFor<Filters, any>(reportErrors, plugins, filterName, filterPurpose);
+                const DisplayFilter = findDisplayFilterFor<Filters, any>(reportErrors, plugins, filterName, filterPurpose);
                 if (!DisplayFilter) return null;
                 const filterOps = makeGetterSetter(filters, setFilters, lensBuilder<Filters>().focusOn(filterName as any));
-                return <ErrorBoundary key={filterName} message={`error.filter.${filterName}`}><DisplayFilter  id={`${id}.${filterName}`} filterOps={filterOps}/></ErrorBoundary>
+                return <ErrorBoundary key={filterName} message={`error.filter.${filterName}`}><DisplayFilter id={`${id}.${filterName}`} filterOps={filterOps}/></ErrorBoundary>
             })}
         </FilterLayout>
     };

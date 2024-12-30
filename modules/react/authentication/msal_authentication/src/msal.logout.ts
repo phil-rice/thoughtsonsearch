@@ -1,4 +1,4 @@
-import {AccountInfo, AuthenticationResult, PublicClientApplication} from "@azure/msal-browser";
+import {AccountInfo, PublicClientApplication} from "@azure/msal-browser";
 
 export type MsalLogout = {
     name: string;
@@ -30,7 +30,7 @@ export const msalLogout: MsalLogout =
  * Attempts each method in order until one succeeds or all fail.
  * Logs the first success or the last failure for debugging.
  */
-export function chainLogout(...logins: MsalLogout[]) {
+export function chainLogout(...logins: MsalLogout[]):MsalLogout {
     let lastError: any = undefined
     return {
         name: logins.map(l => l.name).join(" -> "),
