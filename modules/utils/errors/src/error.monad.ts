@@ -1,9 +1,11 @@
 import {NameAnd} from "@laoban/utils";
 
+export type ErrorsOr<T> = Errors | Value<T>
 export type Value<T> = { value: T }
+export type Errors = { errors: string[] , reference?: string, extras?: any }
 
 export function isValue<T>(e: ErrorsOr<T>): e is Value<T> {
-    return (e as any)?.value !== undefined
+    return 'value' in e
 }
 
 export function valueOrThrow<T>(e: ErrorsOr<T>): T {
@@ -24,7 +26,6 @@ export function partitionNameAndErrorsOr<T>(es: NameAnd<ErrorsOr<T>>) {
     return {values, errors}
 }
 
-export type Errors = { errors: string[] , reference?: string, extras?: any }
 
 export function errorsOrThrow<T>(e: ErrorsOr<T>): Errors {
     if (isValue(e)) throw new Error(`Expected errors but got value ${JSON.stringify(e)}`)
@@ -36,7 +37,6 @@ export function isErrors<T>(e: ErrorsOr<T>): e is Errors {
 
 }
 
-export type ErrorsOr<T> = Errors | Value<T>
 export function recover<T>(e: ErrorsOr<T>, f: (e: Errors) => T):T {
     if (isErrors(e)) return f(e)
     return e.value

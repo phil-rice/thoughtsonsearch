@@ -7,7 +7,7 @@ export type Authentication = {
     modifyHeaders?: (headers: Headers) => Promise<Headers>;
 }
 
-export async function applyAuthentication(auth: Authentication, req: ServiceRequest): Promise<ServiceRequest> {
+export async function applyAuthentication<T>(auth: Authentication, req: ServiceRequest<T>): Promise<ServiceRequest<T>> {
     const {url, body, headers} = req
     return {
         ...req,

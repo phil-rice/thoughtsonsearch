@@ -8,7 +8,7 @@ node_modules/
 .log
 .profile
 .session/
-
+.status
 dist/
 # testing
 coverage/

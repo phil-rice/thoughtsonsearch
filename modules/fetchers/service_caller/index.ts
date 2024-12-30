@@ -1,1 +1,1 @@
-export * from './src/serviceCaller'
+export * from './src/service.caller'

@@ -35,7 +35,7 @@ const debugState = {
     [startStateDebug]: false,
     [dataViewDebug]: false,
     [routingDebug]: false,
-    [editComponentDebug]: true
+    [editComponentDebug]: false
 };
 
 export const exampleMsalConfig: Configuration = {

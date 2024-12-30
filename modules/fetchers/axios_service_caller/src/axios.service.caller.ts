@@ -1,9 +1,7 @@
 import axios, {AxiosError, AxiosRequestConfig} from 'axios';
 import {Errors, ErrorsOr} from "@enterprise_search/errors";
-import {ServiceCaller, ServiceRequest, ServiceResponse} from "@enterprise_search/service_caller";
-
+import {makeServiceResponse, ServiceCaller, ServiceRequest, ServiceResponse} from "@enterprise_search/service_caller";
 import {DebugLog, NameAnd} from "@enterprise_search/recoil_utils";
-
 import {applyAuthentication, Authentication} from "@enterprise_search/authentication";
 
 export type AxiosContext = {
@@ -12,10 +10,10 @@ export type AxiosContext = {
     authentication: Authentication
 }
 
-export const axiosServiceCaller: ServiceCaller<AxiosContext> =  async (
+export async function axiosServiceCaller<T>(
     {axiosConfig, debug, authentication}: AxiosContext,
-    req: ServiceRequest,
-): Promise<ErrorsOr<ServiceResponse>> => {
+    req: ServiceRequest<T>,
+): Promise<ErrorsOr<ServiceResponse<T>>> {
     try {
         debug('serviceCaller - req', req);
         const withAuth = await applyAuthentication(authentication, req)
@@ -29,17 +27,17 @@ export const axiosServiceCaller: ServiceCaller<AxiosContext> =  async (
         const responseHeaders: NameAnd<string> = {}
         for (const [key, value] of Object.entries(response?.headers || {}))
             responseHeaders[key] = Array.isArray(value) ? value.join(',') : value.toString()
-        const sr: ServiceResponse = {status: response.status, body: response.data, headers: responseHeaders};
-        debug('serviceCaller - res', sr);
-        return {value: sr}
+        const result = makeServiceResponse<T>(response.status, responseHeaders, response.data, req.parser);
+        debug('serviceCaller - res', result);
+        return result
     } catch (error: any) {
         const result: Errors = handleAxiosError(req, error);
         debug.debugError(error, 'serviceCaller - error', result);
         return result;
     }
-};
+}
 
-function handleAxiosError(sr: ServiceRequest, error: AxiosError): Errors {
+function handleAxiosError<T>(sr: ServiceRequest<T>, error: AxiosError): Errors {
     if (error.response) {
         // Server responded with a status other than 2xx
         return {
