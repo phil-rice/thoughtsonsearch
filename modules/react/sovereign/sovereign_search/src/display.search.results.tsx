@@ -50,10 +50,11 @@ export const SearchResults = <Filters extends any>({st = 'main'}: SearchResultsP
     const {dataSourceToSearchResult} = oneSearch
     const dataTypeToData = searchResultsToDataView(dataSourceToSearchResult)
     return <DisplaySearchResultsLayout>
-        {Object.entries(dataTypeToData).map(([dataType, data]) => {
+        {Object.entries(dataTypeToData).map(([dataType, data], i) => {
             const plugin = dataPlugins[dataType]
             if (!plugin) reportError('s/w', `No plugin found for data type ${dataType}. Legal values are ${Object.keys(dataPlugins).sort().join(', ')}`)
-            return plugin.DefaultDisplayData({data})
+            const DisplayData = plugin.DisplayData;
+            return <DisplayData key={i} data={data}/>
         })}
         {Object.entries(searchResultsToErrors(dataSourceToSearchResult)).map(([dataSourceName, errors]) => {
             return <ErrorInDataSource key={dataSourceName} dataSourceName={dataSourceName} errors={errors}/>

@@ -4,8 +4,10 @@
   "description": "A sample search client using these utilities",
   "links": [
     "@enterprise_search/authentication",
+    "@enterprise_search/confluence_data_plugin",
     "@enterprise_search/errors",
     "@enterprise_search/icons",
+    "@enterprise_search/jira_data_plugin",
     "@enterprise_search/msal_authentication",
     "@enterprise_search/search_important_components",
     "@enterprise_search/sovereign",

@@ -5,6 +5,11 @@ node_modules/
 .pnp
 .pnp.js
 
+# Don't remove this: it's about the secrets in the root.
+.env
+# Allow .env files in modules
+!modules/**/.env
+
 .log
 .profile
 .session/

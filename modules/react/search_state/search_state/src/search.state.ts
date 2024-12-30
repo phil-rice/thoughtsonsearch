@@ -72,7 +72,8 @@ export function searchResultsToDataView(dataSourceToSearchResult: DatasourceToSe
     const result: NameAnd<any[]> = {}
     Object.entries(dataSourceToSearchResult).map(([dataSourceName, searchResult]) => {
         if (isValue(searchResult)) {
-            for (const item of (searchResult.value.data as any[])) {
+            const value: SearchResult<any, any> = searchResult.value;
+            for (const item of value.data) {
                 const dataType = item.type
                 result[dataType] = result[dataType] || []
                 result[dataType].push(item)

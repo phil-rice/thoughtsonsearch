@@ -1,7 +1,7 @@
 {
   "template": "react",
-  "name": "@enterprise_search/recoil_components",
-  "description": "Exploring recoil. This is a package of components used to edit/view recoil atoms.",
+  "name": "@enterprise_search/edit_components",
+  "description": "This is a package of components used to edit/view arbitary data",
   "packageJson": {
     "files": ["build/"],
     "dependencies": {

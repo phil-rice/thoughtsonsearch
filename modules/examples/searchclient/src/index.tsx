@@ -2,15 +2,15 @@ import React, {useEffect} from "react";
 import {createRoot} from "react-dom/client";
 import {Configuration, PublicClientApplication} from "@azure/msal-browser";
 import {loginUsingMsal} from "@enterprise_search/msal_authentication";
-import {Authenticate, SimpleDisplayLogin, SimpleMustBeLoggedIn, useLoginComponents} from "@enterprise_search/react_login_component";
+import {Authenticate, authenticateDebug, AuthenticationProvider, LoginConfig, SimpleDisplayLogin, SimpleMustBeLoggedIn, useLoginComponents} from "@enterprise_search/react_login_component";
 import {filtersDisplayPurpose, ReactFiltersContextData} from "@enterprise_search/react_filters_plugin";
 
 import {SearchImportantComponents, SearchImportantComponentsProvider, startStateDebug} from "@enterprise_search/search_important_components";
-import {CommonDataSourceDetails, DataSourceDetails, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
+import {CommonDataSourceDetails, DataSourceDetails, DataSourcePlugins, validateDataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {SimpleSearchBar} from "@enterprise_search/search_bar";
 import {simpleLoadingDisplay} from "@enterprise_search/loading";
-import {DisplaySelectedSovereignPage, SovereignStatePlugins, SovereignStatePluginsProvider, SovereignStateProvider} from "@enterprise_search/sovereign";
+import {DisplaySelectedSovereignPage, SimpleUnknownDisplay, SovereignStatePlugins, SovereignStatePluginsProvider, SovereignStateProvider} from "@enterprise_search/sovereign";
 import {IconProvider, simpleIconContext} from "@enterprise_search/icons";
 import {dataViewFilter, dataViewFilterName, DataViewFilters, SimpleDataViewFilterDisplay} from "@enterprise_search/react_data_views_filter_plugin";
 import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResultsLayout, simpleSearchResultComponents} from "@enterprise_search/sovereign_search";
@@ -21,12 +21,12 @@ import {ElasticSearchContext, elasticSearchDataSourcePlugin, elasticSearchDsName
 import {consoleErrorReporter, FeatureFlags, NonFunctionalsProvider} from "@enterprise_search/react_utils";
 import {routingDebug, WindowUrlProvider} from "@enterprise_search/routing";
 import {simpleSearchDropDownComponents} from "@enterprise_search/search_dropdown";
-import {SimpleUnknownDisplay} from "@enterprise_search/sovereign";
-import {authenticateDebug, AuthenticationProvider, LoginConfig} from "@enterprise_search/react_login_component";
-import {bearerAuthentication} from "@enterprise_search/authentication";
+import {basicAuthentication} from "@enterprise_search/authentication";
 import {axiosServiceCaller} from "@enterprise_search/axios_service_caller";
 import {editComponentDebug} from "@enterprise_search/recoil_components";
 import {exampleTimeFilterPlugin, timefilterPluginName, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
+import {ConfluenceDataName, ConfluenceDataPlugin} from "@enterprise_search/confluence_data_plugin";
+import {JiraDataName, JiraDataPlugin} from "@enterprise_search/jira_data_plugin";
 
 
 const debugState = {
@@ -61,16 +61,32 @@ const reactFiltersContextData: ReactFiltersContextData<SearchAppFilters> = {
         [filtersDisplayPurpose]: ({children}) => <div><h3>Filters</h3>{children}</div>
     }
 }
+
 export const elasticSearchContext: ElasticSearchContext = {
     knownIndicies: ['jira-prod', 'confluence-prod'],
     elasticSearchUrl: process.env['REACT_APP_ELASTIC_SEARCH_URL']!,
     serviceCaller: axiosServiceCaller,
-    authentication: bearerAuthentication(process.env['REACT_APP_ELASTIC_SEARCH_API_KEY']!)
+    authentication: basicAuthentication(
+        process.env['REACT_APP_ELASTIC_SEARCH_USERNAME']!,
+        process.env['REACT_APP_ELASTIC_SEARCH_PASSWORD']!)
 }
+
+
 const dataSourcePlugins: DataSourcePlugins<any> = {
     elasticSearch: elasticSearchDataSourcePlugin(elasticSearchContext)
 }
-const dataPlugins: DataPlugins = {}
+try {
+    validateDataSourcePlugins(dataSourcePlugins)
+} catch (e: any) {
+    if (window.location.href.includes('ignoreValidation=true'))
+        console.error(e)
+    else throw e
+}
+
+const dataPlugins: DataPlugins = {
+    [ConfluenceDataName]: ConfluenceDataPlugin(),
+    [JiraDataName]: JiraDataPlugin()
+}
 
 type AllDataSourceDetails = ElasticSearchSourceDetails | CommonDataSourceDetails
 

@@ -1,7 +1,7 @@
-import {AsyncErrorCall2, ErrorsOr, flatMapErrorsOr} from "@enterprise_search/errors";
+import {ErrorsOr, flatMapErrorsOr} from "@enterprise_search/errors";
 import {NameAnd} from "@enterprise_search/recoil_utils";
 
-export type ServiceCaller<Context, T = string> = AsyncErrorCall2<Context, ServiceRequest<T>, ServiceResponse<T>>;
+export type ServiceCaller<Context> = <T, >(context: Context,serviceRequest: ServiceRequest<T>) => Promise<ErrorsOr<ServiceResponse<T>>>
 
 export type Method = 'POST' | 'GET' | 'PUT' | 'DELETE';
 export type Header = string | string[] | undefined;
@@ -84,12 +84,13 @@ export function stringParserAndValidator<T>(
         validator: actualValidator,
     };
 }
+
 export function justValidator<T>(
     validator?: (a: unknown) => string[]
 ): ParserAndValidator<T> {
     const actualValidator = validator ?? (() => []);
     return {
-        parser: (s: any, status: number) => ({value:s}),
+        parser: (s: any, status: number) => ({value: s}),
         validator: actualValidator,
     };
 }

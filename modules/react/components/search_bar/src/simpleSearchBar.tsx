@@ -54,7 +54,7 @@ const cssVariables: CSSVariables = {
     },
 };
 
-export function SimpleSearchBar<Filters extends KeywordsFilter>({immediateSearch, mainSearch}: SearchBarProps) {
+export function SimpleSearchBar<Filters extends KeywordsFilter>({immediateSearch, mainSearch, escapePressed}: SearchBarProps) {
     const [searchQuery, setSearchQuery] = useGuiSearchQuery();
     const [guiFilters] = useGuiFilters();
     const [immediate, setImmediate] = useSearchResultsByStateType('immediate');
@@ -91,7 +91,10 @@ export function SimpleSearchBar<Filters extends KeywordsFilter>({immediateSearch
                 placeholder="Search..."
                 aria-label="Search input"
                 style={cssVariables.input}
-                onKeyUp={(e) => e.key === "Enter" && mainSearch?.()}
+                onKeyUp={(e) => {
+                    if (e.key === "Enter") return mainSearch?.();
+                    if (e.key === "Escape") return escapePressed?.();
+                }}
                 onFocus={(e) =>
                     Object.assign(e.target.style, cssVariables.inputFocus)
                 }

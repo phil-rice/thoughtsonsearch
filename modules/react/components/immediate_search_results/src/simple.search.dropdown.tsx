@@ -1,15 +1,16 @@
 import React, {CSSProperties} from 'react';
 import {SearchDropDown, SearchDropDownProps} from "./search.drop.down";
-import {searchResultsToErrors, searchResultsToInterleavedData, SearchType} from "@enterprise_search/search_state";
+import {searchResultsToErrors, searchResultsToInterleavedData} from "@enterprise_search/search_state";
 import {useGuiSearchQuery} from "@enterprise_search/search_gui_state";
 import {useSearchResultsByStateType} from "@enterprise_search/react_search_state";
 import {useUserData} from "@enterprise_search/react_login_component/src/authenticationProvider";
-
+import {useOneLineDisplayDataComponent} from "@enterprise_search/react_data/src/react.data";
 
 
 export const SimpleSearchDropdown: SearchDropDown = ({st}: SearchDropDownProps) => {
     const [searchResults] = useSearchResultsByStateType(st);
     const [searchQuery, setSearchQuery] = useGuiSearchQuery();
+    const displayOneLine = useOneLineDisplayDataComponent()
     const data = searchResultsToInterleavedData(searchResults.dataSourceToSearchResult, 6);
     const srToError = searchResultsToErrors(searchResults.dataSourceToSearchResult);
     const userData = useUserData();
@@ -18,12 +19,12 @@ export const SimpleSearchDropdown: SearchDropDown = ({st}: SearchDropDownProps) 
             <div style={styles.dropdown}>
                 {data.map((data, index) => (
                     <div key={index} style={styles.suggestion} onClick={() => setSearchQuery(JSON.stringify(data))}>
-                        {JSON.stringify(data)}
+                        {displayOneLine(data.type)({data})}
                     </div>
                 ))}
                 {data.length === 0 && <div style={styles.suggestion}>...</div>}
                 {userData.isDev ? (
-                    <div style={styles.errors}>
+                    Object.keys(srToError).length > 0 && <div style={styles.errors}>
                         {Object.entries(srToError).map(([source, error]) => (
                             <div key={source} style={styles.error}>
                                 {source}: {JSON.stringify(error)}

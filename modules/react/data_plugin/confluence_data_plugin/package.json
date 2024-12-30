@@ -1,6 +1,6 @@
 {
-  "name": "@enterprise_search/searchclient",
-  "description": "A sample search client using these utilities",
+  "name": "@enterprise_search/confluence_data_plugin",
+  "description": "Transformation and display of confluence",
   "version": "0.0.1",
   "browserslist": {
     "development": [
@@ -15,47 +15,27 @@
     ]
   },
   "dependencies": {
-    "@azure/msal-browser": "^3.28.0",
-    "@enterprise_search/authentication": "0.0.1",
-    "@enterprise_search/confluence_data_plugin": "0.0.1",
-    "@enterprise_search/errors": "0.0.1",
-    "@enterprise_search/icons": "0.0.1",
-    "@enterprise_search/jira_data_plugin": "0.0.1",
-    "@enterprise_search/msal_authentication": "0.0.1",
-    "@enterprise_search/search_important_components": "0.0.1",
-    "@enterprise_search/sovereign": "0.0.1",
-    "@enterprise_search/sovereign_search": "0.0.1",
-    "@enterprise_search/service_caller": "0.0.1",
     "@enterprise_search/search_state": "0.0.1",
-    "@enterprise_search/react_utils": "0.0.1",
-    "@enterprise_search/recoil_components": "0.0.1",
+    "@enterprise_search/react_data": "0.0.1",
     "debug": "^4.3.4",
-    "@emotion/react": "^11.11.3",
-    "@emotion/styled": "^11.11.0",
     "@focuson/lens": "1.44.3",
     "@focuson/state": "1.44.3",
-    "@laoban/utils": "1.4.45",
-    "@mui/material": "^5.15.10",
-    "@mui/icons-material": "^5.15.10",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@laoban/utils": "1.4.45"
   },
   "devDependencies": {
     "ts-jest": "^29.2.5",
-    "@babel/preset-react": "^7.24.7",
-    "@babel/preset-env": "^7.24.7",
+    "parcel": "^2.13.3",
+    "typescript": "^5.3.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/dom": "^10.4.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/user-event": "^14.5.2",
+    "@babel/preset-react": "^7.23.3",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
-    "parcel": "^2.13.3",
-    "@parcel/transformer-webmanifest": "^2.13.3",
-    "typescript": "^5.3.3",
-    "@testing-library/react": "^16.0.0",
-    "@testing-library/dom": "^10.1.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "jest-environment-jsdom": "^29.7.0",
-    "@testing-library/user-event": "^14.5.2",
     "recoil": "^0.7.7",
-    "@types/jest": "^27.0.1"
+    "@types/jest": "^27.5.2"
   },
   "eslintConfig": {
     "extends": [
@@ -91,10 +71,12 @@
     "runbook"
   ],
   "license": "MIT",
-  "peerDependencies": {},
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
   "repository": "git@github.com:intellimaintain/intellimaintain.git",
   "scripts": {
-    "8080": "parcel src/index.html --port 8080",
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html",
     "test": "jest --config jest.config.json",

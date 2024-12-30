@@ -2,6 +2,7 @@ import {Headers, ServiceRequest} from "@enterprise_search/service_caller"
 
 export type Authentication = {
     name: string
+    validate: () => string[]
     modifyUrl?: (url: string) => Promise<string>;
     modifyBody?: (body: any) => Promise<any>;
     modifyHeaders?: (headers: Headers) => Promise<Headers>;
@@ -16,11 +17,14 @@ export async function applyAuthentication<T>(auth: Authentication, req: ServiceR
         headers: auth.modifyHeaders ? await auth.modifyHeaders(headers) : headers
     }
 }
+
 export const emptyAuthentication: Authentication = {
     name: 'empty',
+    validate: () => []
 }
 export const testAuthentication: Authentication = {
     name: 'test',
+    validate: () => [],
     modifyHeaders: async (headers: Headers) => ({...headers, 'x-test': 'test'}),
     modifyUrl: async (url: string) => `${url}?test=test`,
     modifyBody: async (body: any) => ({...body, test: 'test'})
@@ -28,19 +32,40 @@ export const testAuthentication: Authentication = {
 
 export const basicAuthentication = (username: string, password: string): Authentication => ({
     name: 'basic',
-    modifyHeaders: async (headers: Headers) =>
-        ({...headers, Authorization: `Basic ${(Buffer.from(`${username}:${password}`).toString('base64'))}`})
+    validate: () => {
+        const errors = [];
+        if (!username) errors.push('Username must be provided for basic authentication');
+        if (!password) errors.push('Password must be provided for basic authentication');
+        return errors;
+    },
+    modifyHeaders: async (headers: Headers) => {
+        return ({...headers, Authorization: `Basic ${(Buffer.from(`${username}:${password}`).toString('base64'))}`});
+    }
 });
 
 export const bearerAuthentication = (token: string): Authentication => ({
     name: 'bearer',
-    modifyHeaders: async (headers: Headers) =>
-        ({...headers, Authorization: `Bearer ${token}`})
+    validate: () => {
+        const errors = [];
+        if (!token) errors.push('Token must be provided for bearer authentication');
+        return errors
+    },
+    modifyHeaders: async (headers: Headers) => {
+        return ({...headers, Authorization: `Bearer ${token}`});
+    }
 })
 
 export const bearerAuthenticationFromFn = (token: () => Promise<string>): Authentication => ({
     name: 'bearerFromFn',
-    modifyHeaders: async (headers: Headers) =>
-        ({...headers, Authorization: `Bearer ${await token()}`})
+    validate: () => {
+        const errors = [];
+        if (!token) errors.push('Token function must be provided for bearer authentication');
+        return errors
+    },
+    modifyHeaders: async (headers: Headers) => {
+        const bearer = await token();
+        if (!bearer) throw new Error('Token function must return a token for bearer authentication');
+        return ({...headers, Authorization: `Bearer ${bearer}`});
+    }
 })
 

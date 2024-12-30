@@ -1,14 +1,12 @@
-import {DatasourceToPromiseSearchResult, OneSearch, SearchResult, SearchState, SearchType, searchTypes} from "@enterprise_search/search_state";
-import {SearchParser} from "@enterprise_search/react_search_parser";
-import {ErrorsOr, ThrowError} from "@enterprise_search/errors";
+import {DatasourceToPromiseSearchResult, OneSearch, SearchResult, SearchType, searchTypes} from "@enterprise_search/search_state";
+import {mapErrorsOr, ThrowError} from "@enterprise_search/errors";
 import {DataSourcePlugins, useDataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
-import {useGuiFilters, useGuiSearchQuery, useGuiSelectedDataView} from "@enterprise_search/search_gui_state";
-import {KeywordsFilter} from "@enterprise_search/react_keywords_filter_plugin";
+import {useGuiSelectedDataView} from "@enterprise_search/search_gui_state";
 import React, {ReactNode, useEffect, useRef} from "react";
-import {useFiltersByStateType, useOneFilterBySearchType, useSearchResultsByStateType, useSearchState} from "@enterprise_search/react_search_state";
+import {useFiltersByStateType, useSearchResultsByStateType} from "@enterprise_search/react_search_state";
 import {lensBuilder} from "@enterprise_search/optics";
 import {ErrorReporter, useDebug, useErrorReporter, useThrowError} from "@enterprise_search/react_utils";
-import {DataView, DataViews, useDataViews} from "@enterprise_search/data_views";
+import {DataView, useDataViews} from "@enterprise_search/data_views";
 import {DebugLog} from "@enterprise_search/recoil_utils";
 
 export const searchDebug = 'search'
@@ -35,7 +33,7 @@ function useDoSearch<Filters>(st: SearchType, resultSize: number) {
         const dataView = dataViews[dataViewName]
         const searchCapabilities: SearchCapabilities = {debug, throwError: throwError, errorReporter, dataView}
 
-        if (Object.keys(filters  as object).length === 0) return //removes calls at start up, and this isn't a credible search anyway
+        if (Object.keys(filters as object).length === 0) return //removes calls at start up, and this isn't a credible search anyway
         const baseCount = countRef.current + 1
         //when we do a new search we increment the count. We then check this in the result and ignore results if count has changed
         //we need it in a ref so that we can use it in the promise.then
@@ -43,7 +41,7 @@ function useDoSearch<Filters>(st: SearchType, resultSize: number) {
         countRef.current = baseCount
         setSearchResults(countL.set(searchResults, baseCount))
         debug(st, baseCount, 'filters', filters)
-        const result: DatasourceToPromiseSearchResult = searchAllDataSourcesPage1(searchCapabilities, st, dataSourcePlugins, filters, resultSize)
+        const result: DatasourceToPromiseSearchResult = searchAllDataSourcesPage1(searchCapabilities, st, dataSourcePlugins, filters, baseCount, resultSize)
         for (const [datasourceName, promise] of Object.entries(result)) {
             promise.then(res => {
                 if (baseCount !== countRef.current) return debug(st, baseCount, '!==', countRef.current, 'ignoring result')//ignore the result if the count has changed because there is another search on the way already
@@ -74,30 +72,38 @@ export type SearchCapabilities = {
     dataView: DataView<any>
 }
 
-export function searchAllDataSourcesPage1<Filters>(searchCapabilities: SearchCapabilities, searchType: SearchType, plugins: DataSourcePlugins<Filters>, filters: Filters, resultSize: number): DatasourceToPromiseSearchResult {
+export function searchAllDataSourcesPage1<Filters>(searchCapabilities: SearchCapabilities, searchType: SearchType, plugins: DataSourcePlugins<Filters>, filters: Filters, baseCount: number, resultSize: number): DatasourceToPromiseSearchResult {
     const result: DatasourceToPromiseSearchResult = {}
     const {debug} = searchCapabilities
     debug('searchAllDataSourcesPage1', plugins, filters, resultSize)
     for (const [datasourceName, plugin] of Object.entries(plugins)) {
         debug(datasourceName, 'starting to fetch from plugin', plugin)
         result[datasourceName] = plugin.fetch(searchCapabilities, searchType, filters, resultSize)
+            .then(res => mapErrorsOr(res, r => {
+                const result: SearchResult<any, any> = {
+                    count: baseCount,
+                    datasourceName,
+                    ...r
+                };
+                return result;
+            }))
     }
     return result
 }
 
-export function intermediateSearch<Filters extends KeywordsFilter>(searchCapabilities: SearchCapabilities,
-                                                                   plugins: DataSourcePlugins<Filters>,
-                                                                   parser: SearchParser<Filters>,
-                                                                   setIntermediateFilters: (filters: Filters) => void,
-                                                                   setResult: (st: SearchType, datasourceName: string, res: ErrorsOr<SearchResult<any, any>>) => void,
-                                                                   searchState: SearchState<any>,) {
-    const {searches} = searchState
-    const {main, immediate} = searches
-    const [searchQuery] = useGuiFilters()
-    const newImmediate = parser(searchQuery, main.filters);
-    setIntermediateFilters(newImmediate)
-    const result: DatasourceToPromiseSearchResult = searchAllDataSourcesPage1(searchCapabilities, 'immediate', plugins, newImmediate, 10)
-    for (const [datasourceName, promise] of Object.entries(result)) {
-        promise.then(res => setResult('immediate', datasourceName, res))
-    }
-}
+// export function intermediateSearch<Filters extends KeywordsFilter>(searchCapabilities: SearchCapabilities,
+//                                                                    plugins: DataSourcePlugins<Filters>,
+//                                                                    parser: SearchParser<Filters>,
+//                                                                    setIntermediateFilters: (filters: Filters) => void,
+//                                                                    setResult: (st: SearchType, datasourceName: string, res: ErrorsOr<SearchResult<any, any>>) => void,
+//                                                                    searchState: SearchState<any>,) {
+//     const {searches} = searchState
+//     const {main, immediate} = searches
+//     const [searchQuery] = useGuiFilters()
+//     const newImmediate = parser(searchQuery, main.filters);
+//     setIntermediateFilters(newImmediate)
+//     const result: DatasourceToPromiseSearchResult = searchAllDataSourcesPage1(searchCapabilities, 'immediate', plugins, newImmediate, 10)
+//     for (const [datasourceName, promise] of Object.entries(result)) {
+//         promise.then(res => setResult('immediate', datasourceName, res))
+//     }
+// }

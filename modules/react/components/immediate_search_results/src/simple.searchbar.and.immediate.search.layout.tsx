@@ -11,6 +11,7 @@ const styles: Record<string, React.CSSProperties> = {
 };
 
 
-export const SimpleSearchBarAndImmediateSearchLayout: SearchBarAndImmediateSearchLayout = ({children}: SearchBarAndImmediateSearchLayoutProps) => <div style={styles.searchContainer}>
-    {children}
-</div>;
+export const SimpleSearchBarAndImmediateSearchLayout: SearchBarAndImmediateSearchLayout = ({children}: SearchBarAndImmediateSearchLayoutProps) =>
+    <div style={styles.searchContainer}>
+        {children}
+    </div>;
