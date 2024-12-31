@@ -9,6 +9,7 @@
     "@enterprise_search/icons",
     "@enterprise_search/jira_data_plugin",
     "@enterprise_search/msal_authentication",
+    "@enterprise_search/people_data_plugin",
     "@enterprise_search/renderers",
     "@enterprise_search/html_renderers",
     "@enterprise_search/markdown_renderers",

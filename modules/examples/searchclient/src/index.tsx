@@ -9,14 +9,13 @@ import {SearchImportantComponents, SearchImportantComponentsProvider, startState
 import {CommonDataSourceDetails, DataSourceDetails, DataSourcePlugins, validateDataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {SimpleSearchBar} from "@enterprise_search/search_bar";
-import {simpleLoadingDisplay} from "@enterprise_search/loading";
 import {DisplaySelectedSovereignPage, SimpleUnknownDisplay, SovereignStatePlugins, SovereignStatePluginsProvider, SovereignStateProvider} from "@enterprise_search/sovereign";
 import {IconProvider, simpleIconContext} from "@enterprise_search/icons";
 import {dataViewFilter, dataViewFilterName, DataViewFilters, SimpleDataViewFilterDisplay} from "@enterprise_search/react_data_views_filter_plugin";
 import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResultsLayout, simpleSearchResultComponents} from "@enterprise_search/sovereign_search";
 import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
 import {DoTheSearching, searchDebug} from "@enterprise_search/search";
-import {dataViewDebug, SimpleDataViewNavbarLayout, SimpleDataViewNavItem} from "@enterprise_search/data_views";
+import {dataViewDebug, SimpleDataViewNavItem} from "@enterprise_search/data_views";
 import {ElasticSearchContext, elasticSearchDataSourcePlugin, elasticSearchDsName, ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
 import {consoleErrorReporter, FeatureFlags, NonFunctionalsProvider} from "@enterprise_search/react_utils";
 import {routingDebug, WindowUrlProvider} from "@enterprise_search/routing";
@@ -27,9 +26,11 @@ import {axiosServiceCaller} from "@enterprise_search/axios_service_caller";
 import {exampleTimeFilterPlugin, timefilterPluginName, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
 import {ConfluenceDataName, ConfluenceDataPlugin} from "@enterprise_search/confluence_data_plugin";
 import {JiraDataName, JiraDataPlugin} from "@enterprise_search/jira_data_plugin";
-import {AttributeValueProvider, Renderers, SimpleAttributeValueLayout, SimpleDataLayout, SimpleDateRenderer, SimpleJsonRenderer, SimpleTextRenderer, SimpleUrlRenderer} from "@enterprise_search/renderers";
+import {AttributeValueProvider, Renderers, SimpleAttributeValueLayout, SimpleDataLayout, SimpleDateRenderer, SimpleH1Renderer, SimpleH2Renderer, SimpleH3Renderer, SimpleJsonRenderer, SimpleTextRenderer, SimpleUrlRenderer} from "@enterprise_search/renderers";
 import {MarkdownRenderer} from "@enterprise_search/markdown_renderers";
 import {SimpleHtmlRenderer} from "@enterprise_search/html_renderers";
+import {PeopleDataName, peopleDataPlugin} from "@enterprise_search/people_data_plugin";
+import {OneSearchPagePlugin, OneSearchSovereignPage} from "@enterprise_search/sovereign_search/src/sovereignPages/one.search.sovereign.page";
 
 
 const debugState = {
@@ -87,7 +88,8 @@ try {
 
 const dataPlugins: DataPlugins = {
     [ConfluenceDataName]: ConfluenceDataPlugin(),
-    [JiraDataName]: JiraDataPlugin()
+    [JiraDataName]: JiraDataPlugin(),
+    [PeopleDataName]:peopleDataPlugin()
 }
 
 type AllDataSourceDetails = ElasticSearchSourceDetails | CommonDataSourceDetails
@@ -99,11 +101,11 @@ const graphApiPeopleData: CommonDataSourceDetails = {type: 'graphApiPeople', nam
 const sharepointData: CommonDataSourceDetails = {type: 'sharepoint', names: ['sharepoint']}
 const allDetails: AllDataSourceDetails[] = [allElasticSearchData, graphApiPeopleData, sharepointData];
 const dataViewDetails: DataSourceDetails<AllDataSourceDetails> = {
-    all: allDetails,
-    jira: [jiraElasicSearchData],
-    confluence: [confluenceElasticSearchData],
-    graphApiPeople: [graphApiPeopleData],
-    sharepoint: [sharepointData]
+    all: {details: allDetails, displayAsWidget: true, expectedDataTypes: ['jira', 'confluence', 'people']},
+    jira: {details: [jiraElasicSearchData], expectedDataTypes: ['jira']},
+    confluence: {details: [confluenceElasticSearchData], expectedDataTypes: ['confluence']},
+    graphApiPeople: {details: [graphApiPeopleData], expectedDataTypes: ['people']},
+    sharepoint: {details: [sharepointData]}
 }
 
 
@@ -111,12 +113,10 @@ const searchImportantComponents: SearchImportantComponents<any, AllDataSourceDet
     dataSourcePlugins,
     dataPlugins,
     reactFiltersContextData,
-    LoadingDisplay: simpleLoadingDisplay,
     DisplayLogin: SimpleDisplayLogin,
     NotLoggedIn: SimpleMustBeLoggedIn,
     SearchBar: SimpleSearchBar,
     DisplaySearchResultsLayout: SimpleDisplayResultsLayout,
-    DataViewNavBarLayout: SimpleDataViewNavbarLayout,
     NavBarItem: SimpleDataViewNavItem,
     dataViewDetails,
     SearchResultsComponents: simpleSearchResultComponents,
@@ -127,6 +127,7 @@ const sovereignStatePlugins: SovereignStatePlugins = {
     plugins: {
         start: InitialSovereignPagePlugin,
         advancedSearch: AdvanceSearchPagePlugin,
+        one:OneSearchPagePlugin
     },
     UnknownDisplay: SimpleUnknownDisplay
 }
@@ -161,7 +162,10 @@ const renderers: Renderers = {
     Html: SimpleHtmlRenderer,
     Json: SimpleJsonRenderer,
     Date: SimpleDateRenderer,
-    Url: SimpleUrlRenderer
+    Url: SimpleUrlRenderer,
+    H1: SimpleH1Renderer,
+    H2: SimpleH2Renderer,
+    H3: SimpleH3Renderer
 }
 
 msal.initialize({}).then(() => {

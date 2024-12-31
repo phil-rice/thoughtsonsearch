@@ -33,10 +33,8 @@ export interface SearchImportantComponents<Context, Details extends CommonDataSo
     SearchBar: SearchBar
     DisplayLogin: DisplayLogin
     NotLoggedIn?: () => React.ReactElement
-    /*If present will be displayed when loading. There is a default but it's not very pretty*/
-    LoadingDisplay?: LoadingDisplay
+
     DisplaySearchResultsLayout: DisplaySearchResultsLayout
-    DataViewNavBarLayout: DataViewNavBarLayout
     NavBarItem: NavBarItem
     SearchResultsComponents: SearchResultsComponents
     SearchDropDownComponents: SearchDropDownComponents
@@ -58,8 +56,8 @@ export type SetupStartStateProps<Filters extends DataViewFilters> = {
 
 export function SearchImportantComponentsProvider<Context, Details extends CommonDataSourceDetails, Filters extends DataViewFilters>({components, children}: SearchImportantComponentsProviderProps<Context, Details, Filters>) {
     const {
-        SearchBar, dataPlugins, dataSourcePlugins, reactFiltersContextData, LoadingDisplay, DisplayLogin, DisplaySearchResultsLayout,
-        NotLoggedIn, NavBarItem, DataViewNavBarLayout, dataViewDetails
+        SearchBar, dataPlugins, dataSourcePlugins, reactFiltersContextData, DisplayLogin, DisplaySearchResultsLayout,
+        NotLoggedIn, NavBarItem,  dataViewDetails
     } = components
     const dataViews: DataViews<Details> = dataSourceDetailsToDataView(dataViewDetails, NavBarItem)
 

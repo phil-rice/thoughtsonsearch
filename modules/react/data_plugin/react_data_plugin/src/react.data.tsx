@@ -5,6 +5,7 @@ import {DataAndDataSource, OneSearch} from "@enterprise_search/search_state";
 
 
 export type DataComponents<Data> = {
+    DisplayDataWidget: DisplayDataWidget<Data>
     DisplayDataArray: DisplayDataArray<Data>
     DisplayData: DisplayData<Data>
     OneLineDisplayData: DisplayData<Data>
@@ -30,6 +31,13 @@ export type DisplayDataArrayProps<Data> = {
     Display: DisplayData<Data>
 }
 export type DisplayDataArray<Data> = (props: DisplayDataArrayProps<Data>) => React.ReactElement
+
+export type DisplayDataWidgetProps<Data> = {
+    title: string
+    data: DataAndDataSource<Data>[]
+    id: string
+}
+export type DisplayDataWidget<Data> = (props: DisplayDataWidgetProps<Data>) => React.ReactElement
 
 export const {Provider: DataPluginProvider, use: useDataPlugins} = makeContextFor('dataPlugins', {} as DataPlugins);
 

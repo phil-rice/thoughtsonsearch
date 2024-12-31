@@ -18,11 +18,14 @@ export type DataViewPurposesToDisplay = Record<DataViewPurposes, DataViewDisplay
 
 
 export type DataViews<Details> = NameAnd<DataView<Details>>
+
 export type DataView<Details> = {
     plugin: 'dataview'
     name: string
     displays: DataViewPurposesToDisplay
     datasources: Details[]
+    displayAsWidget?: boolean
+    expectedDataTypes?: string[]
 }
 
 export function dataSourceDetailsToDataView<Details extends CommonDataSourceDetails>(datasources: DataSourceDetails<Details>, ItemFn: NavBarItem): DataViews<Details> {
@@ -32,7 +35,9 @@ export function dataSourceDetailsToDataView<Details extends CommonDataSourceDeta
             plugin: 'dataview',
             name,
             displays: {navbar: ({itemName}) => <ItemFn name={itemName}/>},
-            datasources: datasource
+            datasources: datasource.details,
+            displayAsWidget: datasource.displayAsWidget,
+            expectedDataTypes: datasource.expectedDataTypes
         }
     }
     return result

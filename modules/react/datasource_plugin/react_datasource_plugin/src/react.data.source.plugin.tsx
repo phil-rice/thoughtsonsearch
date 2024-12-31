@@ -13,7 +13,12 @@ export type CommonDataSourceDetails = {
     names: string[]
 }
 
-export type DataSourceDetails<Details extends CommonDataSourceDetails> = NameAnd<Details[]>
+export type DataSourcesAndHowToDisplay <Details>= {
+    details: Details[]
+    displayAsWidget?: boolean
+    expectedDataTypes?: string[]
+}
+export type DataSourceDetails<Details extends CommonDataSourceDetails> = NameAnd<DataSourcesAndHowToDisplay<Details>>
 
 //Maps from a data source name to the plugin that fetches data from that source
 export type DataSourcePlugins<Filters> = NameAnd<DataSourcePlugin<any, Filters, any>>

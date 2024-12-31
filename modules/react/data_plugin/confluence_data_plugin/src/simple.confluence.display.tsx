@@ -1,9 +1,11 @@
-import {DisplayData, DisplayDataProps} from "@enterprise_search/react_data/src/react.data";
+import {DisplayData, DisplayDataArray, DisplayDataProps, DisplayDataWidget} from "@enterprise_search/react_data/src/react.data";
 import {ConfluenceData} from "./confluence.data";
 import React from "react";
 import {JiraData} from "@enterprise_search/jira_data_plugin";
 import {useAttributeValueComponents, useRenderers} from "@enterprise_search/renderers";
 import {ClipHeight} from "@enterprise_search/react_utils";
+import {SimpleTable} from "@enterprise_search/react_utils/src/table";
+import {SimpleWidget} from "@enterprise_search/react_data/src/simple.widget";
 //{
 //   "last_updated": "p34350@eon.com",
 //   "mediaType": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
@@ -50,3 +52,6 @@ export const SimpleConfluenceOneLineDisplay: DisplayData<ConfluenceData> =
     ({data}: DisplayDataProps<ConfluenceData>) => {
         return <span>{data.type} {data.title}</span>
     }
+
+export const SimpleConfluenceWidget: DisplayDataWidget<ConfluenceData> =
+    SimpleWidget<ConfluenceData>(['space', 'title', 'body'], ['space', 'title', 'body'], ['space'])

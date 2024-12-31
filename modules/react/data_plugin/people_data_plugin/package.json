@@ -1,6 +1,6 @@
 {
-  "name": "@enterprise_search/devmode",
-  "description": "components to support dev mode for gui state",
+  "name": "@enterprise_search/people_data_plugin",
+  "description": "Transformation and display of people from outlook",
   "version": "0.0.1",
   "browserslist": {
     "development": [
@@ -15,11 +15,9 @@
     ]
   },
   "dependencies": {
-    "@enterprise_search/authentication": "0.0.1",
-    "@enterprise_search/recoil_utils": "0.0.1",
-    "@enterprise_search/react_datasource_plugin": "0.0.1",
+    "@enterprise_search/search_state": "0.0.1",
+    "@enterprise_search/react_data": "0.0.1",
     "@enterprise_search/renderers": "0.0.1",
-    "@enterprise_search/navbar": "0.0.1",
     "debug": "^4.3.4",
     "@focuson/lens": "1.44.3",
     "@focuson/state": "1.44.3",

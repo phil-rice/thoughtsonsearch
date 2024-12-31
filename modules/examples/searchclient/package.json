@@ -22,6 +22,7 @@
     "@enterprise_search/icons": "0.0.1",
     "@enterprise_search/jira_data_plugin": "0.0.1",
     "@enterprise_search/msal_authentication": "0.0.1",
+    "@enterprise_search/people_data_plugin": "0.0.1",
     "@enterprise_search/renderers": "0.0.1",
     "@enterprise_search/html_renderers": "0.0.1",
     "@enterprise_search/markdown_renderers": "0.0.1",

@@ -8,17 +8,17 @@ import {DataViewFilters} from "@enterprise_search/react_data_views_filter_plugin
 import {CommonSearchSovereignPage} from "./common.search.sovereign.page";
 
 
-export function AdvancedSearchSovereignPage<Filters extends DataViewFilters>() {
+export function OneSearchSovereignPage<Filters extends DataViewFilters>() {
     const filterOps = useGuiFilters()
     const {DisplayAllFilters} = useDisplayAllFilters<Filters>()
 
     return <CommonSearchSovereignPage title={'search.advance.title'}>
         <DataViewNavBar/>
-        <SearchResults st='main'/>
+        <SearchResults st='main' showEvenIfEmpty={false}/>
         <DisplayAllFilters id='filter' filtersOps={filterOps}/>
     </CommonSearchSovereignPage>
 
 }
 
-export const AdvanceSearchPagePlugin = makeSovereignStatePlugin(AdvancedSearchSovereignPage)
+export const OneSearchPagePlugin = makeSovereignStatePlugin(OneSearchSovereignPage)
 

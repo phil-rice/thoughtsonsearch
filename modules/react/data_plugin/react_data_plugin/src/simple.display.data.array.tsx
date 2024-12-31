@@ -7,7 +7,7 @@ export function simpleDisplayDataArray<Data>({id, title, Display, data}: Display
             <h1>{title}</h1>
             {
                 data.map(({data}, index) => {
-                    return <Display id={`${id}-item-${index}`} data={data}/>
+                    return <Display key={index} id={`${id}-item-${index}`} data={data}/>
                 })}
 
         </div>)

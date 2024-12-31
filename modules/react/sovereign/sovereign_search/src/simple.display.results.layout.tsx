@@ -1,59 +1,38 @@
-import React, { CSSProperties, useState, useEffect } from "react";
+import React from "react";
 import { DisplaySearchResultsLayout, DisplaySearchResultsLayoutProps } from "./display.search.results";
-const styles: Record<string, CSSProperties> = {
-    container: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',  // Two equal columns by default
-        width: '100%',
-        gap: '1rem',
-        overflow: 'hidden',
-        wordBreak: 'break-word',
-        overflowWrap: 'anywhere',
-    },
-    singleColumn: {
-        gridTemplateColumns: 'auto',  // Auto size to fit content (fix for single column)
-        width: 'fit-content',         // Grid shrinks to fit the content width
-        margin: '0 auto',             // Center the grid horizontally
-    },
-    gridItem: {
-        width: '100%',
-        boxSizing: 'border-box',
-        minWidth: 0,
-    },
-    gridItemContent: {
-        width: '100%',
-    }
-};
 
-
-export const SimpleDisplayResultsLayout: DisplaySearchResultsLayout = ({ children }: DisplaySearchResultsLayoutProps) => {
+// Grid component with inline CSS for responsiveness
+export const SimpleDisplayResultsLayout: DisplaySearchResultsLayout = ({
+                                                                           children,
+                                                                       }: DisplaySearchResultsLayoutProps) => {
     const childArray = React.Children.toArray(children);
-    const [isSingleColumn, setIsSingleColumn] = useState(childArray.length === 1 || window.innerWidth < 400);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsSingleColumn(childArray.length === 1 || window.innerWidth < 800);
-        };
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, [...childArray]);
 
     return (
-        <div
-            className="search-results"
-            style={{
-                ...styles.container,
-                ...(isSingleColumn ? styles.singleColumn : {}),
-            }}
-        >
-            {childArray.map((child, index) => (
-                <div key={index} style={styles.gridItem}>
-                    <div style={styles.gridItemContent}>
+        <>
+            <style>
+                {`
+                .search-results {
+                    display: grid;
+                    grid-template-columns: repeat(2, minmax(250px, 1fr));  /* Two equal columns */
+                    gap: 1rem;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                @media (max-width: 800px) {
+                    .search-results {
+                        grid-template-columns: 1fr;  /* Collapse to one column */
+                    }
+                }
+                `}
+            </style>
+
+            <div className="search-results">
+                {childArray.map((child, index) => (
+                    <div key={index} style={{ boxSizing: 'border-box' }}>
                         {child}
                     </div>
-                </div>
-            ))}
-        </div>
+                ))}
+            </div>
+        </>
     );
 };

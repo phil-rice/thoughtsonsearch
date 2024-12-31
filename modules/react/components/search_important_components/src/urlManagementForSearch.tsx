@@ -16,7 +16,7 @@ function calculateStartStateFromUrl<Filters extends DataViewFilters & KeywordsFi
     const dataViewDetail = dataViewDetails[selectedDataView];
     if (!dataViewDetail) throw new Error(`Cannot find dataViewDetail for ${selectedDataView}. Legal values are ${Object.keys(dataViewDetails).sort()}`)
     const dataViewFilter: DataViewFilterData = {
-        allowedNames: uniqueStrings(dataViewDetail.flatMap(x => x.names)),
+        allowedNames: uniqueStrings(dataViewDetail.details.flatMap(x => x.names)),
         selectedNames: [],
         selected: selectedDataView
     };

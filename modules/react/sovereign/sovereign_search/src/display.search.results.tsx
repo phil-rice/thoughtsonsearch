@@ -1,9 +1,11 @@
 import React, {createContext, ReactElement, ReactNode} from "react";
-import {useDataPlugins} from "@enterprise_search/react_data/src/react.data";
+import {useDataPlugins} from "@enterprise_search/react_data";
 import {useSearchResultsByStateType} from "@enterprise_search/react_search_state";
-import {searchResultsToDataView, searchResultsToErrors, SearchType} from "@enterprise_search/search_state";
+import {DataAndDataSource, searchResultsToDataAndDataSource, searchResultsToErrors, SearchType} from "@enterprise_search/search_state";
 import {useThrowError} from "@enterprise_search/react_utils";
 import {ErrorInDataSource} from "./search.results.components";
+import {useGuiSelectedDataView} from "@enterprise_search/search_gui_state";
+import {useDataViews} from "@enterprise_search/data_views";
 
 export type DisplaySearchResultsProps = {}
 export type DisplaySearchResults = (props: DisplaySearchResultsProps) => ReactElement
@@ -38,27 +40,50 @@ export function useSearchResultsLayout(): SearchResultsContextType {
 }
 
 export type SearchResultsProps = {
-    st?: SearchType
+    st?: SearchType;
+    showEvenIfEmpty?: boolean;
+};
+
+type DisplaySearchResultDataTypeProps<Data, > = { dataType: string, data: DataAndDataSource<Data>[], displayAsWidget: boolean }
+
+function DisplaySearchResultDataType<Data>({data, displayAsWidget, dataType}: DisplaySearchResultDataTypeProps<Data>) {
+    const dataPlugins = useDataPlugins();
+    const reportError = useThrowError();
+    const plugin = dataPlugins[dataType];
+    if (!plugin) reportError('s/w', `No plugin found for data type ${dataType}. Legal values are ${Object.keys(dataPlugins).sort().join(', ')}`);
+
+    const {DisplayData, DisplayDataArray, DisplayDataWidget} = plugin
+    return displayAsWidget
+        ? <DisplayDataWidget title={dataType} id={`data-${dataType}`} data={data}/>
+        : <DisplayDataArray title={dataType} id={`data-${dataType}`} data={data} Display={DisplayData}/>
+
 }
 
 
-export const SearchResults = <Filters extends any>({st = 'main'}: SearchResultsProps) => {
-    const {DisplaySearchResultsLayout} = useSearchResultsLayout()
-    const dataPlugins = useDataPlugins()
-    const reportError = useThrowError()
-    const [oneSearch] = useSearchResultsByStateType<Filters>(st)
-    const {dataSourceToSearchResult} = oneSearch
-    const dataTypeToData = searchResultsToDataView(dataSourceToSearchResult)
-    return <DisplaySearchResultsLayout>
-        {Object.entries(dataTypeToData).map(([dataType, data], i) => {
-            const plugin = dataPlugins[dataType]
-            if (!plugin) reportError('s/w', `No plugin found for data type ${dataType}. Legal values are ${Object.keys(dataPlugins).sort().join(', ')}`)
-            const {DisplayData, DisplayDataArray} = plugin
-            return <DisplayDataArray key={dataType} title={dataType} id={`data-${dataType}`} data={data} Display={DisplayData}/>
-        })}
-        {Object.entries(searchResultsToErrors(dataSourceToSearchResult)).map(([dataSourceName, errors]) => {
-            return <ErrorInDataSource key={dataSourceName} dataSourceName={dataSourceName} errors={errors}/>
-        })}
-    </DisplaySearchResultsLayout>
+export const SearchResults = <Filters extends any>({
+                                                       st = 'main',
+                                                       showEvenIfEmpty = true
+                                                   }: SearchResultsProps) => {
+    const {DisplaySearchResultsLayout} = useSearchResultsLayout();
+    const [oneSearch] = useSearchResultsByStateType<Filters>(st);
+    const {dataSourceToSearchResult} = oneSearch;
+    const [dataViewName] = useGuiSelectedDataView()
+    const dataViews = useDataViews()
+    const dataView = dataViews[dataViewName]
+    const throwError = useThrowError()
+    if (!dataView) throwError('s/w', `No data view found for ${dataViewName}`)
+    const dataTypeToData = searchResultsToDataAndDataSource(dataSourceToSearchResult);
+    const errors = searchResultsToErrors(dataSourceToSearchResult);
+    const names = showEvenIfEmpty ? dataView.expectedDataTypes || Object.keys(dataTypeToData) : Object.keys(dataTypeToData)
+    return (
+        <DisplaySearchResultsLayout>
+            {names.map((dataType) => {
+                const data = dataTypeToData[dataType] || []
+                return <DisplaySearchResultDataType key={dataType} data={data} dataType={dataType} displayAsWidget={dataView.displayAsWidget}/>
+            })}
+            {Object.entries(errors).map(([dataSourceName, errors]) => {
+                return <ErrorInDataSource key={dataSourceName} dataSourceName={dataSourceName} errors={errors}/>
+            })}
+        </DisplaySearchResultsLayout>
+    );
 };
-

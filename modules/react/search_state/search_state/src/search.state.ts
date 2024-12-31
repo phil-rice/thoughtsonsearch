@@ -72,7 +72,7 @@ export type DataAndDataSource<Data> = {
 }
 
 /* Converts the results of a data search into a map of 'data type name' to the data */
-export function searchResultsToDataView(dataSourceToSearchResult: DatasourceToSearchResult): NameAnd<DataAndDataSource<any>[]> {
+export function searchResultsToDataAndDataSource(dataSourceToSearchResult: DatasourceToSearchResult): NameAnd<DataAndDataSource<any>[]> {
     if (dataSourceToSearchResult === undefined) return {}
     const result: NameAnd<any[]> = {}
     Object.entries(dataSourceToSearchResult).map(([dataSourceName, searchResult]) => {
@@ -90,7 +90,7 @@ export function searchResultsToDataView(dataSourceToSearchResult: DatasourceToSe
 
 
 export function searchResultsToInterleavedData(dataSourceToSearchResult: DatasourceToSearchResult, n: number): DataAndDataSource<any>[] {
-    const dataView = searchResultsToDataView(dataSourceToSearchResult)
+    const dataView = searchResultsToDataAndDataSource(dataSourceToSearchResult)
     return interleaveUntilMax(dataView, (x) => x, n)
 }
 

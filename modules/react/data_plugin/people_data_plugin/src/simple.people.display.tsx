@@ -1,6 +1,6 @@
 import React from "react";
 import {DisplayData, DisplayDataArray, DisplayDataProps, DisplayDataWidget} from "@enterprise_search/react_data/src/react.data";
-import {JiraData} from "./jira.data";
+import {PeopleData} from "./people.data";
 import {useAttributeValueComponents} from "@enterprise_search/renderers";
 import {useRenderers} from "@enterprise_search/renderers";
 import {ClipHeight} from "@enterprise_search/react_utils";
@@ -9,8 +9,8 @@ import {SimpleTable} from "@enterprise_search/react_utils/src/table";
 import {DataAndDataSource} from "@enterprise_search/search_state";
 import {SimpleWidget} from "@enterprise_search/react_data/src/simple.widget";
 
-export const SimpleJiraDisplay: DisplayData<JiraData> =
-    ({id, data}: DisplayDataProps<JiraData>) => {
+export const SimplePeopleDisplay: DisplayData<PeopleData> =
+    ({id, data}: DisplayDataProps<PeopleData>) => {
         const {Text: JustText, Markdown, Url} = useRenderers()
         const {Text, Date, DataLayout} = useAttributeValueComponents()
         return <DataLayout className='jira-data' layout={[2, 1, 3, 1]}><span>{data.issue}</span>
@@ -25,11 +25,11 @@ export const SimpleJiraDisplay: DisplayData<JiraData> =
         </DataLayout>
     };
 
-export const SimpleOneLineJiraDisplay: DisplayData<JiraData> =
-    ({data}: DisplayDataProps<JiraData>) =>
+export const SimpleOneLinePeopleDisplay: DisplayData<PeopleData> =
+    ({data}: DisplayDataProps<PeopleData>) =>
         <span>{data.type} {data.summary}</span>
 
-export const SimpleJiraWidget: DisplayDataWidget<JiraData> =
+export const SimplePeopleWidget: DisplayDataWidget<PeopleData> =
     SimpleWidget(
         ['issue', 'summary', 'status'],
         ['issue', 'summary', 'status'],

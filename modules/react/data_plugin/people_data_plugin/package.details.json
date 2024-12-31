@@ -1,0 +1,24 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/people_data_plugin",
+  "description": "Transformation and display of people from outlook",
+  "links": [
+    "@enterprise_search/search_state",
+    "@enterprise_search/react_data",
+    "@enterprise_search/renderers"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}
