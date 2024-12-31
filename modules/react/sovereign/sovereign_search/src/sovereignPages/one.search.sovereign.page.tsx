@@ -1,4 +1,4 @@
-import {makeSovereignStatePlugin} from "@enterprise_search/sovereign";
+import {makeSovereignStatePlugin, useSelectedSovereign} from "@enterprise_search/sovereign";
 import {useDisplayAllFilters} from "@enterprise_search/react_filters_plugin";
 import React from "react";
 import {useGuiFilters, useGuiSelectedDataView} from "@enterprise_search/search_gui_state";
@@ -11,9 +11,10 @@ import {CommonSearchSovereignPage} from "./common.search.sovereign.page";
 export function OneSearchSovereignPage<Filters extends DataViewFilters>() {
     const filterOps = useGuiFilters()
     const {DisplayAllFilters} = useDisplayAllFilters<Filters>()
+    const [selected, setSelected] = useSelectedSovereign()
 
-    return <CommonSearchSovereignPage title={'search.advance.title'}>
-        <DataViewNavBar/>
+    return <CommonSearchSovereignPage title={'search.advance.title'} onMainSearch={() => {setSelected('advancedSearch')}}>
+        {/*<DataViewNavBar/>*/}
         <SearchResults st='main' showEvenIfEmpty={false}/>
         <DisplayAllFilters id='filter' filtersOps={filterOps}/>
     </CommonSearchSovereignPage>

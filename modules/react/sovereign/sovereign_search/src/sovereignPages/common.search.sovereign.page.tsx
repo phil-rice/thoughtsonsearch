@@ -61,7 +61,6 @@ export function CommonSearchSovereignPage<Filters extends DataViewFilters>({titl
         setMainResults(makeUpSearchResult)
         cleanImmediateSearchResults();
         setSovereignPage('one')
-        onMainSearch?.()
     }
 
     return <>
