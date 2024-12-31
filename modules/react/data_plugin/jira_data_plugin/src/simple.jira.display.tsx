@@ -13,8 +13,8 @@ export const SimpleJiraDisplay: DisplayData<JiraData> =
     ({id, data}: DisplayDataProps<JiraData>) => {
         const {Text: JustText, Markdown, Url} = useRenderers()
         const {Text, Date, DataLayout} = useAttributeValueComponents()
-        return <DataLayout className='jira-data' layout={[2, 1, 3, 1]}><span>{data.issue}</span>
-            <JustText id={`${id}-summary`} value={data.summary}/>
+        return <DataLayout className='jira-data' layout={[1, 1, 3, 1]}>
+            <JustText id={`${id}-summary`} value={`${data.issue}: ${data.summary}`}/>
             <ClipHeight maxHeight='5rem' force={true}>
                 <Markdown id={`${id}-description`} value={data.description}/>
             </ClipHeight>
