@@ -1,4 +1,4 @@
-import {camelCase, camelCaseToWords, capitalizeFirstLetter} from "./strings";
+import {camelCase, camelCaseToWords, capitalizeFirstLetter, ellipsesInMiddle} from "./strings";
 
 describe('camelCaseToWords', () => {
     it('converts simple camelCase strings to words', () => {
@@ -128,3 +128,29 @@ describe('camelCase', () => {
     });
 
 });
+
+
+describe("ellipsesInMiddle", () => {
+    test("returns full string if within maxLength", () => {
+        expect(ellipsesInMiddle("short", 10)).toBe("short");
+    });
+
+    test("truncates with default ellipses in the middle", () => {
+        expect(ellipsesInMiddle("abcdefghijklmno", 11)).toBe("abcd...lmno");
+    });
+
+    test("truncates with custom ellipses", () => {
+        expect(ellipsesInMiddle("abcdefghijklmno", 11, "[...]")).toBe("abc[...]mno");
+    });
+
+    test("returns only ellipsis if maxLength is too small", () => {
+        expect(ellipsesInMiddle("abcdefghij", 4)).toBe("...");
+        expect(ellipsesInMiddle("abcdefghij", 5, "[...]")).toBe("[...]");
+    });
+
+    test("handles edge cases with extremely small maxLength", () => {
+        expect(ellipsesInMiddle("abcdefghij", 3)).toBe("...");
+        expect(ellipsesInMiddle("abcdefghij", 2, "--")).toBe("--");
+    });
+});
+

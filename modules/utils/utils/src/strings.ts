@@ -36,3 +36,22 @@ export function camelCase(input: string): string {
 export function capitalizeFirstLetter(input: string): string {
     return input.charAt(0).toUpperCase() + input.slice(1);
 }
+export const ellipsesInMiddle = (
+    text: string,
+    maxLength: number,
+    ellipsis: string = "..."
+): string => {
+    if (text.length <= maxLength) return text;
+
+    const ellipsisLength = ellipsis.length;
+    const partLength = Math.floor((maxLength - ellipsisLength) / 2);
+
+    // Ensure we don't cut too much when maxLength is small
+    if (partLength <= 0) return ellipsis;
+
+    const start = text.slice(0, partLength);
+    const end = text.slice(-partLength);
+
+    return `${start}${ellipsis}${end}`;
+};
+
