@@ -1,7 +1,7 @@
 import {ErrorsOr, flatMapErrorsOr} from "@enterprise_search/errors";
 import {NameAnd} from "@enterprise_search/recoil_utils";
 
-export type ServiceCaller<Context> = <T, >(context: Context,serviceRequest: ServiceRequest<T>) => Promise<ErrorsOr<ServiceResponse<T>>>
+export type ServiceCaller<Context> = <T, >(context: Context, serviceRequest: ServiceRequest<T>) => Promise<ErrorsOr<ServiceResponse<T>>>
 
 export type Method = 'POST' | 'GET' | 'PUT' | 'DELETE';
 export type Header = string | string[] | undefined;
@@ -50,7 +50,8 @@ export function makeServiceResponse<T = string>(
     const actualParser = parser ?? defaultCopyParser as unknown as ParserAndValidator<T>;
 
     const {validator, parser: parserFn} = actualParser;
-    return flatMapErrorsOr(parserFn(body, status), (value) => {
+    const parsed = parserFn(body, status);
+    return flatMapErrorsOr(parsed, (value): ErrorsOr<ServiceResponse<T>> => {
         const errors = validator(value);
         if (errors.length > 0) return {errors, extras: {status, headers, body}};
         const serviceResponse: ServiceResponse<T> = {body: value, headers, status};

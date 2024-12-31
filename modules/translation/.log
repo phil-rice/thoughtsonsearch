@@ -1,2 +1,2 @@
-2024-12-30T08:46:10.483Z file:rmDir(dist)
-Took 4ms 
+2024-12-31T14:38:18.182Z tsc --noEmit false --outDir dist
+Took 2186ms 

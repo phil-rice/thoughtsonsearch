@@ -1,9 +1,10 @@
 import {useSearchState} from "@enterprise_search/react_search_state";
 import React from "react";
 import {SearchType, searchTypes} from "@enterprise_search/search_state";
-import {makeSimpleNavBar} from "@enterprise_search/navbar";
+import {makeSimpleNavBar, NavBar} from "@enterprise_search/navbar";
+import {GetterSetter} from "@enterprise_search/react_utils";
 
-const SearchTypeNavBar = makeSimpleNavBar('dev mode search type', searchTypes)
+const SearchTypeNavBar: NavBar = makeSimpleNavBar('dev mode search type', searchTypes)
 
 export function DevModeSearchState<Filters, >() {
     const selectedOps = React.useState<SearchType | null>(null)
@@ -16,7 +17,7 @@ export function DevModeSearchState<Filters, >() {
     }
 
     return <div className='dev-mode-search-state'>
-        <SearchTypeNavBar selectedOps={selectedOps}/>
+        <SearchTypeNavBar selectedOps={selectedOps as GetterSetter<string>}/>
         <Body/>
     </div>
 }

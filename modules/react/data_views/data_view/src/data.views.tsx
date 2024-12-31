@@ -24,7 +24,7 @@ export type DataView<Details> = {
     name: string
     displays: DataViewPurposesToDisplay
     datasources: Details[]
-    displayAsWidget?: boolean
+    displayAsWidget: boolean
     expectedDataTypes?: string[]
 }
 
@@ -36,7 +36,7 @@ export function dataSourceDetailsToDataView<Details extends CommonDataSourceDeta
             name,
             displays: {navbar: ({itemName}) => <ItemFn name={itemName}/>},
             datasources: datasource.details,
-            displayAsWidget: datasource.displayAsWidget,
+            displayAsWidget: datasource.displayAsWidget === true,
             expectedDataTypes: datasource.expectedDataTypes
         }
     }

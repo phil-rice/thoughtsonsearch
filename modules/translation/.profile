@@ -45,3 +45,13 @@ run run 3
 run run 4
 run run 5
 run run 4
+compile compile 2544
+run run 54
+compile compile 2953
+run run 59
+run run 7
+run run 6
+run run 5
+run run 6
+compile compile 2423
+compile compile 2186

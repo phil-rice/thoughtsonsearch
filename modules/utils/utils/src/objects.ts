@@ -17,6 +17,7 @@ export function mapRecord<Key extends string, T, R>(
     fn: (value: T, k: Key, i: number) => R
 ): Record<Key, R> {
     return Object.fromEntries(
-        Object.entries(rec).map(([k, v]: [Key, T], i) => [k, fn(v, k, i)])
+        //@ts-ignore - Object.entries is not typed correctly. This method exists so that we only need to worry about that here
+        Object.entries(rec).map(([k, v]: [Key, T], i) => [k as Key, fn(v, k as Key, i)])
     ) as Record<Key, R>;
 }

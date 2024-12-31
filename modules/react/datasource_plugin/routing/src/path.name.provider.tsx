@@ -30,6 +30,7 @@ function triggerUrlChange() {
 function overrideHistoryMethod(method: 'pushState' | 'replaceState') {
     const original = history[method]
     return function (this: History, ...args: any[]) {
+        //@ts-ignore
         const result = original.apply(this, args)
         triggerUrlChange()  // Fire custom event
         return result
@@ -71,8 +72,8 @@ export const WindowUrlProvider = ({children}: WindowUrlProviderProps) => {
 export function useWindowUrlData(): GetterSetter<WindowUrlData> {
     const result = React.useContext(WindowUrlContext);
     const throwError = useThrowError()
-    if (result === undefined) throwError('s/w', 'useWindowUrlData must be used within a WindowUrlProvider')
-    return result
+    if (result === undefined) return throwError('s/w', 'useWindowUrlData must be used within a WindowUrlProvider')
+    return result!
 }
 
 export function useWindowsUrl(): URL {
