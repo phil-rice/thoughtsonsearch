@@ -38,7 +38,7 @@ export function makeRoutingSegmentContextFor(
     // Provider component dynamically named like `${field}Provider`
     function RoutingProvider(props: RoutingProviderProps) {
         const debug = useDebug(routingDebug)
-        const [urlData] = useWindowUrlData()
+        const [urlData,setUrlData] = useWindowUrlData()
         const {parts, url} = urlData
         const value = parts[segment] || '';
         debug('RoutingProvider', segment, field, value)
@@ -50,6 +50,7 @@ export function makeRoutingSegmentContextFor(
             newUrl.pathname = `/${newParts.join('/')}`;  // bit dirty...
             debug('RoutingProvider', segment, actualName, 'pushState', newUrl.toString())
             window.history.pushState(null, '', newUrl.toString());
+            setUrlData({...urlData,parts: newParts, url: newUrl})
         }], [value])
         return <context.Provider value={ops}>{props.children}</context.Provider>;
     }

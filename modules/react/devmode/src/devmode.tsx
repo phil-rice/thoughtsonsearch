@@ -8,6 +8,7 @@ import {makeSimpleNavBar, NavBar} from "@enterprise_search/navbar";
 import {DevModeDebug} from "./devmode.debug";
 import {DevModeFeatureFlags} from "./devmode.feature.flags";
 import {useUserData} from "@enterprise_search/react_login_component/src/authenticationProvider";
+import {DevModeSovereignState} from "./devModeSovereignState";
 
 export type DevModeComponent = () => React.ReactElement;
 export type DevModeNavbarComponent = () => ReactElement;
@@ -26,7 +27,8 @@ const debugComponents = {
     SearchState: DevModeSearchState,
     UserData: DevModeUserData,
     Debug: DevModeDebug,
-    FeatureFlags: DevModeFeatureFlags
+    FeatureFlags: DevModeFeatureFlags,
+    Sovereign: DevModeSovereignState
 };
 export const simpleDevModeComponents: SearchDevModeComponents = {
     DevModeNavBar: makeSimpleNavBar('devmode', Object.keys(debugComponents)),

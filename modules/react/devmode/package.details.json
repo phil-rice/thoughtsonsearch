@@ -6,6 +6,7 @@
     "@enterprise_search/authentication",
     "@enterprise_search/recoil_utils",
     "@enterprise_search/react_datasource_plugin",
+    "@enterprise_search/renderers",
     "@enterprise_search/navbar"
   ],
   "packageJson": {

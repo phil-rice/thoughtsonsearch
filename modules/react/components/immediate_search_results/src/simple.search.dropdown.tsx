@@ -1,28 +1,28 @@
 import React, {CSSProperties} from 'react';
 import {SearchDropDown, SearchDropDownProps} from "./search.drop.down";
-import {searchResultsToErrors, searchResultsToInterleavedData} from "@enterprise_search/search_state";
-import {useGuiSearchQuery} from "@enterprise_search/search_gui_state";
+import {DataAndDataSource, searchResultsToErrors, searchResultsToInterleavedData} from "@enterprise_search/search_state";
 import {useSearchResultsByStateType} from "@enterprise_search/react_search_state";
 import {useUserData} from "@enterprise_search/react_login_component/src/authenticationProvider";
 import {useOneLineDisplayDataComponent} from "@enterprise_search/react_data/src/react.data";
 
+//need to have a more nuanced type in the data. Must have a datasource, so might as well do count as well.
+//This is then used when we select it.
 
-export const SimpleSearchDropdown: SearchDropDown = ({st}: SearchDropDownProps) => {
+export const SimpleSearchDropdown: SearchDropDown = ({st, onSelect}: SearchDropDownProps) => {
     const [searchResults] = useSearchResultsByStateType(st);
-    const [searchQuery, setSearchQuery] = useGuiSearchQuery();
     const displayOneLine = useOneLineDisplayDataComponent()
-    const data = searchResultsToInterleavedData(searchResults.dataSourceToSearchResult, 6);
+    const dataAndDs: DataAndDataSource<any>[] = searchResultsToInterleavedData(searchResults.dataSourceToSearchResult, 6);
     const srToError = searchResultsToErrors(searchResults.dataSourceToSearchResult);
     const userData = useUserData();
-    if (Object.keys(srToError).length > 0 || data.length > 0) {
+    if (Object.keys(srToError).length > 0 || dataAndDs.length > 0) {
         return (
             <div style={styles.dropdown}>
-                {data.map((data, index) => (
-                    <div key={index} style={styles.suggestion} onClick={() => setSearchQuery(JSON.stringify(data))}>
-                        {displayOneLine(data.type)({data})}
+                {dataAndDs.map(({data, dataSourceName}, index) => (
+                    <div key={index} style={styles.suggestion} onClick={() => onSelect(data, dataSourceName)}>
+                        {displayOneLine(data.type)({data, id: `${st}-dropdown-${index}`})}
                     </div>
                 ))}
-                {data.length === 0 && <div style={styles.suggestion}>...</div>}
+                {dataAndDs.length === 0 && <div style={styles.suggestion}>...</div>}
                 {userData.isDev ? (
                     Object.keys(srToError).length > 0 && <div style={styles.errors}>
                         {Object.entries(srToError).map(([source, error]) => (

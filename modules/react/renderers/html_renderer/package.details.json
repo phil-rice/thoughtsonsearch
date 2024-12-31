@@ -1,0 +1,24 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/html_renderers",
+  "description": "Components that allow us to safely render some value in html",
+  "links": [
+    "@enterprise_search/errors",
+    "@enterprise_search/renderers"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+      "dompurify": "^3.2.3"
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

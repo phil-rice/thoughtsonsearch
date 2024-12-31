@@ -53,8 +53,8 @@ export const SearchResults = <Filters extends any>({st = 'main'}: SearchResultsP
         {Object.entries(dataTypeToData).map(([dataType, data], i) => {
             const plugin = dataPlugins[dataType]
             if (!plugin) reportError('s/w', `No plugin found for data type ${dataType}. Legal values are ${Object.keys(dataPlugins).sort().join(', ')}`)
-            const DisplayData = plugin.DisplayData;
-            return <DisplayData key={i} data={data}/>
+            const {DisplayData, DisplayDataArray} = plugin
+            return <DisplayDataArray key={dataType} title={dataType} id={`data-${dataType}`} data={data} Display={DisplayData}/>
         })}
         {Object.entries(searchResultsToErrors(dataSourceToSearchResult)).map(([dataSourceName, errors]) => {
             return <ErrorInDataSource key={dataSourceName} dataSourceName={dataSourceName} errors={errors}/>
@@ -62,6 +62,3 @@ export const SearchResults = <Filters extends any>({st = 'main'}: SearchResultsP
     </DisplaySearchResultsLayout>
 };
 
-export function SimpleDisplayResultsLayout({children}: { children: React.ReactNode }) {
-    return <div className='search.results'>{children}</div>
-}

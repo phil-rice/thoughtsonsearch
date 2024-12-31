@@ -1,5 +1,6 @@
 import {useLowlevelEditComponents} from "./use.edit";
 import React from "react";
+import {RecoilState} from "recoil";
 import {useErrorReporter} from "@enterprise_search/react_utils";
 
 
@@ -18,6 +19,8 @@ export function isTitleDefn(defn: EditObjectDefn<any>): defn is TitleDefn {
 
 export type EditObjectDefn<T> = keyof T | EditDropdownDefn<T> | TitleDefn
 export type FullEditObjectProps<T> = {
+
+    atom: RecoilState<T>
     rootId: string
     defns: EditObjectDefn<T>[]
 }

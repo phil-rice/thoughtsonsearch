@@ -66,24 +66,30 @@ export type SearchResult<Data, Paging> = {
 }
 
 
+export type DataAndDataSource<Data> = {
+    data: Data
+    dataSourceName: string
+}
+
 /* Converts the results of a data search into a map of 'data type name' to the data */
-export function searchResultsToDataView(dataSourceToSearchResult: DatasourceToSearchResult): NameAnd<any[]> {
+export function searchResultsToDataView(dataSourceToSearchResult: DatasourceToSearchResult): NameAnd<DataAndDataSource<any>[]> {
     if (dataSourceToSearchResult === undefined) return {}
     const result: NameAnd<any[]> = {}
     Object.entries(dataSourceToSearchResult).map(([dataSourceName, searchResult]) => {
         if (isValue(searchResult)) {
             const value: SearchResult<any, any> = searchResult.value;
-            for (const item of value.data) {
-                const dataType = item.type
+            for (const data of value.data) {
+                const dataType = data.type
                 result[dataType] = result[dataType] || []
-                result[dataType].push(item)
+                result[dataType].push({data, dataSourceName})
             }
         }
     })
     return result
 }
 
-export function searchResultsToInterleavedData(dataSourceToSearchResult: DatasourceToSearchResult, n: number): any[] {
+
+export function searchResultsToInterleavedData(dataSourceToSearchResult: DatasourceToSearchResult, n: number): DataAndDataSource<any>[] {
     const dataView = searchResultsToDataView(dataSourceToSearchResult)
     return interleaveUntilMax(dataView, (x) => x, n)
 }

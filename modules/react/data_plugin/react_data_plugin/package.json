@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@enterprise_search/search_state": "0.0.1",
+    "@enterprise_search/renderers": "0.0.1",
     "debug": "^4.3.4",
     "@focuson/lens": "1.44.3",
     "@focuson/state": "1.44.3",

@@ -9,13 +9,15 @@
     "@enterprise_search/icons",
     "@enterprise_search/jira_data_plugin",
     "@enterprise_search/msal_authentication",
+    "@enterprise_search/renderers",
+    "@enterprise_search/html_renderers",
+    "@enterprise_search/markdown_renderers",
     "@enterprise_search/search_important_components",
     "@enterprise_search/sovereign",
     "@enterprise_search/sovereign_search",
     "@enterprise_search/service_caller",
     "@enterprise_search/search_state",
-    "@enterprise_search/react_utils",
-    "@enterprise_search/recoil_components"
+    "@enterprise_search/react_utils"
   ],
   "packageJson": {
     "files": ["build/"],

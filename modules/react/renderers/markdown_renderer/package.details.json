@@ -1,0 +1,24 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/markdown_renderers",
+  "description": "Components that allow us to render a string in markdown",
+  "links": [
+    "@enterprise_search/errors",
+    "@enterprise_search/renderers"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+      "react-markdown": "^7.1.2"
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "guards": {
+      "compile": true,
+      "publish": false,
+      "test": false,
+      "react": false
+    }
+  }
+}

@@ -4,7 +4,8 @@
   "description": "Transformation and display of confluence",
   "links": [
     "@enterprise_search/search_state",
-    "@enterprise_search/react_data"
+    "@enterprise_search/react_data",
+    "@enterprise_search/renderers"
   ],
   "packageJson": {
     "files": ["build/"],

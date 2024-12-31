@@ -1,6 +1,6 @@
 {
-  "name": "@enterprise_search/recoil_components",
-  "description": "Exploring recoil. This is a package of components used to edit/view recoil atoms.",
+  "name": "@enterprise_search/edit_components",
+  "description": "This is a package of components used to edit/view arbitary data",
   "version": "0.0.1",
   "browserslist": {
     "development": [
@@ -85,8 +85,8 @@
   "peerDependencies": {},
   "repository": "git@github.com:intellimaintain/intellimaintain.git",
   "scripts": {
-    "start": "node_modules/.bin/parcel src/index.html",
-    "build": "node_modules/.bin/parcel build src/index.html",
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html",
     "test": "jest --config jest.config.json",
     "test:watch": "npm run test -- --watch",
     "storybook": "storybook dev -p 6006",

@@ -1,11 +1,8 @@
 import React, {useEffect, useRef} from "react";
-import {useFiltersByStateType, useSearchResultsByStateType} from "@enterprise_search/react_search_state";
-import {useSearchParser} from "@enterprise_search/react_search_parser";
+import {useSearchResultsByStateType} from "@enterprise_search/react_search_state";
 import {SearchBarProps} from "./search.bar";
-import {KeywordsFilter, keywordsFilterName} from "@enterprise_search/react_keywords_filter_plugin";
-import {emptySearchGuiState, useGuiFilters, useGuiSearchQuery, useSearchGuiState} from "@enterprise_search/search_gui_state";
-import {useDebug} from "@enterprise_search/react_utils";
-import {searchDebug} from "@enterprise_search/search";
+import {KeywordsFilter} from "@enterprise_search/react_keywords_filter_plugin";
+import {useGuiFilters, useGuiSearchQuery} from "@enterprise_search/search_gui_state";
 
 type CSSVariables = {
     container: React.CSSProperties;
@@ -105,10 +102,7 @@ export function SimpleSearchBar<Filters extends KeywordsFilter>({immediateSearch
                 aria-label="Clear search"
                 onClick={() => mainSearch?.()}
                 style={cssVariables.clearButton}
-                onMouseOver={(e) =>
-                    Object.assign(e.currentTarget.style, cssVariables.clearButtonHover)
-                }
-                onMouseOut={(e) => (e.currentTarget.style.color = "#555")}
+
             >
                 Search
             </button>

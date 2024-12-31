@@ -9,7 +9,7 @@ import {CommonDataSourceDetails, DataSourceDetails} from "@enterprise_search/rea
 import {useSelectedSovereign, useSovereignStatePlugins} from "@enterprise_search/sovereign";
 import {useWindowUrlData, WindowUrlData} from "@enterprise_search/routing";
 import {KeywordsFilter, keywordsFilterName} from "@enterprise_search/react_keywords_filter_plugin";
-import {DebugLog, mapObject} from "@enterprise_search/recoil_utils";
+import {DebugLog, mapObjectToArray} from "@enterprise_search/recoil_utils";
 
 function calculateStartStateFromUrl<Filters extends DataViewFilters & KeywordsFilter>(debug: DebugLog, urlData: WindowUrlData, dataViewDetails: DataSourceDetails<CommonDataSourceDetails>, filterPlugins: ReactFiltersPlugins<any>, state: SearchGuiData<any>, rawSelectedDataView: string): SearchGuiData<Filters> {
     const selectedDataView = (rawSelectedDataView in dataViewDetails) ? rawSelectedDataView : Object.keys(dataViewDetails)[0]

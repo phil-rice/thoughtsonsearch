@@ -1,9 +1,11 @@
 import React from "react";
 import {NameAnd} from "@enterprise_search/recoil_utils";
 import {makeContextFor, useThrowError} from "@enterprise_search/react_utils";
+import {DataAndDataSource, OneSearch} from "@enterprise_search/search_state";
 
 
 export type DataComponents<Data> = {
+    DisplayDataArray: DisplayDataArray<Data>
     DisplayData: DisplayData<Data>
     OneLineDisplayData: DisplayData<Data>
 }
@@ -17,8 +19,17 @@ export type DataPlugin<Data> = DataComponents<Data> & {
 
 export type DisplayDataProps<Data> = {
     data: Data
+    id: string
 }
 export type DisplayData<Data> = (props: DisplayDataProps<Data>) => React.ReactElement
+
+export type DisplayDataArrayProps<Data> = {
+    title: string
+    data: DataAndDataSource<Data>[]
+    id: string
+    Display: DisplayData<Data>
+}
+export type DisplayDataArray<Data> = (props: DisplayDataArrayProps<Data>) => React.ReactElement
 
 export const {Provider: DataPluginProvider, use: useDataPlugins} = makeContextFor('dataPlugins', {} as DataPlugins);
 
@@ -35,7 +46,7 @@ export const useDisplayDataComponent = <Data extends any>(): (type: string) => D
     }
 };
 
-export const useOneLineDisplayDataComponent = <Data extends any>(): (type: string) => DisplayData<Data> => {
+export const useOneLineDisplayDataComponent = <Data extends any>(): (type: string,) => DisplayData<Data> => {
     const plugins = useDataPlugins()
     const throwError = useThrowError()
     return type => {

@@ -1,9 +1,12 @@
 import {DataPlugin, DisplayData} from "@enterprise_search/react_data/src/react.data";
 import {SimpleConfluenceDisplay, SimpleConfluenceOneLineDisplay} from "./simple.confluence.display";
+import {simpleDisplayDataArray} from "@enterprise_search/react_data";
 
 export const ConfluenceDataName = 'confluence'
 
 export type ConfluenceData = {
+    url: string;
+    space: string;
     type: string
     title: string
     body: string
@@ -17,6 +20,7 @@ export function ConfluenceDataPlugin(
     return {
         plugin: 'data',
         type: ConfluenceDataName,
+        DisplayDataArray: simpleDisplayDataArray,
         DisplayData,
         OneLineDisplayData
     }

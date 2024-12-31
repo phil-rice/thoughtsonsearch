@@ -23,10 +23,13 @@ import {routingDebug, WindowUrlProvider} from "@enterprise_search/routing";
 import {simpleSearchDropDownComponents} from "@enterprise_search/search_dropdown";
 import {basicAuthentication} from "@enterprise_search/authentication";
 import {axiosServiceCaller} from "@enterprise_search/axios_service_caller";
-import {editComponentDebug} from "@enterprise_search/recoil_components";
+
 import {exampleTimeFilterPlugin, timefilterPluginName, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
 import {ConfluenceDataName, ConfluenceDataPlugin} from "@enterprise_search/confluence_data_plugin";
 import {JiraDataName, JiraDataPlugin} from "@enterprise_search/jira_data_plugin";
+import {AttributeValueProvider, Renderers, SimpleAttributeValueLayout, SimpleDataLayout, SimpleDateRenderer, SimpleJsonRenderer, SimpleTextRenderer, SimpleUrlRenderer} from "@enterprise_search/renderers";
+import {MarkdownRenderer} from "@enterprise_search/markdown_renderers";
+import {SimpleHtmlRenderer} from "@enterprise_search/html_renderers";
 
 
 const debugState = {
@@ -35,7 +38,6 @@ const debugState = {
     [startStateDebug]: false,
     [dataViewDebug]: false,
     [routingDebug]: false,
-    [editComponentDebug]: false
 };
 
 export const exampleMsalConfig: Configuration = {
@@ -124,7 +126,7 @@ const searchImportantComponents: SearchImportantComponents<any, AllDataSourceDet
 const sovereignStatePlugins: SovereignStatePlugins = {
     plugins: {
         start: InitialSovereignPagePlugin,
-        advancedSearch: AdvanceSearchPagePlugin
+        advancedSearch: AdvanceSearchPagePlugin,
     },
     UnknownDisplay: SimpleUnknownDisplay
 }
@@ -153,28 +155,38 @@ const featureFlags: FeatureFlags = {
     flag2: {value: false, description: 'Another feature flag'}
 };
 
+const renderers: Renderers = {
+    Text: SimpleTextRenderer,
+    Markdown: MarkdownRenderer,
+    Html: SimpleHtmlRenderer,
+    Json: SimpleJsonRenderer,
+    Date: SimpleDateRenderer,
+    Url: SimpleUrlRenderer
+}
 
 msal.initialize({}).then(() => {
 //we set up here: how we display the components, how we do state management and how we do authentication
 
     root.render(<React.StrictMode>
-            <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags} errorReporter={consoleErrorReporter}>
-                <AuthenticationProvider loginConfig={login}>
-                    <WindowUrlProvider>
-                        <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
-                            <SovereignStateProvider>
-                                <SearchImportantComponentsProvider components={searchImportantComponents}>
-                                    <IconProvider icons={simpleIconContext}>
-                                        <DoTheSearching resultSize={20}>
-                                            <SearchApp/>
-                                        </DoTheSearching>
-                                    </IconProvider>
-                                </SearchImportantComponentsProvider>
-                            </SovereignStateProvider>
-                        </SovereignStatePluginsProvider>
-                    </WindowUrlProvider>
-                </AuthenticationProvider>
-            </NonFunctionalsProvider>
+            <AttributeValueProvider renderers={renderers} AttributeValueLayout={SimpleAttributeValueLayout} DataLayout={SimpleDataLayout}>
+                <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags} errorReporter={consoleErrorReporter}>
+                    <AuthenticationProvider loginConfig={login}>
+                        <WindowUrlProvider>
+                            <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
+                                <SovereignStateProvider>
+                                    <SearchImportantComponentsProvider components={searchImportantComponents}>
+                                        <IconProvider icons={simpleIconContext}>
+                                            <DoTheSearching resultSize={20}>
+                                                <SearchApp/>
+                                            </DoTheSearching>
+                                        </IconProvider>
+                                    </SearchImportantComponentsProvider>
+                                </SovereignStateProvider>
+                            </SovereignStatePluginsProvider>
+                        </WindowUrlProvider>
+                    </AuthenticationProvider>
+                </NonFunctionalsProvider>
+            </AttributeValueProvider>
         </React.StrictMode>
     );
 })
