@@ -15,9 +15,11 @@ export const SimpleUrlRenderer: Render = ({id, value}) => {
 
     const displayUrl = ellipsesInMiddle(value, 70); // Truncate URLs longer than 50 characters
 
+    const thisId = `${id}-value`;
     return (
         <a
-            id={`${id}-value`}
+            id={thisId}
+            data-testid={thisId}
             href={isValidUrl(value) ? value : '#'}
             target="_blank"
             rel="noopener noreferrer"

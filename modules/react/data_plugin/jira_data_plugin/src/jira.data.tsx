@@ -1,6 +1,6 @@
 import {DataPlugin, DisplayData, DisplayDataWidget} from "@enterprise_search/react_data/src/react.data";
 import {SimpleJiraDisplay, SimpleJiraWidget, SimpleOneLineJiraDisplay} from "./simple.jira.display";
-import {simpleDisplayDataArray} from "@enterprise_search/react_data";
+import {SimpleDisplayDataArray} from "@enterprise_search/react_data";
 
 export const JiraDataName = 'jira'
 
@@ -21,7 +21,7 @@ export function JiraDataPlugin(
     return {
         plugin: 'data',
         type: JiraDataName,
-        DisplayDataArray: simpleDisplayDataArray,
+        DisplayDataArray: SimpleDisplayDataArray,
         DisplayData,
         OneLineDisplayData,
         DisplayDataWidget

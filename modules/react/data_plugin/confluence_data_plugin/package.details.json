@@ -5,7 +5,8 @@
   "links": [
     "@enterprise_search/search_state",
     "@enterprise_search/react_data",
-    "@enterprise_search/renderers"
+    "@enterprise_search/renderers",
+    "@enterprise_search/all_renderers"
   ],
   "packageJson": {
     "files": ["build/"],

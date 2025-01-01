@@ -33,7 +33,7 @@ export function makeSovereignStatePlugin(display: DisplaySovereignPage): Soverei
     return {plugin: 'sovereign', display}
 }
 
-export const {use: useSovereignStatePlugins, Provider: SovereignStatePluginsProvider} = makeContextFor<SovereignStatePlugins, 'plugins'>('plugins', undefined)
+export const {use: useSovereignStatePlugins, Provider: SovereignStatePluginsProvider} = makeContextFor<SovereignStatePlugins, 'plugins'>('plugins')
 
 export const {use: useSelectedSovereign, Provider: SovereignStateProvider} = makeRoutingSegmentContextFor('routing0', 0)
 

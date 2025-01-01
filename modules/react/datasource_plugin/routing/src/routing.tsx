@@ -13,7 +13,7 @@ export type RoutingContextResults = {
     context: Context<RoutingSegmentOps | undefined>
 }
 
-type RoutingProviderProps = { children: ReactNode }
+type RoutingProviderProps = { children: ReactNode, updateWindowsState?: boolean }
 
 
 export function makeRoutingSegmentContextFor(
@@ -38,7 +38,7 @@ export function makeRoutingSegmentContextFor(
     // Provider component dynamically named like `${field}Provider`
     function RoutingProvider(props: RoutingProviderProps) {
         const debug = useDebug(routingDebug)
-        const [urlData,setUrlData] = useWindowUrlData()
+        const [urlData, setUrlData] = useWindowUrlData()
         const {parts, url} = urlData
         const value = parts[segment] || '';
         debug('RoutingProvider', segment, field, value)
@@ -49,8 +49,10 @@ export function makeRoutingSegmentContextFor(
             const newUrl = new URL(url.toString());
             newUrl.pathname = `/${newParts.join('/')}`;  // bit dirty...
             debug('RoutingProvider', segment, actualName, 'pushState', newUrl.toString())
-            window.history.pushState(null, '', newUrl.toString());
-            setUrlData({...urlData,parts: newParts, url: newUrl})
+            const updateWindowsState = props.updateWindowsState !== false;
+            debug('RoutingProvider', 'updateWindowsState', updateWindowsState)
+            if (updateWindowsState) window.history.pushState(null, '', newUrl.toString());
+            setUrlData({...urlData, parts: newParts, url: newUrl})
         }], [value])
         return <context.Provider value={ops}>{props.children}</context.Provider>;
     }

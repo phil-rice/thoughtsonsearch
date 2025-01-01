@@ -1,6 +1,6 @@
 import {DataPlugin, DisplayData, DisplayDataWidget} from "@enterprise_search/react_data/src/react.data";
 import {SimpleConfluenceDisplay, SimpleConfluenceOneLineDisplay, SimpleConfluenceWidget} from "./simple.confluence.display";
-import {simpleDisplayDataArray} from "@enterprise_search/react_data";
+import {SimpleDisplayDataArray} from "@enterprise_search/react_data";
 
 export const ConfluenceDataName = 'confluence'
 
@@ -11,7 +11,7 @@ export type ConfluenceData = {
     title: string
     body: string
     last_updated: string
-    last_update_date: string
+
 }
 
 export function ConfluenceDataPlugin(
@@ -21,7 +21,7 @@ export function ConfluenceDataPlugin(
     return {
         plugin: 'data',
         type: ConfluenceDataName,
-        DisplayDataArray: simpleDisplayDataArray,
+        DisplayDataArray: SimpleDisplayDataArray,
         DisplayData,
         OneLineDisplayData,
         DisplayDataWidget

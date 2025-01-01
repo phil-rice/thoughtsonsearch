@@ -41,19 +41,6 @@ export type DisplayDataWidget<Data> = (props: DisplayDataWidgetProps<Data>) => R
 
 export const {Provider: DataPluginProvider, use: useDataPlugins} = makeContextFor('dataPlugins', {} as DataPlugins);
 
-export const useDisplayDataComponent = <Data extends any>(): (type: string) => DisplayData<Data> => {
-    const plugins = useDataPlugins()
-    const throwError = useThrowError()
-    return type => {
-        const plugin = plugins[type] as DataPlugin<Data>
-        if (!plugin) return throwError('s/w', `No plugin found for data type ${type}. Legal values are ${Object.keys(plugins).sort().join(', ')}`)
-
-        const displayData = plugin.DisplayData;
-        if (!displayData) return throwError('s/w', `No display data found for data type ${type}`)
-        return displayData
-    }
-};
-
 export const useOneLineDisplayDataComponent = <Data extends any>(): (type: string,) => DisplayData<Data> => {
     const plugins = useDataPlugins()
     const throwError = useThrowError()

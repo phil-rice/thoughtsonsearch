@@ -1,12 +1,8 @@
 import React from "react";
-import {DisplayData, DisplayDataArray, DisplayDataProps, DisplayDataWidget} from "@enterprise_search/react_data/src/react.data";
+import {DisplayData, DisplayDataProps, DisplayDataWidget} from "@enterprise_search/react_data/src/react.data";
 import {JiraData} from "./jira.data";
-import {useAttributeValueComponents} from "@enterprise_search/renderers";
-import {useRenderers} from "@enterprise_search/renderers";
+import {useAttributeValueComponents, useRenderers} from "@enterprise_search/renderers";
 import {ClipHeight} from "@enterprise_search/react_utils";
-import {ConfluenceData} from "@enterprise_search/confluence_data_plugin";
-import {SimpleTable} from "@enterprise_search/react_utils/src/table";
-import {DataAndDataSource} from "@enterprise_search/search_state";
 import {SimpleWidget} from "@enterprise_search/react_data/src/simple.widget";
 
 export const SimpleJiraDisplay: DisplayData<JiraData> =

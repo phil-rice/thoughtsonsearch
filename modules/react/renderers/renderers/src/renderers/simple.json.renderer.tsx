@@ -14,9 +14,11 @@ export const SimpleJsonRenderer: Render = ({ id, value }) => {
     const formattedValue = formatJson(value);
     const isError = formattedValue.startsWith("invalid json");
 
+    const thisId = `${id}-value`;
     return (
         <pre
-            id={`${id}-value`}
+            id={thisId}
+            data-testid={thisId}
             aria-label={isError ? "Invalid JSON data" : "Formatted JSON"}
             aria-live={isError ? "polite" : undefined} // Announce errors dynamically
             role="code"
@@ -28,8 +30,6 @@ export const SimpleJsonRenderer: Render = ({ id, value }) => {
                 borderRadius: '4px',
                 border: '1px solid #ddd',
             }}
-        >
-            {formattedValue}
-        </pre>
+        >{formattedValue}</pre>
     );
 };

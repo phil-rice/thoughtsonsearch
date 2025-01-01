@@ -1,6 +1,5 @@
 import React, {createContext, useEffect, useState} from "react";
 import {GetterSetter, useThrowError} from "@enterprise_search/react_utils";
-import {Getter} from "@focuson/lens";
 
 export type WindowUrlData = {
     url: URL
@@ -14,8 +13,8 @@ export type WindowUrlProviderProps = {
 }
 
 // Helper function to get current URL and path parts
-function makeWindowUrlData(): WindowUrlData {
-    const url = new URL(window.location.href)
+export function makeWindowUrlData(form: string = window.location.href): WindowUrlData {
+    const url = new URL(form)
     const parts = url.pathname.split('/').filter(Boolean)
     return {url, parts}
 }

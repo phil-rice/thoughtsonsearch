@@ -45,11 +45,11 @@ export function SimpleUnknownDisplay() {
                 onMouseOut={(e) => Object.assign(e.currentTarget.style, styles.button)}
                 onClick={() => {
                     const name = Object.keys(plugins)[0];
-                    console.log('trying to reload',name);
+                    console.log('trying to reload', name);
                     setSelected(name);
                 }}
             >
-                Reload
+                {translate('sovereign.unknown.reload')}
             </button>
 
         </div>

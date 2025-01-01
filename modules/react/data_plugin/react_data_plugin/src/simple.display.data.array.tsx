@@ -1,7 +1,7 @@
 import {DisplayDataArrayProps} from "./react.data";
 import React from "react";
 
-export function simpleDisplayDataArray<Data>({id, title, Display, data}: DisplayDataArrayProps<Data>) {
+export function SimpleDisplayDataArray<Data>({id, title, Display, data}: DisplayDataArrayProps<Data>) {
     return (
         <div id={`${id}-data-array`}>
             <h1>{title}</h1>

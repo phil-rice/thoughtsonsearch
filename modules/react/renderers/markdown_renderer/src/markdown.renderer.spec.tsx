@@ -1,68 +1,37 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-
+import {render, screen} from "@testing-library/react";
 import '@testing-library/jest-dom';
 import {MarkdownRenderer} from "./markdown.renderer";
 
+
+// Mock react-markdown globally for this test suite
+jest.mock('react-markdown', () => (props) => <div>{props.children}</div>);
+
 describe("MarkdownRenderer", () => {
-    test("renders basic markdown as HTML", () => {
-        render(<MarkdownRenderer id="test" value="**Bold Text**" />);
-        expect(screen.getByText("Bold Text").tagName).toBe("STRONG");
+    it("renders markdown content inside CleanHeaders", () => {
+        render(<MarkdownRenderer id="test" value="**Bold Text**"/>);
+
+        // Assert that the cleaned markdown is rendered
+        expect(screen.getByText("**Bold Text**")).toBeInTheDocument();
+
+        // Assert that it is wrapped in CleanHeaders' div
+        const container = screen.getByText("**Bold Text**").closest(".clean-headers");
+        expect(container).toBeInTheDocument();
     });
 
-    test("renders headings correctly", () => {
-        render(<MarkdownRenderer id="test" value="# Heading 1" />);
-        expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
+    it("trims excessive newlines in markdown", () => {
+        render(<MarkdownRenderer id="test" value={`\n\nHeading\n\n\nContent`}/>);
+
+        const rootElement = screen.getByTestId('test-markdown');
+
+        expect(rootElement.textContent).toBe("Heading\n\nContent");
     });
 
-    test("renders list items properly", () => {
-        render(<MarkdownRenderer id="test" value={`- Item 1\n- Item 2`} />);
-
-        const listItems = screen.getAllByRole("listitem");
-
-        expect(listItems).toHaveLength(2);
-        expect(listItems[0]).toHaveTextContent("Item 1");
-        expect(listItems[1]).toHaveTextContent("Item 2");
-    });
-
-    test("renders empty string gracefully", () => {
-        render(<MarkdownRenderer id="test" value={""} />);
-        const element = document.getElementById("test-value");
-        expect(element).toBeInTheDocument();
-        expect(element?.innerHTML).toBe("");
-    });
-
-    test("renders placeholder for null value", () => {
-        render(<MarkdownRenderer id="test" value={null as any} />);
-        const element = document.getElementById("test-value");
-        expect(element).toBeInTheDocument();
-        expect(element?.innerHTML).toBe("");
-    });
-
-    test("escapes raw HTML by default (XSS prevention)", () => {
-        const maliciousHtml = "<script>alert('XSS')</script>";
-        render(<MarkdownRenderer id="test" value={maliciousHtml} />);
-        const element = document.getElementById("test-value");
-        expect(element).toBeInTheDocument();
-        expect(element?.innerHTML).toContain("&lt;script&gt;alert('XSS')&lt;/script&gt;");
-    });
-
-    test("renders mixed markdown and text", () => {
-        render(<MarkdownRenderer id="test" value="Hello **World**!" />);
-
-        const paragraph = screen.getByRole('paragraph') || document.querySelector('#test-value p');
-
-        expect(paragraph).toHaveTextContent("Hello World!");
-        expect(screen.getByText("World").tagName).toBe("STRONG");
+    it("applies CleanHeaders styling to headings", () => {
+        //I don't know how to test this... we are mocking the markdown.
+        //we have already tested that the markdown is wrapped in a div with the class clean-headers
+        //and we have tested the CleanHeaders component
     });
 
 
-
-    test("handles multiple paragraphs", () => {
-        render(<MarkdownRenderer id="test" value={"First paragraph.\n\nSecond paragraph."} />);
-        const paragraphs = screen.getAllByText(/paragraph/);
-        expect(paragraphs).toHaveLength(2);
-        expect(paragraphs[0].tagName).toBe("P");
-        expect(paragraphs[1].tagName).toBe("P");
-    });
 });

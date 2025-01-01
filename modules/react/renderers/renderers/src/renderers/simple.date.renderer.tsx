@@ -1,7 +1,7 @@
-import { Render } from "../renderers";
+import {Render} from "../renderers";
 import React from "react";
 
-export const SimpleDateRenderer: Render = ({ id, value }) => {
+export const SimpleDateRenderer: Render = ({id, value}) => {
     function asDate(value: string): string {
         if (!value) return "Invalid date";
 
@@ -9,7 +9,7 @@ export const SimpleDateRenderer: Render = ({ id, value }) => {
         if (isNaN(date.getTime())) return "Invalid date";
 
         const day = date.getDate().toString().padStart(2, '0');
-        const month = date.toLocaleString(undefined, { month: 'short' });  // Use browser locale
+        const month = date.toLocaleString(undefined, {month: 'short'});  // Use browser locale
         const year = date.getFullYear();
 
         return `${day}/${month}/${year}`;
@@ -17,14 +17,14 @@ export const SimpleDateRenderer: Render = ({ id, value }) => {
 
     const formattedDate = asDate(value);
 
+    const thisId = `${id}-value`;
     return (
         <time
-            id={`${id}-value`}
+            id={thisId}
+            data-testid={thisId}
             dateTime={value}
             aria-label={`Formatted date: ${formattedDate}`}
             title={formattedDate}
-        >
-            {formattedDate}
-        </time>
+        >{formattedDate}</time>
     );
 };

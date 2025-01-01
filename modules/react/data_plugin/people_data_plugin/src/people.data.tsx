@@ -1,6 +1,6 @@
 import {DataPlugin, DisplayData, DisplayDataWidget} from "@enterprise_search/react_data/src/react.data";
 import {SimplePeopleDisplay, SimplePeopleWidget, SimpleOneLinePeopleDisplay} from "./simple.people.display";
-import {simpleDisplayDataArray} from "@enterprise_search/react_data";
+import {SimpleDisplayDataArray} from "@enterprise_search/react_data";
 
 export const PeopleDataName = 'people'
 
@@ -22,7 +22,7 @@ export function peopleDataPlugin(
     return {
         plugin: 'data',
         type: PeopleDataName,
-        DisplayDataArray: simpleDisplayDataArray,
+        DisplayDataArray: SimpleDisplayDataArray,
         DisplayData,
         OneLineDisplayData,
         DisplayDataWidget

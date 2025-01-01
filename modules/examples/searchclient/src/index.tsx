@@ -31,6 +31,7 @@ import {MarkdownRenderer} from "@enterprise_search/markdown_renderers";
 import {SimpleHtmlRenderer} from "@enterprise_search/html_renderers";
 import {PeopleDataName, peopleDataPlugin} from "@enterprise_search/people_data_plugin";
 import {OneSearchPagePlugin, OneSearchSovereignPage} from "@enterprise_search/sovereign_search/src/sovereignPages/one.search.sovereign.page";
+import {allRenderers} from "@enterprise_search/all_renderers";
 
 
 const debugState = {
@@ -156,24 +157,13 @@ const featureFlags: FeatureFlags = {
     flag2: {value: false, description: 'Another feature flag'}
 };
 
-const renderers: Renderers = {
-    Text: SimpleTextRenderer,
-    Markdown: MarkdownRenderer,
-    Html: SimpleHtmlRenderer,
-    Json: SimpleJsonRenderer,
-    Date: SimpleDateRenderer,
-    Url: SimpleUrlRenderer,
-    H1: SimpleH1Renderer,
-    H2: SimpleH2Renderer,
-    H3: SimpleH3Renderer
-}
 
 msal.initialize({}).then(() => {
 //we set up here: how we display the components, how we do state management and how we do authentication
 
     root.render(<React.StrictMode>
             <WindowUrlProvider>
-                <AttributeValueProvider renderers={renderers} AttributeValueLayout={SimpleAttributeValueLayout} DataLayout={SimpleDataLayout}>
+                <AttributeValueProvider renderers={allRenderers} AttributeValueLayout={SimpleAttributeValueLayout} DataLayout={SimpleDataLayout}>
                     <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags} errorReporter={consoleErrorReporter}>
                         <AuthenticationProvider loginConfig={login}>
                             <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
