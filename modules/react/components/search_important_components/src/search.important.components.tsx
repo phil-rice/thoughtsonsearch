@@ -5,12 +5,12 @@ import {LoadingDisplay} from "@enterprise_search/loading";
 import React from "react";
 import {CommonDataSourceDetails, DataSourceDetails, DataSourcePluginProvider, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPluginProvider, DataPlugins} from "@enterprise_search/react_data/src/react.data";
-import {DisplayLogin, LoginProvider} from "@enterprise_search/react_login_component";
+import {DisplayLogin, LoginComponentsProvider} from "@enterprise_search/react_login_component";
 import {DisplaySearchResultsLayout, SearchResultsProvider} from "@enterprise_search/sovereign_search";
 import {dataSourceDetailsToDataView, DataViewNavBarLayout, DataViews, DataViewsProvider, NavBarItem} from "@enterprise_search/data_views";
 import {emptySearchGuiState, GuiSelectedDataViewProvider, SearchGuiStateProvider} from "@enterprise_search/search_gui_state";
 import {DataViewFilters} from "@enterprise_search/react_data_views_filter_plugin";
-import {DevMode, DevModeForSearchProvider} from "@enterprise_search/devmode";
+import {DevMode, DevModeStateForSearchProvider} from "@enterprise_search/devmode";
 import {emptySearchState} from "@enterprise_search/search_state";
 import {SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
 import {SearchResultsComponents, SearchResultsComponentsProvider} from "@enterprise_search/sovereign_search/src/search.results.components";
@@ -64,11 +64,11 @@ export function SearchImportantComponentsProvider<Context, Details extends Commo
     return <SearchInfoProviderUsingUseState allSearchState={emptySearchState}>
         <GuiSelectedDataViewProvider>
             <SearchBarProvider searchBar={SearchBar}>
-                <DevModeForSearchProvider devModeState={{selected: ''}}>
+                <DevModeStateForSearchProvider devModeState={{selected: ''}}>
                     <ReactFiltersProvider reactFilters={reactFiltersContextData}>
                         <DataSourcePluginProvider plugins={dataSourcePlugins}>
                             <DataPluginProvider dataPlugins={dataPlugins}>
-                                <LoginProvider loginComponents={{DisplayLogin: DisplayLogin, NotLoggedIn: NotLoggedIn}}>
+                                <LoginComponentsProvider loginComponents={{DisplayLogin: DisplayLogin, NotLoggedIn: NotLoggedIn}}>
                                     <SearchResultsProvider DisplaySearchResultsLayout={DisplaySearchResultsLayout}>
                                         <DataViewsProvider dataViews={dataViews}>
                                             <SearchDropDownProvider searchDropDown={components.SearchDropDownComponents}>
@@ -84,11 +84,11 @@ export function SearchImportantComponentsProvider<Context, Details extends Commo
                                             </SearchDropDownProvider>
                                         </DataViewsProvider>
                                     </SearchResultsProvider>
-                                </LoginProvider>
+                                </LoginComponentsProvider>
                             </DataPluginProvider>
                         </DataSourcePluginProvider>
                     </ReactFiltersProvider>
-                </DevModeForSearchProvider>
+                </DevModeStateForSearchProvider>
             </SearchBarProvider>
         </GuiSelectedDataViewProvider>
     </SearchInfoProviderUsingUseState>

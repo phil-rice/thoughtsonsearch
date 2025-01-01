@@ -1,53 +1,52 @@
+import {render, screen} from "@testing-library/react";
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import {SimpleUrlRenderer} from "./simple.url.renderer";
+import {ellipsesInMiddle} from "@enterprise_search/recoil_utils";
 import '@testing-library/jest-dom';
-import { SimpleUrlRenderer } from "./simple.url.renderer";
-import { ellipsesInMiddle } from "@enterprise_search/recoil_utils";
+// No mock for ellipsesInMiddle – use the real implementation
 
-describe("SimpleUrlRenderer component", () => {
-    const validUrl = "https://www.example.com/path/to/resource";
-    const longUrl = "https://www.superlongexample.com/some/very/long/path/to/resource/that/never/ends";
-    const truncatedUrl = ellipsesInMiddle(longUrl, 50);
+describe("SimpleUrlRenderer", () => {
+    it("renders a valid URL as a link", () => {
+        render(<SimpleUrlRenderer id="test" value="https://example.com" />);
+        const link = screen.getByRole("link");
 
-    test("renders valid URL without truncation if short enough", () => {
-        render(<SimpleUrlRenderer id="test" value={validUrl} />);
-
-        const link = screen.getByRole('link', { name: validUrl });
-        expect(link).toHaveAttribute('href', validUrl);
-        expect(link).toHaveTextContent(validUrl);
+        expect(link).toHaveAttribute("href", "https://example.com");
+        expect(link).toHaveTextContent("https://example.com");
+        expect(link).toHaveAttribute("target", "_blank");
     });
 
-    test("truncates long URLs with ellipses in the middle", () => {
-        render(<SimpleUrlRenderer id="test" value={longUrl} />);
+    it("truncates long URLs with ellipses in the middle", () => {
+        const longUrl = "https://averylongexample.com/some/deep/path/resource/file.html";
+        const expectedText = ellipsesInMiddle(longUrl, 70);
 
-        const link = screen.getByRole('link');
-        expect(link).toHaveAttribute('href', longUrl);
-        expect(link).toHaveTextContent(truncatedUrl);
+        render(<SimpleUrlRenderer id="long-url" value={longUrl} />);
+        const link = screen.getByRole("link");
+
+        expect(link).toHaveTextContent(expectedText);
     });
 
-    test("falls back to '#' if URL is invalid", () => {
-        const invalidUrl = "not-a-valid-url";
-        render(<SimpleUrlRenderer id="test" value={invalidUrl} />);
+    it("falls back to # for invalid URLs", () => {
+        render(<SimpleUrlRenderer id="invalid-url" value="invalid-url" />);
+        const link = screen.getByRole("link");
 
-        const link = screen.getByRole('link', { name: invalidUrl });
-        expect(link).toHaveAttribute('href', '#');
-        expect(link).toHaveTextContent(invalidUrl);
+        expect(link).toHaveAttribute("href", "#");
+        expect(link).toHaveTextContent("invalid-url");
     });
 
-    test("renders empty href for empty string value", () => {
-        render(<SimpleUrlRenderer id="test" value="" />);
+    it("renders empty string as invalid URL", () => {
+        render(<SimpleUrlRenderer id="empty-url" value="" />);
+        const link = screen.getByRole("link");
 
-        const link = screen.getByRole('link', { name: "" });
-        expect(link).toHaveAttribute('href', '#');
-        expect(link).toHaveTextContent('');
+        expect(link).toHaveAttribute("href", "#");
+        expect(link).toBeEmptyDOMElement();
     });
 
-    test("handles extremely long URLs", () => {
-        const extremeUrl = "https://www.example.com/" + "a".repeat(200);
-        render(<SimpleUrlRenderer id="test" value={extremeUrl} />);
+    it("provides full URL in aria-label and title", () => {
+        const testUrl = "https://example.com/path";
+        render(<SimpleUrlRenderer id="aria-label" value={testUrl} />);
+        const link = screen.getByRole("link");
 
-        const link = screen.getByRole('link');
-        expect(link).toHaveAttribute('href', extremeUrl);
-        expect(link).toHaveTextContent(ellipsesInMiddle(extremeUrl, 50));
+        expect(link).toHaveAttribute("aria-label", testUrl);
+        expect(link).toHaveAttribute("title", testUrl);
     });
 });

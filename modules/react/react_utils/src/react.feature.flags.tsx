@@ -2,6 +2,7 @@ import {NameAnd} from "@enterprise_search/recoil_utils";
 import {makeContextFor, makeContextForState} from "./react_utils";
 import React, {useMemo} from "react";
 import {lensBuilder} from "@enterprise_search/optics";
+import {useWindowUrlData} from "@enterprise_search/routing";
 
 export type FeatureFlag = {
     description: string
@@ -12,9 +13,9 @@ export type FeatureFlags = NameAnd<FeatureFlag>
 export const {use: useOriginalFeatureFlags, Provider: OriginalFeatureFlagsProvider} = makeContextFor<FeatureFlags, 'originalFeatureFlags'>('originalFeatureFlags');
 export const {use: useFeatureFlagsState, Provider: FeatureFlagsStateProvider} = makeContextForState<FeatureFlags, 'featureFlags'>('featureFlags');
 
-export function updateFeatureFlagsFromHRef(featureFlags: FeatureFlags) {
+export function updateFeatureFlagsFromHRef(url: URL, featureFlags: FeatureFlags) {
     let copy: FeatureFlags = featureFlags
-    const searchParams = new URLSearchParams(window.location.search);
+    const searchParams = new URLSearchParams(url.search);
     for (const key of Object.keys(featureFlags)) {
         if (searchParams.has(key)) {
             const lens = lensBuilder<FeatureFlags>().focusOn(key).focusOn('value')
@@ -34,8 +35,9 @@ export function clearAllFeatureFlags(featureFlags: FeatureFlags) {
 }
 
 export function FeatureFlagsProvider({children, featureFlags}: { children: React.ReactNode, featureFlags: FeatureFlags }) {
+    const [winUrlData] = useWindowUrlData()
     const initialState = useMemo<FeatureFlags>(() => {
-        return updateFeatureFlagsFromHRef(featureFlags);
+        return updateFeatureFlagsFromHRef(winUrlData.url, featureFlags);
     }, [window.location.href, featureFlags]);
     return <OriginalFeatureFlagsProvider originalFeatureFlags={featureFlags}>
         <FeatureFlagsStateProvider featureFlags={initialState}>{children}</FeatureFlagsStateProvider>

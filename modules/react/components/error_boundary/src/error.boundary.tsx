@@ -1,13 +1,12 @@
 // ErrorBoundary.tsx
+import React, { Component, ReactNode } from 'react';
+import { ErrorReporterContext, makeContextFor } from "@enterprise_search/react_utils";
+import { Errors } from "@enterprise_search/errors";
 
-import React, {Component, ReactNode} from 'react';
-import {ErrorReporterContext, makeContextFor} from "@enterprise_search/react_utils";
-import {Errors} from "@enterprise_search/errors";
-
-import {TranslationContext, TranslationFn} from "@enterprise_search/translation";
-import {defaultErrorBoundaryStyles, ErrorBoundaryStyles} from "./defaultErrorBoundaryStyles";
-import {UserData} from "@enterprise_search/authentication";
-import {UserDataAccessor} from "@enterprise_search/react_login_component/src/authenticationProvider";
+import { TranslationContext, TranslationFn } from "@enterprise_search/translation";
+import { defaultErrorBoundaryStyles, ErrorBoundaryStyles } from "./defaultErrorBoundaryStyles";
+import { UserData } from "@enterprise_search/authentication";
+import { UserDataAccessor } from "@enterprise_search/react_login_component";
 
 interface ErrorBoundaryProps {
     message: string;
@@ -39,45 +38,45 @@ export class ErrorBoundaryClass extends Component<ErrorBoundaryPropsWithStyles, 
 
     constructor(props: ErrorBoundaryPropsWithStyles) {
         super(props);
-        this.state = {hasError: false, showStack: false};
+        this.state = { hasError: false, showStack: false };
     }
 
     static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
-        return {hasError: true, error};
+        return { hasError: true, error };
     }
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
         const errorReporter = this.context;
         const errors: Errors = {
             errors: [`${this.props.message}: ${error.message}`],
-            extras: {error, errorInfo}
+            extras: { error, errorInfo }
         };
-        this.setState({errors});
+        this.setState({ errors });
 
         if (errorReporter) {
             errorReporter(errors)
                 .then((reportedErrors) => {
                     if (reportedErrors.reference) {
-                        this.setState({reference: reportedErrors.reference});
+                        this.setState({ reference: reportedErrors.reference });
                     } else {
-                        this.setState({reportingFailed: true});
+                        this.setState({ reportingFailed: true });
                     }
                 })
                 .catch((err) => {
                     console.error("Failed to log error:", err, 'Error was', errors);
-                    this.setState({reportingFailed: true});
+                    this.setState({ reportingFailed: true });
                 });
         } else {
             console.error("ErrorReporter is not available in context.");
-            this.setState({reportingFailed: true});
+            this.setState({ reportingFailed: true });
         }
     }
 
     toggleStack = () => {
-        this.setState((prevState) => ({showStack: !prevState.showStack}));
+        this.setState((prevState) => ({ showStack: !prevState.showStack }));
     };
     toggleViewDetails = () => {
-        this.setState((prevState) => ({showDetails: !prevState.showDetails}));
+        this.setState((prevState) => ({ showDetails: !prevState.showDetails }));
     };
 
     renderContent(userData: UserData, translation: TranslationFn) {
@@ -90,8 +89,8 @@ export class ErrorBoundaryClass extends Component<ErrorBoundaryPropsWithStyles, 
         } = this.props;
 
         if (this.state.hasError) {
-            const {fallback} = this.props;
-            const {reference, reportingFailed, showStack} = this.state;
+            const { fallback } = this.props;
+            const { reference, reportingFailed } = this.state;
 
             if (fallback) {
                 return fallback;
@@ -103,12 +102,16 @@ export class ErrorBoundaryClass extends Component<ErrorBoundaryPropsWithStyles, 
                     aria-live="assertive"
                     style={styles.containerStyle}
                 >
-                    <strong style={styles.strongStyle}>{translation('Error')}:</strong> {translation(message)}
+                    <strong style={styles.strongStyle}>
+                        {translation('error.title')}:
+                    </strong> {translation(message)}
 
                     {reference && !reportingFailed && (
                         <div style={styles.referenceStyle}>
                             <p>
-                                <strong style={styles.strongStyle}>{translation(referenceMessage)}:</strong> {reference}
+                                <strong style={styles.strongStyle}>
+                                    {translation(referenceMessage)}:
+                                </strong> {reference}
                             </p>
                         </div>
                     )}
@@ -127,13 +130,13 @@ export class ErrorBoundaryClass extends Component<ErrorBoundaryPropsWithStyles, 
                         <>
                             <div style={styles.detailsStyle}>
                                 <details style={styles.detailsStyle}>
-                                    <summary>Show Details</summary>
+                                    <summary>{translation('error.details')}</summary>
                                     <pre>{JSON.stringify(this.state.errors, null, 2)}</pre>
                                 </details>
                             </div>
                             <div style={styles.detailsStyle}>
                                 <details style={styles.detailsStyle}>
-                                    <summary>Show Stack</summary>
+                                    <summary>{translation('error.stacktrace')}</summary>
                                     <pre>{this.state.errors.extras.errorInfo.componentStack}</pre>
                                 </details>
                             </div>
@@ -159,13 +162,15 @@ export class ErrorBoundaryClass extends Component<ErrorBoundaryPropsWithStyles, 
     }
 }
 
+// Factory function to create ErrorBoundary with custom styles
 export function makeErrorBoundary(customStyles: ErrorBoundaryStyles): ErrorBoundary {
     return function WrappedErrorBoundary(props: Omit<ErrorBoundaryProps, 'styles'>) {
-        return <ErrorBoundaryClass {...props} styles={customStyles}/>;
+        return <ErrorBoundaryClass {...props} styles={customStyles} />;
     };
 }
 
+// Default error boundary with default styles
 export const SimpleErrorBoundary: ErrorBoundary = makeErrorBoundary(defaultErrorBoundaryStyles);
 
-export const {use: useErrorBoundary, Provider: ErrorBoundaryProvider} = makeContextFor<ErrorBoundary, 'errorBoundary'>('errorBoundary', SimpleErrorBoundary);
-
+export const { use: useErrorBoundary, Provider: ErrorBoundaryProvider } =
+    makeContextFor<ErrorBoundary, 'errorBoundary'>('errorBoundary', SimpleErrorBoundary);

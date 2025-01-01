@@ -1,5 +1,5 @@
-import { DataLayout } from "../data.layout";
-import React, { CSSProperties, ReactNode } from "react";
+import {DataLayout, DataLayoutProps} from "../data.layout";
+import React, {CSSProperties, ReactNode} from "react";
 
 const styles: Record<string, CSSProperties> = {
     layoutContainer: {
@@ -23,13 +23,15 @@ const styles: Record<string, CSSProperties> = {
     }
 };
 
-export const SimpleDataLayout: DataLayout = ({ layout, children, className }) => {
+export const SimpleDataLayout: DataLayout = ({ layout, children, className }: DataLayoutProps) => {
     const rows: ReactNode[][] = [];
     let childIndex = 0;
 
+    const childrenArray = React.Children.toArray(children);
+
     // Create rows based on layout array
     for (const itemsInRow of layout) {
-        const row = children.slice(childIndex, childIndex + itemsInRow);
+        const row = childrenArray.slice(childIndex, childIndex + itemsInRow);
         if (row.length > 0) {
             rows.push(row);
         }
@@ -37,11 +39,15 @@ export const SimpleDataLayout: DataLayout = ({ layout, children, className }) =>
     }
 
     return (
-        <div className={className || 'layout-container'} style={styles.layoutContainer}>
+        <div
+            className={className || 'layout-container'}
+            role="presentation" // Suppresses unwanted semantics
+            style={styles.layoutContainer}
+        >
             {rows.map((row, rowIndex) => (
-                <div key={rowIndex} style={styles.layoutRow}>
+                <div key={rowIndex} role="row" style={styles.layoutRow}>
                     {row.map((child, colIndex) => (
-                        <div key={colIndex} style={styles.layoutItem}>
+                        <div key={colIndex} role="cell" style={styles.layoutItem}>
                             {child}
                         </div>
                     ))}

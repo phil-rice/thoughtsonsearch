@@ -10,12 +10,12 @@
       "ts-jest": "^29.2.5"
     },
     "links": [
-    ],
-    "guards": {
-      "compile": true,
-      "publish": false,
-      "test": false,
-      "react": false
-    }
+    ]
+  },
+  "guards": {
+    "compile": true,
+    "publish": false,
+    "test": true,
+    "react": false
   }
 }

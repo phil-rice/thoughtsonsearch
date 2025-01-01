@@ -1,2 +1,2 @@
-export * from './src/react.dataview.filter'
-export * from './src/simpleDataViewFilterDisplay'
+export * from './src/react.data.view.filter'
+export * from './src/simple.data.view.filter.display'

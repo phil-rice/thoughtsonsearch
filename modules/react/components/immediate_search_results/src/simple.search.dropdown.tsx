@@ -1,70 +1,79 @@
-import React, {CSSProperties} from 'react';
-import {SearchDropDown, SearchDropDownProps} from "./search.drop.down";
-import {DataAndDataSource, searchResultsToErrors, searchResultsToInterleavedData} from "@enterprise_search/search_state";
-import {useSearchResultsByStateType} from "@enterprise_search/react_search_state";
-import {useUserData} from "@enterprise_search/react_login_component/src/authenticationProvider";
+import React, {useMemo} from 'react';
+import {
+    DisplaySearchDropDownErrors,
+    DisplaySearchDropDownErrorsProps,
+    DisplaySearchDropDownResults,
+    DisplaySearchDropDownResultsProps,
+    SearchDropDown,
+    SearchDropDownProps
+} from "./search.drop.down";
 import {useOneLineDisplayDataComponent} from "@enterprise_search/react_data/src/react.data";
+import {useUserData} from "@enterprise_search/react_login_component";
+import {useDropdownData} from "./use.dropdown.data";
+import {defaultSearchDropDownStyles} from "./search.drop.down.styles";
 
-//need to have a more nuanced type in the data. Must have a datasource, so might as well do count as well.
-//This is then used when we select it.
-
-export const SimpleSearchDropdown: SearchDropDown = ({st, onSelect}: SearchDropDownProps) => {
-    const [searchResults] = useSearchResultsByStateType(st);
-    const displayOneLine = useOneLineDisplayDataComponent()
-    const dataAndDs: DataAndDataSource<any>[] = searchResultsToInterleavedData(searchResults.dataSourceToSearchResult, 6);
-    const srToError = searchResultsToErrors(searchResults.dataSourceToSearchResult);
+// Main Dropdown Component
+export const SimpleSearchDropdown: SearchDropDown = ({
+                                                         st,
+                                                         onSelect,
+                                                         styles = defaultSearchDropDownStyles,
+                                                         DisplaySearchDropDownResults = SimpleDisplaySearchDropDownResults,
+                                                         DisplaySearchDropDownErrors = SimpleDisplaySearchDropDownErrors
+                                                     }: SearchDropDownProps) => {
+    const {dataAndDs, srToError} = useDropdownData(st);
     const userData = useUserData();
+    const mergedStyles = useMemo(() => ({...defaultSearchDropDownStyles, ...styles}), [styles]);
+
     if (Object.keys(srToError).length > 0 || dataAndDs.length > 0) {
         return (
-            <div style={styles.dropdown}>
-                {dataAndDs.map(({data, dataSourceName}, index) => (
-                    <div key={index} style={styles.suggestion} onClick={() => onSelect(data, dataSourceName)}>
-                        {displayOneLine(data.type)({data, id: `${st}-dropdown-${index}`})}
+            <div
+                style={mergedStyles.dropdown}
+                aria-hidden="true"  // Completely hides the dropdown from screen readers
+            >
+                <DisplaySearchDropDownResults dataAndDs={dataAndDs} onSelect={onSelect} st={st} styles={mergedStyles}/>
+                {dataAndDs.length === 0 && (
+                    <div style={mergedStyles.suggestion}>
+                        No results found
                     </div>
-                ))}
-                {dataAndDs.length === 0 && <div style={styles.suggestion}>...</div>}
-                {userData.isDev ? (
-                    Object.keys(srToError).length > 0 && <div style={styles.errors}>
-                        {Object.entries(srToError).map(([source, error]) => (
-                            <div key={source} style={styles.error}>
-                                {source}: {JSON.stringify(error)}
-                            </div>
-                        ))}
-                    </div>
-                ) : null}
+                )}
+                {userData.isDev && <DisplaySearchDropDownErrors srToError={srToError} styles={mergedStyles}/>}
             </div>
         );
     }
-    return <></>
-}
-
-// Styles for dropdown and suggestions
-const styles: Record<string, CSSProperties> = {
-    dropdown: {
-        position: 'absolute',
-        top: '40px',  // Adjust to match search bar height
-        width: '100%',
-        border: '1px solid #ccc',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        backgroundColor: 'white',
-        zIndex: 1000,
-        borderRadius: '4px',
-    },
-    suggestion: {
-        padding: '10px',
-        cursor: 'pointer',
-    },
-    errors: {
-        marginTop: '10px',
-        padding: '10px',
-        backgroundColor: '#ffe6e6',
-        border: '1px solid #ffb3b3',
-        borderRadius: '4px',
-    },
-    error: {
-        padding: '5px 0',
-        color: '#d8000c',
-        fontWeight: 'bold',
-    },
+    return <></>;
 };
 
+// Results Component (No Change)
+export const SimpleDisplaySearchDropDownResults: DisplaySearchDropDownResults = <Data, >({
+                                                                                             dataAndDs,
+                                                                                             onSelect,
+                                                                                             st,
+                                                                                             styles
+                                                                                         }: DisplaySearchDropDownResultsProps) => {
+    const displayOneLine = useOneLineDisplayDataComponent();
+
+    return (
+        <>
+            {dataAndDs.map(({data, dataSourceName}, index) => (
+                <div
+                    key={index}
+                    style={styles.suggestion}
+                    onClick={() => onSelect(data, dataSourceName)}
+                >
+                    {displayOneLine((data as any).type)({data, id: `${st}-dropdown-${index}`})}
+                </div>
+            ))}
+        </>
+    );
+};
+
+// Error Display Component (No Change)
+export const SimpleDisplaySearchDropDownErrors: DisplaySearchDropDownErrors =
+    ({srToError, styles}: DisplaySearchDropDownErrorsProps) =>
+        (Object.keys(srToError).length > 0 && <div style={styles.errors}>
+            {Object.entries(srToError).map(([source, error]) => (
+                <div key={source} style={styles.error}>
+                    {source}: {JSON.stringify(error)}
+                </div>
+            ))}
+        </div>);

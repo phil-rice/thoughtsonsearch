@@ -1,40 +1,46 @@
 import {LoadingOr} from "@enterprise_search/loading";
 import {delay} from "@enterprise_search/recoil_utils";
-import React, {ReactNode} from "react";
+import React, {ReactNode, useCallback} from "react";
 import {useLoginComponents} from "./react.login";
 import {useDebug} from "@enterprise_search/react_utils";
-import {authenticateDebug, useLogin, useUserData} from "./authenticationProvider";
+import {authenticateDebug, useLogin, useUserData} from "./authentication.provider";
+import {LoginOpsFn} from "@enterprise_search/authentication";
 
+
+export type RefreshLoginStrategy = (refreshLogin: LoginOpsFn) => LoginOpsFn;
 
 export type AuthenticateProps = {
     children: React.ReactNode
+    _refreshLogin?: (refreshLogin: LoginOpsFn) => LoginOpsFn
 
 };
+
+export const delayedRefreshLogin: RefreshLoginStrategy = (refreshLogin: LoginOpsFn): LoginOpsFn =>
+    async (): Promise<void> => {
+        await delay(1000)
+        await refreshLogin()
+    };
 
 /** When we load the page we need to refresh any logged in tokens for authenticating.
  * If we set notLoggedIn then we will show the notLoggedIn component until we have refreshed the login.
  * */
-export function Authenticate({children = null}: AuthenticateProps) {
-    const {refeshLogin} = useLogin();
+export function Authenticate({children = null, _refreshLogin = delayedRefreshLogin}: AuthenticateProps) {
+    const {refreshLogin} = useLogin();
     const {NotLoggedIn} = useLoginComponents();
-    const kleisli = async () => {
-        await delay(3000)
-        await refeshLogin()
-    }
+    const kleisli: () => Promise<void> = useCallback(_refreshLogin(refreshLogin), [refreshLogin, _refreshLogin])
     return <LoadingOr kleisli={kleisli} input={undefined}>{() =>
-        NotLoggedIn ? <MustBeLoggedIn notLoggedIn={NotLoggedIn}>{children}</MustBeLoggedIn> : children
+        NotLoggedIn ? <MustBeLoggedIn renderNotLoggedIn={NotLoggedIn}>{children}</MustBeLoggedIn> : children
     }</LoadingOr>
-
 }
 
 export type MustBeLoggedInProps = {
-    notLoggedIn: () => ReactNode,
+    renderNotLoggedIn: () => ReactNode,
     children: ReactNode
 };
 
 export type MustBeLoggedInDisplay = (props: MustBeLoggedInProps) => React.ReactElement;
 
-export function MustBeLoggedIn({children, notLoggedIn}: MustBeLoggedInProps): ReactNode {
+export function MustBeLoggedIn({children, renderNotLoggedIn}: MustBeLoggedInProps): ReactNode {
     const userData = useUserData()
     const debug = useDebug(authenticateDebug)
     debug('MustBeLoggedIn', userData)
@@ -42,7 +48,7 @@ export function MustBeLoggedIn({children, notLoggedIn}: MustBeLoggedInProps): Re
         <MustBeLoggedInWrapper
             loggedIn={userData?.loggedIn}
             children={children}
-            notLoggedIn={notLoggedIn}
+            notLoggedIn={renderNotLoggedIn}
         />
     );
 }

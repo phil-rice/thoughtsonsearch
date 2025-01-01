@@ -12,8 +12,8 @@ interface CheckboxItemProps {
 
 const CheckboxItem: React.FC<CheckboxItemProps> = ({rootId, name, isChecked, onChange}) => {
     const translate = useTranslation();
-    const {iconFn} = useIcon();
-    const Icon = iconFn(name);
+    const {decorativeIcon} = useIcon();
+    const Icon = decorativeIcon(name);
     const id = `${rootId}-${name}`;
 
     //needed for accessibility expectations. We are labeled as a listbox, so we need to handle keyboard navigation

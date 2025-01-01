@@ -58,7 +58,3 @@ export function makeRoutingSegmentContextFor(
     // Return context, hook, and provider with dynamic names
     return {use: useRouting, Provider: RoutingProvider, context};
 }
-
-// export const {use: useRouting0, Provider: RoutingProvider0} = makeRoutingSegmentContextFor('routing0', 0)
-//
-// export const {use: useRouting1, Provider: RoutingProvider1} = makeRoutingSegmentContextFor('routing1', 1)

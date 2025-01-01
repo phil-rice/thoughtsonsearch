@@ -1,5 +1,5 @@
 import {DisplayFilter, ReactFiltersPlugin} from "@enterprise_search/react_filters_plugin";
-import {SimpleDataViewFilterDisplay} from "./simpleDataViewFilterDisplay";
+import {SimpleDataViewFilterDisplay} from "./simple.data.view.filter.display";
 
 import {toArray} from "@laoban/utils";
 import {DebugLog} from "@enterprise_search/recoil_utils";

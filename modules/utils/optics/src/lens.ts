@@ -176,7 +176,9 @@ export class LensBuilder<Main, Child> implements LensAndPath<Main, Child> {
     ): LensBuilder<Main, { [P in keyof Child]: P extends K ? Child[K][SubKey] : Child[P] }> {
         const lastPath: ComposedPathPart = this._lens.path[this._lens.path.length - 1] as ComposedPathPart;
         if (!lastPath || typeof lastPath !== 'object') throw new Error('Invalid path for focusOnPart. Must focus on an objectComposed path.');
-        const newLastPart: ComposedPathPart = {...lastPath, [subPart]: [...lastPath[part as any], subPart.toString()]};
+        const lastPathPart = lastPath[part as any];
+        if (!lastPathPart || !Array.isArray(lastPathPart)) throw new Error(`Invalid part [${part.toString()}] for focusOnPart.`);
+        const newLastPart: ComposedPathPart = {...lastPath, [subPart]: [...lastPathPart, subPart.toString()]};
         const path: LensPath = [...this._lens.path.slice(0, -1), newLastPart];
         const get = (main: Main) => {
             const parentValue = this._lens.get(main);

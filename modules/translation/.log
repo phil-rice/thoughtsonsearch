@@ -1,2 +1,16 @@
-2024-12-31T14:38:18.182Z tsc --noEmit false --outDir dist
-Took 2186ms 
+2025-01-01T11:02:11.773Z yarn test
+yarn run v1.22.22
+$ jest --config jest.config.json
+PASS src/translation.spec.tsx
+  Translation Context
+    √ uses the default translation function when no provider is specified (39 ms)
+    √ uses a custom translation function from the provider (5 ms)
+    √ falls back to the default function if no custom provider is present (4 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        4.937 s
+Ran all test suites.
+Done in 5.97s.
+Took 6194ms 

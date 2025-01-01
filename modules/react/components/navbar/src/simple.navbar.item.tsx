@@ -1,4 +1,4 @@
-import {NavBarItemProps} from "./navbar";
+import {NavBarItem, NavBarItemProps} from "./navbar";
 import React, {CSSProperties} from "react";
 import {useTranslation} from "@enterprise_search/translation";
 
@@ -30,7 +30,7 @@ export const DefaultNavItemStyles: NavItemStyles = {
     selectedStyle: DefaultNavBarSelectedStyle,
     unselectedStyle: DefaultNavBarUnselectedStyle
 }
-export const SimpleNavItem = ({selectedStyle, unselectedStyle}: NavItemStyles = DefaultNavItemStyles) =>
+export const SimpleNavItem = ({selectedStyle, unselectedStyle}: NavItemStyles = DefaultNavItemStyles): NavBarItem =>
     ({value, selectedOps}: NavBarItemProps) => {
         const [selected, setSelected] = selectedOps
         const translate = useTranslation()

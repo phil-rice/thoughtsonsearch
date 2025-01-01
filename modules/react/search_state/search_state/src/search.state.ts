@@ -1,6 +1,6 @@
 import {Errors, ErrorsOr, isErrors, isValue} from "@enterprise_search/errors";
 import {NameAnd} from "@enterprise_search/recoil_utils";
-import {interleave, interleaveUntilMax} from "@enterprise_search/recoil_utils/src/arrays";
+import {interleaveUntilMax} from "@enterprise_search/recoil_utils/src/arrays";
 
 
 export type SearchType = 'main' | 'immediate'

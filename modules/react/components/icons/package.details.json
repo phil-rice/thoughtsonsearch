@@ -3,7 +3,8 @@
   "name": "@enterprise_search/icons",
   "description": "How we handle icons",
   "links": [
-    "@enterprise_search/errors"
+    "@enterprise_search/errors",
+    "@enterprise_search/translation"
   ],
   "packageJson": {
     "files": ["build/"],
@@ -11,12 +12,12 @@
     },
     "devDependencies": {
       "ts-jest": "^29.2.5"
-    },
-    "guards": {
-      "compile": true,
-      "publish": false,
-      "test": false,
-      "react": false
     }
+  },
+  "guards": {
+    "compile": true,
+    "publish": false,
+    "test": true,
+    "react": false
   }
 }

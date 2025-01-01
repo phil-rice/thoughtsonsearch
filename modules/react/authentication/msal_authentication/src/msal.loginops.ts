@@ -70,7 +70,7 @@ export function loginUsingMsal({
         const userData: UserData = {email, isDev, isAdmin, loggedIn};
         return userData;
     }
-    return {login, logout, refeshLogin, userDataGetter};
+    return {login, logout, refreshLogin: refeshLogin, userDataGetter};
 }
 
 

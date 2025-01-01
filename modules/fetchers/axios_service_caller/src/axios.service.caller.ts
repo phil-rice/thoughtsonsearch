@@ -17,13 +17,14 @@ export async function axiosServiceCaller<T>(
     try {
         debug('serviceCaller - req', req);
         const withAuth = await applyAuthentication(authentication, req)
-        const response = await axios({
-            ...axiosConfig,
+        const axiosReq = {
+            ...req,
             method: withAuth.method,
             url: withAuth.url,
             data: withAuth.body,
             headers: withAuth.headers || {},
-        });
+        };
+        const response = await axios(axiosReq);
         const responseHeaders: NameAnd<string> = {}
         for (const [key, value] of Object.entries(response?.headers || {}))
             responseHeaders[key] = Array.isArray(value) ? value.join(',') : value.toString()

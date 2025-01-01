@@ -14,12 +14,12 @@
       "@enterprise_search/recoil_utils",
       "@enterprise_search/react_utils",
       "@enterprise_search/translation"
-    ],
-    "guards": {
-      "compile": true,
-      "publish": false,
-      "test": false,
-      "react": false
-    }
+    ]
+  },
+  "guards": {
+    "compile": true,
+    "publish": false,
+    "test": true,
+    "react": false
   }
 }

@@ -1,10 +1,10 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import { axiosServiceCaller, AxiosContext } from './axios.service.caller';
+import {axiosServiceCaller, AxiosContext} from './axios.service.caller';
 import {stringParserAndValidator, ServiceRequest, ServiceResponse, justValidator} from '@enterprise_search/service_caller';
-import { ErrorsOr, errorsOrThrow } from '@enterprise_search/errors';
-import { createMockDebugLog } from '@enterprise_search/recoil_utils';
-import { emptyAuthentication, testAuthentication } from '@enterprise_search/authentication';
+import {ErrorsOr, errorsOrThrow} from '@enterprise_search/errors';
+import {createMockDebugLog} from '@enterprise_search/recoil_utils';
+import {emptyAuthentication, testAuthentication} from '@enterprise_search/authentication';
 
 const mock = new MockAdapter(axios);
 const debugMock = createMockDebugLog();
@@ -18,7 +18,7 @@ describe('axiosServiceCaller - Successful Calls', () => {
     const serviceRequest: ServiceRequest = {
         method: 'GET',
         url: 'https://example.com/api',
-        headers: { Authorization: 'Bearer token' }
+        headers: {Authorization: 'Bearer token'}
     };
 
     afterEach(() => {
@@ -30,7 +30,7 @@ describe('axiosServiceCaller - Successful Calls', () => {
         const mockResponse = {
             status: 200,
             data: 'Success',
-            headers: { 'x-correlation-id': '12345' }
+            headers: {'x-correlation-id': '12345'}
         };
         mock.onGet(serviceRequest.url).reply(
             mockResponse.status,
@@ -50,11 +50,11 @@ describe('axiosServiceCaller - Successful Calls', () => {
     });
 
     it('returns a successful response with parsed JSON', async () => {
-        const jsonBody = { foo: 'bar' };
+        const jsonBody = {foo: 'bar'};
         const mockResponse = {
             status: 200,
             data: JSON.stringify(jsonBody),
-            headers: { 'x-correlation-id': '12345' }
+            headers: {'x-correlation-id': '12345'}
         };
         mock.onGet(serviceRequest.url).reply(
             mockResponse.status,
@@ -64,7 +64,7 @@ describe('axiosServiceCaller - Successful Calls', () => {
 
         const result: ErrorsOr<ServiceResponse<{ foo: string }>> = await axiosServiceCaller(
             axiosContext,
-            { ...serviceRequest, parser: justValidator<{ foo: string }>() }
+            {...serviceRequest, parser: justValidator<{ foo: string }>()}
         );
 
         expect(result).toEqual({
@@ -92,7 +92,7 @@ describe('axiosServiceCaller - Error Handling', () => {
     it('handles 404 error responses', async () => {
         const mockErrorResponse = {
             status: 404,
-            data: { error: 'Not Found' },
+            data: {error: 'Not Found'},
             headers: {}
         };
         mock.onGet(serviceRequest.url).reply(
@@ -105,7 +105,7 @@ describe('axiosServiceCaller - Error Handling', () => {
 
         expect(result).toEqual({
             errors: ['HTTP 404: undefined'],
-            extras: { sr: serviceRequest, text: mockErrorResponse.data }
+            extras: {sr: serviceRequest, text: mockErrorResponse.data}
         });
     });
 
@@ -115,8 +115,8 @@ describe('axiosServiceCaller - Error Handling', () => {
         const result: ErrorsOr<ServiceResponse> = await axiosServiceCaller(axiosContext, serviceRequest);
 
         expect(result).toEqual({
-            errors: [  "Network Error"],
-            extras: { sr: serviceRequest }
+            errors: ["Network Error"],
+            extras: {sr: serviceRequest}
         });
     });
 
@@ -130,30 +130,43 @@ describe('axiosServiceCaller - Error Handling', () => {
 
         expect(result).toEqual({
             errors: [unexpectedError.message],
-            extras: { sr: serviceRequest }
+            extras: {sr: serviceRequest}
         });
     });
 
-    it('applies authentication', async () => {
+    it('applies authentication to PUT request with JSON body', async () => {
         const axiosContextWithAuth: AxiosContext = {
             ...axiosContext,
             authentication: testAuthentication,
         };
 
+        const someJson = {key: 'value', anotherKey: 123};
+        const requestBody = JSON.stringify(someJson);  // JSON string body
+
         const mockResponse = {
             status: 200,
-            data: { message: 'Success' },
-            headers: { 'x-correlation-id': '12345' }
+            data: {message: 'Success'},
+            headers: {'x-correlation-id': '12345'}
         };
 
-        mock.onGet('https://example.com/api?test=test').reply(
+        // Mocking PUT request with test authentication modifying the URL
+        mock.onPut('https://example.com/api?test=test').reply(
             mockResponse.status,
             mockResponse.data,
             mockResponse.headers
         );
 
+        // Prepare PUT request
+        const serviceRequest: ServiceRequest = {
+            method: 'PUT',
+            url: 'https://example.com/api',
+            body: requestBody,
+            headers: {}
+        };
+
         const result: ErrorsOr<ServiceResponse> = await axiosServiceCaller(axiosContextWithAuth, serviceRequest);
 
+        // Validate response
         expect(result).toEqual({
             value: {
                 status: mockResponse.status,
@@ -162,8 +175,11 @@ describe('axiosServiceCaller - Error Handling', () => {
             }
         });
 
-        const requestHistory = mock.history.get[0];
+        // Validate request details
+        const requestHistory = mock.history.put[0];
         expect(requestHistory.url).toBe('https://example.com/api?test=test');
         expect(requestHistory.headers['x-test']).toBe('test');
+        expect(requestHistory.data).toBe('{"key":"value","anotherKey":123,"test":"test"}');  // Ensure the body was sent correctly
     });
+
 });

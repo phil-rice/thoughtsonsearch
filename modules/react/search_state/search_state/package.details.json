@@ -3,7 +3,6 @@
   "name": "@enterprise_search/search_state",
   "description": "The state for search application. This does not include state management, just the state",
   "links": [
-
   ],
   "packageJson": {
     "files": ["build/"],
@@ -11,12 +10,12 @@
     },
     "devDependencies": {
       "ts-jest": "^29.2.5"
-    },
-    "guards": {
-      "compile": true,
-      "publish": false,
-      "test": false,
-      "react": false
     }
+  },
+  "guards": {
+    "compile": true,
+    "publish": false,
+    "test": true,
+    "react": false
   }
 }

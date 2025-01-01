@@ -1,50 +1,88 @@
-import React, {createContext, ReactElement, useMemo} from "react";
-
-import {mapRecord} from "@enterprise_search/recoil_utils";
-import {Renderers, RendererType, RenderProvider} from "./renderers";
-import {DataLayout} from "./data.layout";
+import React, { createContext, ReactElement, useMemo } from "react";
+import { mapRecord } from "@enterprise_search/recoil_utils";
+import { Renderers, RendererType, RenderProvider } from "./renderers";
+import { DataLayout } from "./data.layout";
+import { useTranslation } from "@enterprise_search/translation";
 
 export type AttributeValueLayoutProps = {
     children: [React.ReactNode, React.ReactNode];
-}
-export type AttributeValueLayout = (props: AttributeValueLayoutProps) => ReactElement
+};
+export type AttributeValueLayout = (props: AttributeValueLayoutProps) => ReactElement;
 
 export type AttributeValueProps = {
-    rootId: string
+    rootId: string;
     attribute: string;
     value: string;
-}
-export type AttributeValue = (props: AttributeValueProps) => ReactElement
+};
+export type AttributeValue = (props: AttributeValueProps) => ReactElement;
+
 export type AttributeValueComponents = Record<RendererType, AttributeValue> & {
-    DataLayout: DataLayout
-}
+    DataLayout: DataLayout;
+};
 
 type AttributeValueComponentsProviderProps = {
-    children: React.ReactNode
-    AttributeValueLayout: AttributeValueLayout
-    DataLayout: DataLayout
-    renderers: Renderers
+    children: React.ReactNode;
+    AttributeValueLayout: AttributeValueLayout;
+    DataLayout: DataLayout;
+    renderers: Renderers;
+};
+
+export const AttributeValueContext = createContext<AttributeValueComponents | undefined>(undefined);
+
+/**
+ * Renders attribute-value pairs using a layout and translation hook.
+ * Handles empty values gracefully by displaying an empty string.
+ */
+function AttributeValueRenderer({ Renderer, rootId, attribute, value, AttributeValueLayout }: {
+    Renderer: React.ComponentType<{ id: string; value: string }>;
+    rootId: string;
+    attribute: string;
+    value: string;
+    AttributeValueLayout: AttributeValueLayout;
+}) {
+    const id = `${rootId}-${attribute}`;
+    const translation = useTranslation();
+    const label = translation(`${rootId}.${attribute}`);  // Internationalized label
+
+    return (
+        <AttributeValueLayout>
+            <label htmlFor={id}>{label}:&nbsp;</label>
+            <Renderer id={id} value={value || ""} />
+        </AttributeValueLayout>
+    );
 }
 
-export const AttributeValueContext = createContext<AttributeValueComponents | undefined>(undefined)
-
-export function AttributeValueProvider({children, renderers, AttributeValueLayout, DataLayout}: AttributeValueComponentsProviderProps) {
+/**
+ * Provides attribute-value rendering logic via context.
+ * Enables injection of custom layouts and data layouts.
+ */
+export function AttributeValueProvider({
+                                           children,
+                                           renderers,
+                                           AttributeValueLayout,
+                                           DataLayout,
+                                       }: AttributeValueComponentsProviderProps) {
     const components = useMemo(() => {
-        const components = mapRecord(renderers, (Renderer) =>
-            ({rootId, attribute, value}: AttributeValueProps) => {
-                const id = `${rootId}-${attribute}=${value}`;
-                return <AttributeValueLayout><label htmlFor={id}>{attribute}:&nbsp;</label><Renderer id={id} value={value}/></AttributeValueLayout>;
-            }
+        const mappedComponents = mapRecord(renderers, (Renderer) => (props: AttributeValueProps) =>
+            <AttributeValueRenderer
+                Renderer={Renderer}
+                {...props}
+                AttributeValueLayout={AttributeValueLayout}
+            />
         );
-        return {...components, DataLayout}
-    }, [renderers, AttributeValueLayout])
-    return <AttributeValueContext.Provider value={components}>
-        <RenderProvider renderers={renderers}>{children}</RenderProvider>
-    </AttributeValueContext.Provider>
+
+        return { ...mappedComponents, DataLayout };
+    }, [renderers, AttributeValueLayout]);
+
+    return (
+        <AttributeValueContext.Provider value={components}>
+            <RenderProvider renderers={renderers}>{children}</RenderProvider>
+        </AttributeValueContext.Provider>
+    );
 }
 
 export function useAttributeValueComponents(): AttributeValueComponents {
     const components = React.useContext(AttributeValueContext);
-    if (!components) throw new Error('useAttributeValueComponents must be used inside an AttributeValueProvider');
+    if (!components) throw new Error("useAttributeValueComponents must be used inside an AttributeValueProvider");
     return components;
 }

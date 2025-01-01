@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@enterprise_search/errors": "0.0.1",
+    "@enterprise_search/translation": "0.0.1",
     "debug": "^4.3.4",
     "@focuson/lens": "1.44.3",
     "@focuson/state": "1.44.3",
@@ -59,12 +60,6 @@
     "dist/src/",
     "build/"
   ],
-  "guards": {
-    "compile": true,
-    "publish": false,
-    "test": false,
-    "react": false
-  },
   "keywords": [
     "react",
     "runbook"

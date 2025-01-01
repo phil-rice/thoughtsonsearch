@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {createRoot} from "react-dom/client";
 import {Configuration, PublicClientApplication} from "@azure/msal-browser";
 import {loginUsingMsal} from "@enterprise_search/msal_authentication";
-import {Authenticate, authenticateDebug, AuthenticationProvider, LoginConfig, SimpleDisplayLogin, SimpleMustBeLoggedIn, useLoginComponents} from "@enterprise_search/react_login_component";
+import {Authenticate, authenticateDebug, AuthenticationProvider, LoginConfig, SimpleDisplayLogin, SimpleNotLoggedIn, useLoginComponents} from "@enterprise_search/react_login_component";
 import {filtersDisplayPurpose, ReactFiltersContextData} from "@enterprise_search/react_filters_plugin";
 
 import {SearchImportantComponents, SearchImportantComponentsProvider, startStateDebug} from "@enterprise_search/search_important_components";
@@ -89,7 +89,7 @@ try {
 const dataPlugins: DataPlugins = {
     [ConfluenceDataName]: ConfluenceDataPlugin(),
     [JiraDataName]: JiraDataPlugin(),
-    [PeopleDataName]:peopleDataPlugin()
+    [PeopleDataName]: peopleDataPlugin()
 }
 
 type AllDataSourceDetails = ElasticSearchSourceDetails | CommonDataSourceDetails
@@ -114,7 +114,7 @@ const searchImportantComponents: SearchImportantComponents<any, AllDataSourceDet
     dataPlugins,
     reactFiltersContextData,
     DisplayLogin: SimpleDisplayLogin,
-    NotLoggedIn: SimpleMustBeLoggedIn,
+    NotLoggedIn: SimpleNotLoggedIn,
     SearchBar: SimpleSearchBar,
     DisplaySearchResultsLayout: SimpleDisplayResultsLayout,
     NavBarItem: SimpleDataViewNavItem,
@@ -127,7 +127,7 @@ const sovereignStatePlugins: SovereignStatePlugins = {
     plugins: {
         start: InitialSovereignPagePlugin,
         advancedSearch: AdvanceSearchPagePlugin,
-        one:OneSearchPagePlugin
+        one: OneSearchPagePlugin
     },
     UnknownDisplay: SimpleUnknownDisplay
 }
@@ -172,10 +172,10 @@ msal.initialize({}).then(() => {
 //we set up here: how we display the components, how we do state management and how we do authentication
 
     root.render(<React.StrictMode>
-            <AttributeValueProvider renderers={renderers} AttributeValueLayout={SimpleAttributeValueLayout} DataLayout={SimpleDataLayout}>
-                <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags} errorReporter={consoleErrorReporter}>
-                    <AuthenticationProvider loginConfig={login}>
-                        <WindowUrlProvider>
+            <WindowUrlProvider>
+                <AttributeValueProvider renderers={renderers} AttributeValueLayout={SimpleAttributeValueLayout} DataLayout={SimpleDataLayout}>
+                    <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags} errorReporter={consoleErrorReporter}>
+                        <AuthenticationProvider loginConfig={login}>
                             <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
                                 <SovereignStateProvider>
                                     <SearchImportantComponentsProvider components={searchImportantComponents}>
@@ -187,10 +187,10 @@ msal.initialize({}).then(() => {
                                     </SearchImportantComponentsProvider>
                                 </SovereignStateProvider>
                             </SovereignStatePluginsProvider>
-                        </WindowUrlProvider>
-                    </AuthenticationProvider>
-                </NonFunctionalsProvider>
-            </AttributeValueProvider>
+                        </AuthenticationProvider>
+                    </NonFunctionalsProvider>
+                </AttributeValueProvider>
+            </WindowUrlProvider>
         </React.StrictMode>
     );
 })

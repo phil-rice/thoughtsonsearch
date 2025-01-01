@@ -27,7 +27,7 @@ export const testAuthentication: Authentication = {
     validate: () => [],
     modifyHeaders: async (headers: Headers) => ({...headers, 'x-test': 'test'}),
     modifyUrl: async (url: string) => `${url}?test=test`,
-    modifyBody: async (body: any) => ({...body, test: 'test'})
+    modifyBody: async (body: any) => JSON.stringify({...JSON.parse(body), test: 'test'})
 }
 
 export const basicAuthentication = (username: string, password: string): Authentication => ({
@@ -39,9 +39,14 @@ export const basicAuthentication = (username: string, password: string): Authent
         return errors;
     },
     modifyHeaders: async (headers: Headers) => {
-        return ({...headers, Authorization: `Basic ${(Buffer.from(`${username}:${password}`).toString('base64'))}`});
+        const encoded = btoa(`${username}:${password}`);
+        return {
+            ...headers,
+            Authorization: `Basic ${encoded}`
+        };
     }
 });
+
 
 export const bearerAuthentication = (token: string): Authentication => ({
     name: 'bearer',

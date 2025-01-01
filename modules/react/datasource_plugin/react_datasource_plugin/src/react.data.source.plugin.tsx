@@ -1,8 +1,7 @@
-import {Aggregates, SearchResult, SearchType} from "@enterprise_search/search_state";
+import {Aggregates, SearchType} from "@enterprise_search/search_state";
 import {ErrorsOr} from "@enterprise_search/errors";
 import {NameAnd} from "@laoban/utils";
-import {Authentication} from "@enterprise_search/authentication";
-import {makeContextFor, useThrowError} from "@enterprise_search/react_utils";
+import {makeContextFor} from "@enterprise_search/react_utils";
 import {SearchCapabilities} from "@enterprise_search/search/src/search";
 
 
@@ -50,10 +49,3 @@ export function validateDataSourcePlugins(ds: DataSourcePlugins<any>) {
 
 export const {Provider: DataSourcePluginProvider, use: useDataSourcePlugins} = makeContextFor<DataSourcePlugins<any>, 'plugins'>('plugins')
 
-export function useDatasourcePlugin<Details extends CommonDataSourceDetails, Filters, Paging>(datasourceName: string): DataSourcePlugin<Details, Filters, Paging> {
-    const plugins = useDataSourcePlugins()
-    const throwError = useThrowError()
-    const plugin = plugins[datasourceName as any] as DataSourcePlugin<Details, Filters, Paging>
-    if (!plugin) return throwError('s/w', `No plugin found for datasource ${datasourceName}. Legal values are ${Object.keys(plugins).sort().join(', ')}`)
-    return plugin;
-}

@@ -51,12 +51,6 @@
     "dist/src/",
     "build/"
   ],
-  "guards": {
-    "compile": true,
-    "publish": false,
-    "test": false,
-    "react": false
-  },
   "keywords": [
     "indexing"
   ],

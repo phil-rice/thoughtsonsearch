@@ -2,7 +2,7 @@ import React from "react";
 import {TranslatedLabel, TranslatedMultiSelect} from "@enterprise_search/translation";
 import {DisplayFilterProps} from "@enterprise_search/react_filters_plugin";
 
-import {DataViewFilterData} from "./react.dataview.filter";
+import {DataViewFilterData} from "./react.data.view.filter";
 import {lensBuilder} from "@enterprise_search/optics";
 import {makeGetterSetter} from "@enterprise_search/react_utils";
 

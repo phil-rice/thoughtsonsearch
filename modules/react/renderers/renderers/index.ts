@@ -1,5 +1,5 @@
 export * from './src/attribute.value'
-export * from './src/cleaners'
+export * from './src/clean.headers'
 export * from './src/layouts/simple.attribute.value.layout'
 export * from './src/layouts/simple.data.layout'
 export * from './src/renderers'

@@ -30,12 +30,12 @@
     },
     "scripts": {
       "8080": "parcel src/index.html --port 8080"
-    },
-    "guards": {
-      "compile": true,
-      "publish": false,
-      "test": false,
-      "react": false
     }
+  },
+  "guards": {
+    "compile": true,
+    "publish": false,
+    "test": false,
+    "react": false
   }
 }

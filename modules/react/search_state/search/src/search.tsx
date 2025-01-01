@@ -33,7 +33,7 @@ function useDoSearch<Filters>(st: SearchType, resultSize: number) {
         const dataView = dataViews[dataViewName]
         const searchCapabilities: SearchCapabilities = {debug, throwError: throwError, errorReporter, dataView}
 
-        if (Object.keys(filters as object).length === 0) return //removes calls at start up, and this isn't a credible search anyway
+        if (Object.keys(filters||{} as object).length === 0) return //removes calls at start up, and this isn't a credible search anyway
         const baseCount = countRef.current + 1
         //when we do a new search we increment the count. We then check this in the result and ignore results if count has changed
         //we need it in a ref so that we can use it in the promise.then
@@ -51,7 +51,10 @@ function useDoSearch<Filters>(st: SearchType, resultSize: number) {
                     debug(st, baseCount, 'result', datasourceName, res, 'old', old, 'new', result)
                     return result;
                 })
+                debug('after setSearchResults')
+
             }).catch(e => {
+                errorReporter({errors: [`Unexpected error in search. ${JSON.stringify(e)}`]});
                 debug.debugError(e, st, baseCount, 'error') // Note this only logs the error if debug is on. We need a proper error handling system
             })
         }
@@ -90,20 +93,3 @@ export function searchAllDataSourcesPage1<Filters>(searchCapabilities: SearchCap
     }
     return result
 }
-
-// export function intermediateSearch<Filters extends KeywordsFilter>(searchCapabilities: SearchCapabilities,
-//                                                                    plugins: DataSourcePlugins<Filters>,
-//                                                                    parser: SearchParser<Filters>,
-//                                                                    setIntermediateFilters: (filters: Filters) => void,
-//                                                                    setResult: (st: SearchType, datasourceName: string, res: ErrorsOr<SearchResult<any, any>>) => void,
-//                                                                    searchState: SearchState<any>,) {
-//     const {searches} = searchState
-//     const {main, immediate} = searches
-//     const [searchQuery] = useGuiFilters()
-//     const newImmediate = parser(searchQuery, main.filters);
-//     setIntermediateFilters(newImmediate)
-//     const result: DatasourceToPromiseSearchResult = searchAllDataSourcesPage1(searchCapabilities, 'immediate', plugins, newImmediate, 10)
-//     for (const [datasourceName, promise] of Object.entries(result)) {
-//         promise.then(res => setResult('immediate', datasourceName, res))
-//     }
-// }

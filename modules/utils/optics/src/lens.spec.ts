@@ -364,7 +364,7 @@ describe('Lens functionality', () => {
                     domain: lensBuilder<Obj>().focusOn('domain').build()
                 });
 
-            expect(() => compositeLens.focusOnPart('invalid' as any, 'key' as any)).toThrow('Invalid path for focusOnPart. Must focus on an objectComposed path.');
+            expect(() => compositeLens.focusOnPart('invalid' as any, 'key' as any)).toThrow('Invalid part [invalid] for focusOnPart.');
         });
     });
 

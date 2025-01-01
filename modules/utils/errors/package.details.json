@@ -12,12 +12,12 @@
     "devDependencies": {
       "ts-jest": "^29.2.5"
     },
-    "scripts": {"start": "react-scripts start"},
-    "guards": {
-      "compile": true,
-      "publish": false,
-      "test": false,
-      "react": false
-    }
+    "scripts": {"start": "react-scripts start"}
+  },
+  "guards": {
+    "compile": true,
+    "publish": false,
+    "test": true,
+    "react": false
   }
 }

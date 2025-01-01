@@ -16,9 +16,11 @@ export const keywordsFilterPlugin = (Display: DisplayFilter<string>): ReactFilte
     fromUrl: (debug, windowUrlData, def) => {
         const searchParams = windowUrlData.url.searchParams
         const filter = searchParams.get(keywordsFilterName)
-        return filter ? filter : def
+        const result = filter ? filter : def;
+        debug('keywordsFilter fromurl', `${keywordsFilterName}=`, filter, result)
+        return result
     },
-    addToUrl: (debug, sp, filter) => {
+    addToUrl: (debug, sp: URLSearchParams, filter) => {
         debug('keywordsFilter addToUrl', `${keywordsFilterName}=`, filter)
         if (filter) sp.set(keywordsFilterName, filter);
         else sp.delete(keywordsFilterName)
