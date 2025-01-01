@@ -15,29 +15,28 @@
     ]
   },
   "dependencies": {
+    "react-markdown": "7.1.2",
     "@enterprise_search/errors": "0.0.1",
     "@enterprise_search/renderers": "0.0.1",
+    "debug": "^4.3.4",
     "@focuson/lens": "1.44.3",
     "@focuson/state": "1.44.3",
-    "@laoban/utils": "1.4.45",
-    "debug": "^4.3.4",
-    "nyc": "^17.1.0",
-    "react-markdown": "7.1.2"
+    "@laoban/utils": "1.4.45"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.23.3",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
+    "ts-jest": "^29.2.5",
+    "parcel": "^2.13.3",
+    "typescript": "^5.3.3",
     "@testing-library/react": "^16.1.0",
+    "@testing-library/dom": "^10.4.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/user-event": "^14.5.2",
-    "@types/jest": "^27.5.2",
+    "@babel/preset-react": "^7.23.3",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
-    "jest-environment-jsdom": "^29.7.0",
-    "parcel": "^2.13.3",
     "recoil": "^0.7.7",
-    "ts-jest": "^29.2.5",
-    "typescript": "^5.3.3"
+    "@types/jest": "^27.5.2"
   },
   "eslintConfig": {
     "extends": [

@@ -1,0 +1,23 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/simple_translation",
+  "description": "An implementation of the translation module.",
+  "links": [
+    "@enterprise_search/recoil_utils"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    },
+    "scripts": {"start": "react-scripts start"}
+  },
+  "guards": {
+  "compile": true,
+  "publish": false,
+  "test": true,
+  "react": false
+}
+}

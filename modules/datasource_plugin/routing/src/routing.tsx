@@ -53,7 +53,7 @@ export function makeRoutingSegmentContextFor(
             debug('RoutingProvider', 'updateWindowsState', updateWindowsState)
             if (updateWindowsState) window.history.pushState(null, '', newUrl.toString());
             setUrlData({...urlData, parts: newParts, url: newUrl})
-        }], [value])
+        }], [value, parts[0] || '', parts[1] || ''])
         return <context.Provider value={ops}>{props.children}</context.Provider>;
     }
 
