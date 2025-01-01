@@ -4,7 +4,7 @@ import {act, fireEvent, render, screen} from '@testing-library/react';
 import {DataViews, DataViewsProvider} from "./data.views";
 import {DebugStateProvider} from "@enterprise_search/react_utils";
 import {GuiSelectedDataViewProvider, SearchGuiStateProvider} from "@enterprise_search/search_gui_state";
-import {SimpleDataViewNavItem} from "./simple.data.view.navbar";
+import {SimpleDataViewNavItem} from "./simple.data.view.nav.item";
 import {StateInspector} from "./data.views.spec";
 import {WindowUrlProviderForTests} from "@enterprise_search/routing";
 import {SovereignStateProvider} from "@enterprise_search/sovereign";

@@ -39,7 +39,7 @@ export type DisplayDataWidgetProps<Data> = {
 }
 export type DisplayDataWidget<Data> = (props: DisplayDataWidgetProps<Data>) => React.ReactElement
 
-export const {Provider: DataPluginProvider, use: useDataPlugins} = makeContextFor('dataPlugins', {} as DataPlugins);
+export const {Provider: DataPluginProvider, use: useDataPlugins} = makeContextFor('dataPlugins');
 
 export const useOneLineDisplayDataComponent = <Data extends any>(): (type: string,) => DisplayData<Data> => {
     const plugins = useDataPlugins()

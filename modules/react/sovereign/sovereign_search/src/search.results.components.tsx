@@ -18,7 +18,7 @@ export type ErrorInDataSourceProps = {
 }
 export type ErrorInDataSource = (props: ErrorInDataSourceProps) => ReactElement
 
-export const ErrorInDataSource: ErrorInDataSource = (props: ErrorInDataSourceProps) => {
+export const SimpleErrorInDataSource: ErrorInDataSource = (props: ErrorInDataSourceProps) => {
     const devMode = useUserData().isDev
     const {ErrorInDataSourceDev, ErrorInDataSourceNormal} = useSearchResultsComponents()
     return devMode ? <ErrorInDataSourceDev {...props}/> : <ErrorInDataSourceNormal {...props} />

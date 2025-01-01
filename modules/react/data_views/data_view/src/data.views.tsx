@@ -51,10 +51,7 @@ export type NavBarItemProps = { name: any, } //really is a key of the data views
 export type NavBarItem = (props: NavBarItemProps) => React.ReactElement;
 export type DataViewNavVarLayoutProps = { children: React.ReactNode }
 export type DataViewNavBarLayout = (props: DataViewNavVarLayoutProps) => React.ReactElement;
-export type DataViewComponents = {
-    DataViewNavbar: NavBar
-}
-export const {Provider: DataViewComponentsProvider, use: useDataViewComponents} = makeContextFor('components')
+
 
 const dataViewL = lensBuilder<SearchGuiData<any>>().focusOn('filters').focusOn(dataViewFilterName)
 

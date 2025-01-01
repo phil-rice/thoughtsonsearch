@@ -11,7 +11,7 @@ import {SearchInfoProviderUsingUseState, useSearchState} from "@enterprise_searc
 import {SearchState} from "@enterprise_search/search_state";
 import {dataSourceDetailsToDataView, DataViews, DataViewsProvider, SimpleDataViewNavItem} from "@enterprise_search/data_views";
 import {SimpleNavItem} from "@enterprise_search/navbar";
-import {WindowUrlContext, WindowUrlData} from "@enterprise_search/routing";
+import {WindowUrlContext, WindowUrlData, WindowUrlProvider, WindowUrlProviderForTests} from "@enterprise_search/routing";
 import {SovereignStateProvider} from "@enterprise_search/sovereign";
 import {GuiSelectedDataViewProvider} from "@enterprise_search/search_gui_state";
 
@@ -38,7 +38,7 @@ const dataViewDetails: DataSourceDetails<CommonDataSourceDetails> = {
     confluence: {details: [confluenceElasticSearchData], expectedDataTypes: ['confluence']},
 }
 
-export const jiraConflFiltersForTest :TestFilters= {
+export const jiraConflFiltersForTest: TestFilters = {
     [keywordsFilterName]: "test",
     [dataViewFilterName]: {allowedNames: ["jira", 'confluence'], selectedNames: ['jira', 'confluence'], selected: 'all'},
     [timefilterPluginName]: ''
@@ -61,18 +61,14 @@ export const TestSearchStateDisplay = () => {
 };
 
 export function ProviderForSearchTests({reportedErrors, children, state, dataViews, url, fetch}: ProviderForSearchProps) {
-    const initialUrlData: WindowUrlData = {
-        url: new URL(url),
-        parts: new URL(url).pathname.split('/').filter(Boolean)
-    }
+
     const errorReporter: ErrorReporter = async e => {
         reportedErrors.push(e);
         return e
     };
-    const urlOps = React.useState<WindowUrlData>(initialUrlData);
 
-    return <NonFunctionalsProvider errorReporter={errorReporter} debugState={{}} featureFlags={{}}>
-        <WindowUrlContext.Provider value={urlOps}>
+    return <WindowUrlProviderForTests initialUrl={url}>
+        <NonFunctionalsProvider errorReporter={errorReporter} debugState={{}} featureFlags={{}}>
             <SovereignStateProvider>
                 <GuiSelectedDataViewProvider>
                     <DataSourcePluginProvider plugins={{test: TestDataSourcePlugin(fetch)}}>
@@ -84,6 +80,6 @@ export function ProviderForSearchTests({reportedErrors, children, state, dataVie
                     </DataSourcePluginProvider>
                 </GuiSelectedDataViewProvider>
             </SovereignStateProvider>
-        </WindowUrlContext.Provider>
-    </NonFunctionalsProvider>
+        </NonFunctionalsProvider>
+    </WindowUrlProviderForTests>
 }

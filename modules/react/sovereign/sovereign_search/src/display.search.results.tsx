@@ -3,7 +3,7 @@ import {useDataPlugins} from "@enterprise_search/react_data";
 import {useSearchResultsByStateType} from "@enterprise_search/react_search_state";
 import {DataAndDataSource, searchResultsToDataAndDataSource, searchResultsToErrors, SearchType} from "@enterprise_search/search_state";
 import {useThrowError} from "@enterprise_search/react_utils";
-import {ErrorInDataSource} from "./search.results.components";
+import {ErrorInDataSource, SimpleErrorInDataSource} from "./search.results.components";
 import {useGuiSelectedDataView} from "@enterprise_search/search_gui_state";
 import {useDataViews} from "@enterprise_search/data_views";
 
@@ -42,11 +42,14 @@ export function useSearchResultsLayout(): SearchResultsContextType {
 export type SearchResultsProps = {
     st?: SearchType;
     showEvenIfEmpty?: boolean;
+    DisplaySearchResultDataType?: DisplaySearchResultDataType
+    ErrorInDataSource?: ErrorInDataSource
 };
 
-type DisplaySearchResultDataTypeProps<Data, > = { dataType: string, data: DataAndDataSource<Data>[], displayAsWidget: boolean }
+export type DisplaySearchResultDataTypeProps<Data, > = { dataType: string, data: DataAndDataSource<Data>[], displayAsWidget: boolean }
+export type DisplaySearchResultDataType = <Data, >(props: DisplaySearchResultDataTypeProps<Data>) => ReactElement
 
-function DisplaySearchResultDataType<Data>({data, displayAsWidget, dataType}: DisplaySearchResultDataTypeProps<Data>) {
+export const DefaultDisplaySearchResultDataType: DisplaySearchResultDataType = <Data extends any>({data, displayAsWidget, dataType}: DisplaySearchResultDataTypeProps<Data>) => {
     const dataPlugins = useDataPlugins();
     const reportError = useThrowError();
     const plugin = dataPlugins[dataType];
@@ -57,13 +60,15 @@ function DisplaySearchResultDataType<Data>({data, displayAsWidget, dataType}: Di
         ? <DisplayDataWidget title={dataType} id={`data-${dataType}`} data={data}/>
         : <DisplayDataArray title={dataType} id={`data-${dataType}`} data={data} Display={DisplayData}/>
 
-}
+};
 
 
 export const SearchResults = <Filters extends any>({
-                                                       st = 'main',
-                                                       showEvenIfEmpty = true
-                                                   }: SearchResultsProps) => {
+                                                                             st = 'main',
+                                                                             showEvenIfEmpty = true,
+                                                                             DisplaySearchResultDataType = DefaultDisplaySearchResultDataType,
+                                                                             ErrorInDataSource = SimpleErrorInDataSource
+                                                                         }: SearchResultsProps) => {
     const {DisplaySearchResultsLayout} = useSearchResultsLayout();
     const [oneSearch] = useSearchResultsByStateType<Filters>(st);
     const {dataSourceToSearchResult} = oneSearch;

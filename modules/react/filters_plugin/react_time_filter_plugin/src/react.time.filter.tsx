@@ -1,5 +1,5 @@
 import {ReactFiltersPlugin} from "@enterprise_search/react_filters_plugin";
-import {SimpleTimeDisplay} from "./simpleTimeFilter";
+import {SimpleTimeDisplay} from "./simple.time.filter";
 
 
 export const timefilterPluginName = 'time';
