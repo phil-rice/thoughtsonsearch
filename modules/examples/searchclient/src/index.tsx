@@ -32,11 +32,12 @@ import {SimpleHtmlRenderer} from "@enterprise_search/html_renderers";
 import {PeopleDataName, peopleDataPlugin} from "@enterprise_search/people_data_plugin";
 import {OneSearchPagePlugin, OneSearchSovereignPage} from "@enterprise_search/sovereign_search/src/sovereignPages/one.search.sovereign.page";
 import {allRenderers} from "@enterprise_search/all_renderers";
+import {SimpleTranslationProvider} from "@enterprise_search/simple_translation";
 
 
 const debugState = {
     [authenticateDebug]: false,
-    [searchDebug]: true,
+    [searchDebug]: false,
     [startStateDebug]: false,
     [dataViewDebug]: false,
     [routingDebug]: false,
@@ -163,23 +164,25 @@ msal.initialize({}).then(() => {
 
     root.render(<React.StrictMode>
             <WindowUrlProvider>
-                <AttributeValueProvider renderers={allRenderers} AttributeValueLayout={SimpleAttributeValueLayout} DataLayout={SimpleDataLayout}>
-                    <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags} errorReporter={consoleErrorReporter}>
-                        <AuthenticationProvider loginConfig={login}>
-                            <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
-                                <SovereignStateProvider>
-                                    <SearchImportantComponentsProvider components={searchImportantComponents}>
-                                        <IconProvider icons={simpleIconContext}>
-                                            <DoTheSearching resultSize={20}>
-                                                <SearchApp/>
-                                            </DoTheSearching>
-                                        </IconProvider>
-                                    </SearchImportantComponentsProvider>
-                                </SovereignStateProvider>
-                            </SovereignStatePluginsProvider>
-                        </AuthenticationProvider>
-                    </NonFunctionalsProvider>
-                </AttributeValueProvider>
+                <SimpleTranslationProvider>
+                    <AttributeValueProvider renderers={allRenderers} AttributeValueLayout={SimpleAttributeValueLayout} DataLayout={SimpleDataLayout}>
+                        <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags} errorReporter={consoleErrorReporter}>
+                            <AuthenticationProvider loginConfig={login}>
+                                <SovereignStatePluginsProvider plugins={sovereignStatePlugins}>
+                                    <SovereignStateProvider>
+                                        <SearchImportantComponentsProvider components={searchImportantComponents}>
+                                            <IconProvider icons={simpleIconContext}>
+                                                <DoTheSearching resultSize={20}>
+                                                    <SearchApp/>
+                                                </DoTheSearching>
+                                            </IconProvider>
+                                        </SearchImportantComponentsProvider>
+                                    </SovereignStateProvider>
+                                </SovereignStatePluginsProvider>
+                            </AuthenticationProvider>
+                        </NonFunctionalsProvider>
+                    </AttributeValueProvider>
+                </SimpleTranslationProvider>
             </WindowUrlProvider>
         </React.StrictMode>
     );

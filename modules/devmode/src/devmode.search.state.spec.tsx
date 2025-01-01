@@ -58,7 +58,7 @@ describe("DevModeSearchState", () => {
     it("switches to 'main' search state when 'Main' is clicked", () => {
         renderWithSearchState(mockSearchState);
 
-        fireEvent.click(screen.getByText("Main"));
+        fireEvent.click(screen.getByText("Dev Mode Search Type.main"));
 
         const preElement = screen.getByTestId('dev-mode-search-state');
         const jsonText = preElement.textContent;
@@ -75,7 +75,7 @@ describe("DevModeSearchState", () => {
     it("switches to 'immediate' search state when 'Immediate' is clicked", () => {
         renderWithSearchState(mockSearchState);
 
-        fireEvent.click(screen.getByText("Immediate"));
+        fireEvent.click(screen.getByText("Dev Mode Search Type.immediate"));
 
         const preElement = screen.getByTestId('dev-mode-search-state');
         const jsonText = preElement.textContent;

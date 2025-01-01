@@ -9,7 +9,7 @@ export const makeNavBar = (items: string[], NavBarItem: NavBarItem, NavBarLayout
             {items.map(item => <NavBarItem key={item} value={item} selectedOps={props.selectedOps}/>)}
         </NavBarLayout>
 
-export function makeSimpleNavBar<T extends any>(purpose: string, items:  string[], navItemStyles: NavItemStyles = DefaultNavItemStyles, navLayoutStyles: CSSProperties = defaultNavBarLayoutStyle): NavBar {
-    return makeNavBar(items, SimpleNavItem(navItemStyles), SimpleNavbarLayout(navLayoutStyles, purpose));
+export function makeSimpleNavBar<T extends any>(purpose: string, items: string[], navItemStyles: NavItemStyles = DefaultNavItemStyles, navLayoutStyles: CSSProperties = defaultNavBarLayoutStyle): NavBar {
+    return makeNavBar(items, SimpleNavItem(purpose, navItemStyles), SimpleNavbarLayout(navLayoutStyles, purpose));
 
 }

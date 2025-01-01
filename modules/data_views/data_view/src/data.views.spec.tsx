@@ -130,8 +130,8 @@ describe('DataViewNavBar', () => {
         );
 
         // Assert that data views from mock are present in the DOM
-        expect(screen.getByText('Data View 1')).toBeInTheDocument();
-        expect(screen.getByText('Data View 2')).toBeInTheDocument();
+        expect(screen.getByText('Data Views.data View 1')).toBeInTheDocument();
+        expect(screen.getByText('Data Views.data View 2')).toBeInTheDocument();
     });
 
     it('updates selected data view and state when a new option is clicked', () => {
@@ -148,7 +148,7 @@ describe('DataViewNavBar', () => {
         );
 
         // Simulate selecting 'Data View 2'
-        const dataView2Element = screen.getByText('Data View 2');
+        const dataView2Element = screen.getByText('Data Views.data View 2');
         act(() => {
             fireEvent.click(dataView2Element);
         });
@@ -167,6 +167,6 @@ describe('DataViewNavBar', () => {
         );
 
         // Assert that default (first) data view is selected
-        expect(screen.getByText('Data View 1')).toBeInTheDocument();
+        expect(screen.getByText('Data Views.data View 1')).toBeInTheDocument();
     });
 });

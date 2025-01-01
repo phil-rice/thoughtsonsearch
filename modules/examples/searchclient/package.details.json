@@ -18,7 +18,8 @@
     "@enterprise_search/sovereign_search",
     "@enterprise_search/service_caller",
     "@enterprise_search/search_state",
-    "@enterprise_search/react_utils"
+    "@enterprise_search/react_utils",
+    "@enterprise_search/simple_translation"
   ],
   "packageJson": {
     "files": ["build/"],

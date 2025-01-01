@@ -30,11 +30,12 @@ export const DefaultNavItemStyles: NavItemStyles = {
     selectedStyle: DefaultNavBarSelectedStyle,
     unselectedStyle: DefaultNavBarUnselectedStyle
 }
-export const SimpleNavItem = ({selectedStyle, unselectedStyle}: NavItemStyles = DefaultNavItemStyles): NavBarItem =>
+export const SimpleNavItem = (prefix: string,{selectedStyle, unselectedStyle}: NavItemStyles = DefaultNavItemStyles): NavBarItem =>
     ({value, selectedOps}: NavBarItemProps) => {
         const [selected, setSelected] = selectedOps
         const translate = useTranslation()
-        return <button style={selected === value ? selectedStyle : unselectedStyle} onClick={() => setSelected(value)}>{translate(value)}</button>;
+        const translateKey = `${prefix}.${value}`;
+        return <button style={selected === value ? selectedStyle : unselectedStyle} onClick={() => setSelected(value)}>{translate(translateKey)}</button>;
     };
 
 
