@@ -5,7 +5,6 @@ import {useGuiFilters, useGuiSearchQuery} from "@enterprise_search/search_gui_st
 import {defaultSimpleSearchBarStyles} from "./search.bar.styles";
 
 export function SimpleSearchBar({
-                                    immediateSearch,
                                     mainSearch,
                                     escapePressed,
                                     styles = {},
@@ -25,17 +24,6 @@ export function SimpleSearchBar({
         });
     }, []);
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const query = e.target.value;
-        setSearchQuery(query);
-    };
-
-    // Trigger immediate search
-    useEffect(() => {
-        //needs bounce adding
-        if (searchQuery?.trim()) immediateSearch?.(searchQuery);
-    }, [guiFilters, searchQuery]);
-
     return (
         <div style={mergedStyles.container}>
             <input
@@ -44,7 +32,7 @@ export function SimpleSearchBar({
                 type="text"
                 value={searchQuery}
                 autoComplete="off"
-                onChange={onChange}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                 placeholder="Search..."
                 aria-label="Search input"
                 style={mergedStyles.input}

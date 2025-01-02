@@ -3,8 +3,7 @@ import {makeContextFor} from "@enterprise_search/react_utils";
 import {SearchBarStyles} from "./search.bar.styles";
 
 export type SearchBarProps = {
-    immediateSearch?: (query: string) => void,
-    mainSearch?: () => void
+      mainSearch?: () => void
     escapePressed?: () => void
     styles?: Partial<SearchBarStyles>
 }

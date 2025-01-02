@@ -2,15 +2,11 @@ import React from "react";
 import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import '@testing-library/jest-dom';
 import {SimpleSearchBar} from "./simple.search.bar";
-
-import {SearchState} from "@enterprise_search/search_state";
 import {SearchGuiData, SearchGuiStateProvider} from "@enterprise_search/search_gui_state";
 import {SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
-import {KeywordsFilter, keywordsFilterName} from "@enterprise_search/react_keywords_filter_plugin";
-import {input} from "@testing-library/user-event/event/input";
+import {SearchState} from "@enterprise_search/search_state";
 
 // Mock functions
-const mockImmediateSearch = jest.fn();
 const mockMainSearch = jest.fn();
 const mockEscapePressed = jest.fn();
 
@@ -34,6 +30,7 @@ const mockGuiState: SearchGuiData<any> = {
     searchQuery: '',
     filters: {}
 }
+
 // Utility to render with providers
 const renderWithProviders = (ui: React.ReactNode) => {
     return render(
@@ -53,7 +50,6 @@ describe("SimpleSearchBar Component", () => {
     it("renders input and search button", () => {
         renderWithProviders(
             <SimpleSearchBar
-                immediateSearch={mockImmediateSearch}
                 mainSearch={mockMainSearch}
                 escapePressed={mockEscapePressed}
             />
@@ -66,7 +62,6 @@ describe("SimpleSearchBar Component", () => {
     it("autofocuses on the input field when mounted", async () => {
         renderWithProviders(
             <SimpleSearchBar
-                immediateSearch={mockImmediateSearch}
                 mainSearch={mockMainSearch}
                 escapePressed={mockEscapePressed}
             />
@@ -80,7 +75,6 @@ describe("SimpleSearchBar Component", () => {
     it("updates search query on input change", () => {
         renderWithProviders(
             <SimpleSearchBar
-                immediateSearch={mockImmediateSearch}
                 mainSearch={mockMainSearch}
                 escapePressed={mockEscapePressed}
             />
@@ -90,13 +84,11 @@ describe("SimpleSearchBar Component", () => {
         fireEvent.change(input, {target: {value: 'test query'}});
 
         expect(input).toHaveValue('test query');
-        expect(mockImmediateSearch).toHaveBeenCalledWith('test query');
     });
 
     it("clears search when input is empty", () => {
         renderWithProviders(
             <SimpleSearchBar
-                immediateSearch={mockImmediateSearch}
                 mainSearch={mockMainSearch}
                 escapePressed={mockEscapePressed}
             />
@@ -107,15 +99,11 @@ describe("SimpleSearchBar Component", () => {
         fireEvent.change(input, {target: {value: ''}});
 
         expect(input).toHaveValue('');
-        // Ensure immediateSearch wasn't triggered again after clearing
-        expect(mockImmediateSearch).toHaveBeenCalledTimes(1);
-        expect(mockImmediateSearch).toHaveBeenCalledWith('test');
     });
 
     it("disables search button when query is empty", () => {
         renderWithProviders(
             <SimpleSearchBar
-                immediateSearch={mockImmediateSearch}
                 mainSearch={mockMainSearch}
                 escapePressed={mockEscapePressed}
             />
@@ -128,7 +116,6 @@ describe("SimpleSearchBar Component", () => {
     it("enables search button when query is present", () => {
         renderWithProviders(
             <SimpleSearchBar
-                immediateSearch={mockImmediateSearch}
                 mainSearch={mockMainSearch}
                 escapePressed={mockEscapePressed}
             />
@@ -144,7 +131,6 @@ describe("SimpleSearchBar Component", () => {
     it("triggers main search on Enter key press", () => {
         renderWithProviders(
             <SimpleSearchBar
-                immediateSearch={mockImmediateSearch}
                 mainSearch={mockMainSearch}
                 escapePressed={mockEscapePressed}
             />
@@ -159,7 +145,6 @@ describe("SimpleSearchBar Component", () => {
     it("triggers escapePressed callback on Escape key press", () => {
         renderWithProviders(
             <SimpleSearchBar
-                immediateSearch={mockImmediateSearch}
                 mainSearch={mockMainSearch}
                 escapePressed={mockEscapePressed}
             />

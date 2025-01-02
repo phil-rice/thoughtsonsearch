@@ -19,6 +19,7 @@
     "nyc": "^17.1.0"
   },
   "scripts": {
-    "example": "cd modules/examples/searchclient && parcel src/index.html --port 8080"
+    "example": "cd modules/examples/searchclient && parcel src/index.html --port 8080",
+    "coverage:report": "nyc report --reporter=html --report-dir=coverage --temp-dir=coverage"
   }
 }

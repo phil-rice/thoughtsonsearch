@@ -25,8 +25,8 @@ describe("DevMode Component (with initial selection)", () => {
         renderDevModeWithSelection("http://localhost?devMode=true", "invalidSelection");
 
         // Navbar should still be present
-        expect(screen.getByText("Name 1")).toBeInTheDocument();
-        expect(screen.getByText("Name 2")).toBeInTheDocument();
+        expect(screen.getByText("Devmode.name 1")).toBeInTheDocument();
+        expect(screen.getByText("Devmode.name 2")).toBeInTheDocument();
 
         // No component should render if 'invalidSelection' is not a valid key
         expect(screen.queryByText("Dev Mode 1 Component")).not.toBeInTheDocument();
@@ -39,7 +39,7 @@ describe("DevMode Component (with initial selection)", () => {
         expect(screen.getByText("Dev Mode 1 Component")).toBeInTheDocument();
 
         // Click to switch to second component
-        fireEvent.click(screen.getByText("Name 2"));
+        fireEvent.click(screen.getByText("Devmode.name 2"));
         expect(screen.getByText("Dev Mode 2 Component")).toBeInTheDocument();
         expect(screen.queryByText("Dev Mode 1 Component")).not.toBeInTheDocument();
     });
@@ -77,8 +77,8 @@ describe("DevMode Component (with initial selection)", () => {
         renderDevModeWithSelection("http://localhost?devMode=true", "");
 
         // Navbar is present
-        expect(screen.getByText("Name 1")).toBeInTheDocument();
-        expect(screen.getByText("Name 2")).toBeInTheDocument();
+        expect(screen.getByText("Devmode.name 1")).toBeInTheDocument();
+        expect(screen.getByText("Devmode.name 2")).toBeInTheDocument();
 
         // No component should render
         expect(screen.queryByText("Dev Mode 1 Component")).not.toBeInTheDocument();
