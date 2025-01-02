@@ -60,7 +60,7 @@ export function CommonSearchSovereignPage<Filters extends DataViewFilters>({titl
     //it is 'afterFirstTime' because we don't want to trigger the search until the user types something.
     useEffectAfterFirstTime(() => {
         //needs bounce adding
-        if (searchQuery?.trim().length<3) {
+        if (searchQuery?.trim().length>3) {
             const newGuiFilters = {...guiFilters, [keywordsFilterName]: searchQuery}
             debug('search query has changed so will do immediate search for', searchQuery, newGuiFilters)
             setImmediateFilters(parser(newGuiFilters, immediateFilters))
