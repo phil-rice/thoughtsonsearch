@@ -10,8 +10,8 @@ export type Icon = () => React.ReactElement;
 
 // Icon context type to manage both types of icons
 export type IconContextData = {
-    decorativeIcon: DecorativeIconFn;
-    meaningfulIcon: MeaningfulIconFn;
+    DecorativeIcon: DecorativeIconFn;
+    MeaningfulIcon: MeaningfulIconFn;
 };
 
 // Accessible descriptions for meaningful icons
@@ -45,8 +45,8 @@ export const simpleRecover = (e: Errors): Icon => {
 
 // Default context values for icons
 export const simpleIconContext: IconContextData = {
-    decorativeIcon: decorativeIconFn,
-    meaningfulIcon: meaningfulIconFn,
+    DecorativeIcon: decorativeIconFn,
+    MeaningfulIcon: meaningfulIconFn,
 };
 
 // Context provider and hook for icons

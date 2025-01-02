@@ -1,0 +1,23 @@
+{
+  "template": "react_library",
+  "name": "@enterprise_search/search_app",
+  "description": "The code for a search app (not the executable just the search app component)",
+  "links": [
+    "@enterprise_search/search_state",
+    "@enterprise_search/react_keywords_filter_plugin"
+  ],
+  "packageJson": {
+    "files": ["build/"],
+    "dependencies": {
+    },
+    "devDependencies": {
+      "ts-jest": "^29.2.5"
+    }
+  },
+  "guards": {
+    "compile": true,
+    "publish": false,
+    "test": true,
+    "react": false
+  }
+}

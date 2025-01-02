@@ -9,8 +9,8 @@ const mockTranslation: TranslationFn = (key: string) => `${key}_translated`;
 
 // Mock component to test icon rendering
 const TestComponent = ({iconName, purpose, type}: { iconName: string, purpose?: string, type: 'decorative' | 'meaningful' }) => {
-    const {decorativeIcon, meaningfulIcon} = useIcon();
-    const Icon = type === 'decorative' ? decorativeIcon(iconName) : meaningfulIcon(iconName, purpose || '');
+    const {DecorativeIcon, MeaningfulIcon} = useIcon();
+    const Icon = type === 'decorative' ? DecorativeIcon(iconName) : MeaningfulIcon(iconName, purpose || '');
     return <Icon/>;
 };
 
