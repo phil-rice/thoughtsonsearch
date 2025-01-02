@@ -34,12 +34,12 @@ describe("AttributeValueProvider", () => {
             </AttributeValueProvider>
         );
 
-        const label = screen.getByText("root.Name-translated:");
+        const label = screen.getByText("Name-translated:");
         const value = screen.getByText("John Doe");
 
         expect(label).toBeInTheDocument();
         expect(value).toBeInTheDocument();
-        expect(value).toHaveAttribute("id", "root-Name-value");
+        expect(value).toHaveAttribute("id", "root-Name");
     });
 
     it("renders empty string for missing values", () => {
@@ -53,7 +53,7 @@ describe("AttributeValueProvider", () => {
             </AttributeValueProvider>
         );
 
-        const label = screen.getByText("root.Name-translated:");
+        const label = screen.getByText("Name-translated:");
         const value = screen.getByLabelText("Not available");  // Directly select by aria-label
 
         expect(label).toBeInTheDocument();

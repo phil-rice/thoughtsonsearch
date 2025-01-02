@@ -45,6 +45,7 @@
       "description": "Copies the data to the coverage directory",
       "inLinksOrder": true,
       "commands": [
+        "file:mkdir(${laobanDirectory}/ncoverage)",
         {
           "guard": "${packageDetails.guards.test}",
           "command": "copy coverage\\coverage-final.json ${laobanDirectory}\\coverage\\${packageDetails.name|forwardSlashToDot}.json"

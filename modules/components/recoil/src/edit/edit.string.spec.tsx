@@ -26,7 +26,7 @@ describe('StringValue Component', () => {
 
         render(
             <RecoilRoot>
-                <TranslationProvider value={customTranslationFn}>
+                <TranslationProvider translationFn={customTranslationFn}>
                     <EditStringInput rootId="test" atom={testAtom} atomKey="firstName"/>
                 </TranslationProvider>
             </RecoilRoot>
@@ -38,7 +38,7 @@ describe('StringValue Component', () => {
     it('updates the atom value on input change', () => {
         render(
             <RecoilRoot>
-                <TranslationProvider value={(key) => key}>
+                <TranslationProvider translationFn={(key) => key}>
                     <EditStringInput rootId="test" atom={testAtom} atomKey="firstName"/>
                 </TranslationProvider>
             </RecoilRoot>
@@ -55,7 +55,7 @@ describe('StringValue Component', () => {
 
         render(
             <RecoilRoot>
-                <TranslationProvider value={(key) => key}>
+                <TranslationProvider translationFn={(key) => key}>
                     <EditStringInput rootId="test" atom={testAtom} atomKey="firstName"/>
                 </TranslationProvider>
             </RecoilRoot>
@@ -71,7 +71,7 @@ describe('StringValue Component', () => {
 
         render(
             <RecoilRoot>
-                <TranslationProvider value={(key) => key}>
+                <TranslationProvider translationFn={(key) => key}>
                     <EditStringInput rootId="test" atom={testAtom} atomKey="firstName"/>
                 </TranslationProvider>
             </RecoilRoot>
@@ -84,7 +84,7 @@ describe('StringValue Component', () => {
     it('handles undefined values gracefully', () => {
         render(
             <RecoilRoot>
-                <TranslationProvider value={(key) => key}>
+                <TranslationProvider translationFn={(key) => key}>
                     <EditStringInput rootId="test" atom={testAtom} atomKey="firstName"/>
                 </TranslationProvider>
             </RecoilRoot>

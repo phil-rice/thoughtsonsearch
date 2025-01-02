@@ -23,7 +23,7 @@ describe('DropdownValue Component', () => {
 
         render(
             <RecoilRoot>
-                <TranslationProvider value={customTranslationFn}>
+                <TranslationProvider translationFn={customTranslationFn}>
                     <EditStringDropdown
                         rootId="user"
                         atom={testAtom}
@@ -42,7 +42,7 @@ describe('DropdownValue Component', () => {
 
         render(
             <RecoilRoot>
-                <TranslationProvider value={customTranslationFn}>
+                <TranslationProvider translationFn={customTranslationFn}>
                     <EditStringDropdown
                         rootId="user"
                         atom={testAtom}
@@ -63,7 +63,7 @@ describe('DropdownValue Component', () => {
     it('updates the atom value on selection', () => {
         render(
             <RecoilRoot>
-                <TranslationProvider value={(key) => key}>
+                <TranslationProvider translationFn={(key) => key}>
                     <EditStringDropdown
                         rootId="user"
                         atom={testAtom}
@@ -85,7 +85,7 @@ describe('DropdownValue Component', () => {
 
         render(
             <RecoilRoot>
-                <TranslationProvider value={(key) => key}>
+                <TranslationProvider translationFn={(key) => key}>
                     <EditStringDropdown
                         rootId="user"
                         atom={testAtom}
@@ -106,7 +106,7 @@ describe('DropdownValue Component', () => {
 
         render(
             <RecoilRoot>
-                <TranslationProvider value={(key) => key}>
+                <TranslationProvider translationFn={(key) => key}>
                     <EditStringDropdown
                         rootId="user"
                         atom={testAtom}

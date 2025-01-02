@@ -1,6 +1,8 @@
 // Define a type for CSS styles
 import React from "react";
 import {DisplayFilterProps} from "@enterprise_search/react_filters_plugin";
+import {useTranslation} from "@enterprise_search/translation";
+import {timeStrings} from "./react.time.filter";
 
 type CSSVariables = {
     container: React.CSSProperties;
@@ -33,13 +35,12 @@ const cssVariables: CSSVariables = {
 };
 
 export function SimpleTimeDisplay({filterOps, id}: DisplayFilterProps<string>) {
-
     const [time, setTime] = filterOps;
-
+    const translate = useTranslation()
     return (
         <div id={id} style={cssVariables.container}>
             <select
-                value={time||''}
+                value={time || ''}
                 onChange={e => setTime(e.target.value)}
                 aria-label="Time filter"
                 style={cssVariables.select}
@@ -47,9 +48,10 @@ export function SimpleTimeDisplay({filterOps, id}: DisplayFilterProps<string>) {
                 <option value="" disabled>
                     Select time...
                 </option>
-                <option value="yesterday">Yesterday</option>
-                <option value="lastweek">Last Week</option>
-                <option value="lastmonth">Last Month</option>
+                {timeStrings.map(timeString => (
+                    <option key={timeString} value={timeString}>
+                        {translate(timeString)}
+                    </option>))}
                 <option disabled>
                     ----
                 </option>

@@ -41,7 +41,7 @@ describe('SimpleTranslationProvider', () => {
         );
 
         // Assert that missing keys return a fallback value
-        expect(screen.getByText('missing.key not found')).toBeInTheDocument();
+        expect(screen.getByText('missing.key.not.found')).toBeInTheDocument();
     });
 });
 
@@ -52,7 +52,7 @@ describe('makeTranslationFn', () => {
         expect(translationFn('greeting.hello')).toBe('Hello');
     });
 
-    it('returns key with "not found" if translation is missing', () => {
-        expect(translationFn('random.key')).toBe('random.key not found');
+    it('returns undefined if translation is missing', () => {
+        expect(translationFn('random.key')).toBeUndefined()
     });
 });

@@ -1,9 +1,11 @@
-import {Render} from "../renderers";
+import {idFrom, Render} from "../renderers";
 import React from "react";
 import {ellipsesInMiddle} from "@enterprise_search/recoil_utils";
 
 
-export const SimpleUrlRenderer: Render = ({id, value}) => {
+export const SimpleUrlRenderer: Render = ({attribute, rootId, value}) => {
+    const id = idFrom(rootId, attribute);
+
     const isValidUrl = (url: string) => {
         try {
             new URL(url);
@@ -15,11 +17,10 @@ export const SimpleUrlRenderer: Render = ({id, value}) => {
 
     const displayUrl = ellipsesInMiddle(value, 70); // Truncate URLs longer than 50 characters
 
-    const thisId = `${id}-value`;
     return (
         <a
-            id={thisId}
-            data-testid={thisId}
+            id={id}
+            data-testid={id}
             href={isValidUrl(value) ? value : '#'}
             target="_blank"
             rel="noopener noreferrer"

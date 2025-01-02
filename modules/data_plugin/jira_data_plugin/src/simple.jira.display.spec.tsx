@@ -32,12 +32,12 @@ describe("SimpleJiraDisplay", () => {
         render(<JiraTestProvider><SimpleJiraDisplay id="jira1" data={mockJiraData}/></JiraTestProvider>);
 
         // Verify key rendered elements
-        expect(screen.getByTestId("jira1-summary-value").textContent).toEqual("JIRA-123: Fix critical bug")
-        expect(screen.getByTestId("jira1-status-value").textContent).toEqual("In Progress")
-        expect(screen.getByTestId("jira1-description-markdown").textContent).toEqual("Detailed description of the bug...")
-        expect(screen.getByTestId("jira1-last updated-value").textContent).toEqual("01/Jan/2024")
+        expect(screen.getByTestId("jira1-data.summary").textContent).toEqual("JIRA-123: Fix critical bug")
+        expect(screen.getByTestId("jira1-data.status").textContent).toEqual("In Progress")
+        expect(screen.getByTestId("jira1-data.description").textContent).toEqual("Detailed description of the bug...")
+        expect(screen.getByTestId("jira1-data.lastUpdated").textContent).toEqual("01/Jan/2024")
 
-        const link = screen.getByTestId("jira1-url-value") as HTMLAnchorElement;
+        const link = screen.getByTestId("jira1-data.url") as HTMLAnchorElement;
         expect(link).toHaveAttribute("href", mockJiraData.url);
     });
 

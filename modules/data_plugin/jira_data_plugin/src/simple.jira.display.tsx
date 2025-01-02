@@ -10,14 +10,14 @@ export const SimpleJiraDisplay: DisplayData<JiraData> =
         const {Text: JustText, Markdown, Url} = useRenderers()
         const {Text, Date, DataLayout} = useAttributeValueComponents()
         return <DataLayout className='jira-data' layout={[1, 1, 3, 1]}>
-            <JustText id={`${id}-summary`} value={`${data.issue}: ${data.summary}`}/>
+            <JustText rootId={id} attribute='data.summary' value={`${data.issue}: ${data.summary}`}/>
             <ClipHeight maxHeight='5rem' force={true}>
-                <Markdown id={`${id}-description`} value={data.description}/>
+                <Markdown rootId={id} attribute='data.description' value={data.description}/>
             </ClipHeight>
-            <Text rootId={id} attribute='jira.source' value='jira'/>
-            <Text rootId={id} attribute='jira.status' value={data.status}/>
-            <Date rootId={id} attribute='jira.lastUpdated' value={data.last_updated}/>
-            <Url id={`${id}-url`} value={data.url}/>
+            <Text rootId={id} attribute='data.source' value='jira'/>
+            <Text rootId={id} attribute='data.status' value={data.status}/>
+            <Date rootId={id} attribute='data.lastUpdated' value={data.last_updated}/>
+            <Url rootId={id} attribute='data.url' value={data.url}/>
         </DataLayout>
     };
 

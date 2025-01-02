@@ -1,6 +1,6 @@
 import React, {createContext, ReactElement, useMemo} from "react";
 import {mapRecord} from "@enterprise_search/recoil_utils";
-import {Renderers, RendererType, RenderProvider} from "./renderers";
+import {idFrom, Render, Renderers, RendererType, RenderProps, RenderProvider} from "./renderers";
 import {DataLayout} from "./data.layout";
 import {useTranslation} from "@enterprise_search/translation";
 
@@ -30,23 +30,20 @@ type AttributeValueComponentsProviderProps = {
 export const AttributeValueContext = createContext<AttributeValueComponents | undefined>(undefined);
 
 
-type AttributeValueRendererProps = {
-    Renderer: React.ComponentType<{ id: string; value: string }>;
-    rootId: string;
-    attribute: string;
-    value: string;
+type AttributeValueRendererProps = RenderProps & {
+    Renderer: Render
     AttributeValueLayout: AttributeValueLayout;
 }
 
 function AttributeValueRenderer({Renderer, rootId, attribute, value, AttributeValueLayout}: AttributeValueRendererProps) {
-    const id = `${rootId}-${attribute}`;
+    const id = idFrom(rootId, attribute);
     const translation = useTranslation();
     const label = translation(`${attribute}`);  // Internationalized label
 
     return (
         <AttributeValueLayout>
             <label htmlFor={id}>{label}:&nbsp;</label>
-            <Renderer id={id} value={value || ""}/>
+            <Renderer rootId={rootId} attribute={attribute} value={value || ""}/>
         </AttributeValueLayout>
     );
 }

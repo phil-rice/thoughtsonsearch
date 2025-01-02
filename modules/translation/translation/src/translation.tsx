@@ -1,6 +1,6 @@
-import React, {createContext, useCallback, useContext} from "react";
-import {camelCaseToWords} from "@enterprise_search/recoil_utils";
-import {makeContextForState} from "@enterprise_search/react_utils";
+import React, { createContext, useCallback, useContext } from "react";
+import { camelCaseToWords } from "@enterprise_search/recoil_utils";
+import { makeContextForState } from "@enterprise_search/react_utils";
 
 export type RawTranslationFn = (key: string) => string | undefined;
 export type TranslationFn = (key: string) => string;
@@ -8,56 +8,91 @@ export type TranslationFn = (key: string) => string;
 // Default function to transform keys into readable labels
 export const defaultTranslationFn: TranslationFn = camelCaseToWords;
 
-export type UsedAndNotFound = {
-    used: string[]
-    notFound: string[]
-    errors: string[]
+export function emptyUsedAndNotFound(): UsedAndNotFound {
+    return { used: new Set(), notFound: new Set(), errors: new Set() };
 }
-export const {use: useTranslationUsedAndNotFound, Provider: TranslationUsedAndNotFoundProvider} = makeContextForState<UsedAndNotFound, 'usedAndNotFound'>('usedAndNotFound', true)
+export type UsedAndNotFound = {
+    used: Set<string>;
+    notFound: Set<string>;
+    errors: Set<string>;
+};
 
+// Create context for tracking translation usage and errors
+export const { use: useTranslationUsedAndNotFound, Provider: TranslationUsedAndNotFoundProvider } =
+    makeContextForState<UsedAndNotFound, "usedAndNotFound">("usedAndNotFound", true);
 
-// Context to provide and consume the current translation function
+// Context to provide the translation function
 export const TranslationContext = createContext<TranslationFn>(defaultTranslationFn);
 
 export type TranslationProviderProps = {
-    translationFn: RawTranslationFn
+    translationFn: RawTranslationFn;
+    defaultFn?: TranslationFn;
+    children: React.ReactNode;
+};
 
-    defaultFn?: TranslationFn
-    children: React.ReactNode
-}
-
+// Default function for missing translations
 export function NotFoundTranslationFn(key: string): string {
-    return key + '.not.found';
+    return `${key}.not.found`;
 }
 
+// Reusable function to update translation tracking state
+function updateSetInState(
+    key: string,
+    type: keyof UsedAndNotFound,
+    setUsedAnd: (updateFn: (prev: UsedAndNotFound) => UsedAndNotFound) => void
+) {
+    setTimeout(() => {
+        setUsedAnd((prev) => {
+            const newSet = new Set(prev[type]);
+            newSet.add(key);
+            const result = { ...prev, [type]: newSet };
+            return result;
+        });
+    }, 0);
+}
 
-export function TranslationProvider({translationFn, children, defaultFn = NotFoundTranslationFn}: TranslationProviderProps) {
+export function TranslationProvider({
+                                        translationFn,
+                                        children,
+                                        defaultFn = NotFoundTranslationFn,
+                                    }: TranslationProviderProps) {
     const ops = useTranslationUsedAndNotFound();
-    const translation: TranslationFn = useCallback((key: string) => {
-        const translation = translationFn(key);
-        if (ops) {
-            const [usedAnd, setUsedAnd] = ops;
-            const {used, errors, notFound} = usedAnd;
-            if (translation === undefined) {
-                if (notFound.indexOf(key) === -1)
-                    setTimeout(() => setUsedAnd({...usedAnd, notFound: [...notFound, key]}), 0)
-            } else {
-                if (used.indexOf(key) === -1)
-                    setTimeout(() => {
-                        const result = {...usedAnd, used: [...used, key]};
-                        setUsedAnd(result);
-                    }, 0)
-                if (typeof translation !== 'string' && errors.indexOf(key) === -1) {
-                    setTimeout(() => setUsedAnd({...usedAnd, errors: [...errors, key]}), 0)
+
+    const translation: TranslationFn = useCallback(
+        (key: string) => {
+            const result = translationFn(key);
+
+            if (ops) {
+                const [usedAnd, setUsedAnd] = ops;
+
+                if (result === undefined) {
+                    if (!usedAnd.notFound.has(key)) {
+                        updateSetInState(key, "notFound", setUsedAnd);
+                    }
+                } else {
+                    if (!usedAnd.used.has(key)) {
+                        updateSetInState(key, "used", setUsedAnd);
+                    }
+                    if (typeof result !== "string" && !usedAnd.errors.has(key)) {
+                        updateSetInState(key, "errors", setUsedAnd);
+                    }
                 }
             }
-        }
-        return translation ===undefined ? defaultFn(key): typeof translation === 'string' ? translation :  `${key}.error`
 
-    }, [translationFn, defaultFn, ops || ''])
-    return <TranslationContext.Provider value={translation}>{children}</TranslationContext.Provider>
+            // Return the result or default fallback if translation not found
+            return result === undefined
+                ? defaultFn(key)
+                : typeof result === "string"
+                    ? result
+                    : `${key}.error`;
+        },
+        [translationFn, defaultFn, ops]
+    );
+
+    return <TranslationContext.Provider value={translation}>{children}</TranslationContext.Provider>;
 }
 
+// Hook to consume the translation function
 export function useTranslation(): TranslationFn {
     return useContext(TranslationContext);
 }

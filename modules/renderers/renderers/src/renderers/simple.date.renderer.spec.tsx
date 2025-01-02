@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 
 import '@testing-library/jest-dom';
-import {SimpleDateRenderer} from "./simple.date.renderer";
+import { SimpleDateRenderer } from "./simple.date.renderer";
 
 describe("SimpleDateRenderer (locale-independent tests)", () => {
 
@@ -19,22 +19,22 @@ describe("SimpleDateRenderer (locale-independent tests)", () => {
     });
 
     it("renders date in dd/MMM/yyyy format consistently", () => {
-        render(<SimpleDateRenderer id="test" value="2024-05-01" />);
+        render(<SimpleDateRenderer attribute="test" rootId="root" value="2024-05-01" />);
         expect(screen.getByText("01/May/2024")).toBeInTheDocument();
     });
 
     it("returns 'Invalid date' for invalid date strings", () => {
-        render(<SimpleDateRenderer id="test" value="invalid-date" />);
+        render(<SimpleDateRenderer attribute="test" rootId="root" value="invalid-date" />);
         expect(screen.getByText("Invalid date")).toBeInTheDocument();
     });
 
     it("returns 'Invalid date' for empty string values", () => {
-        render(<SimpleDateRenderer id="test" value="" />);
+        render(<SimpleDateRenderer attribute="test" rootId="root" value="" />);
         expect(screen.getByText("Invalid date")).toBeInTheDocument();
     });
 
     it("renders aria-label and title for accessibility", () => {
-        render(<SimpleDateRenderer id="test" value="2024-12-25" />);
+        render(<SimpleDateRenderer attribute="test" rootId="root" value="2024-12-25" />);
         const timeElement = screen.getByText("25/May/2024");
         expect(timeElement).toHaveAttribute("aria-label", "Formatted date: 25/May/2024");
         expect(timeElement).toHaveAttribute("title", "25/May/2024");

@@ -1,5 +1,5 @@
 import {useSearchBar} from "@enterprise_search/search_bar";
-import React, {ReactNode, useEffect} from "react";
+import React, {ReactNode, useEffect, useRef, useState} from "react";
 import {useGuiFilters, useGuiSearchQuery} from "@enterprise_search/search_gui_state";
 import {keywordsFilterName} from "@enterprise_search/react_keywords_filter_plugin";
 import {useFiltersByStateType, useSearchResultsByStateType, useSearchState} from "@enterprise_search/react_search_state";
@@ -57,7 +57,12 @@ export function CommonSearchSovereignPage<Filters extends DataViewFilters>({titl
     }, [guiFilters]);
 
     // Trigger immediate search when the search query changes (Note... not when the gui filters change... when they change that will nuke the search results anyway)
+    const [firstRun, setFirstRun] = useState(true);
     useEffect(() => {
+        if (firstRun) {
+            setFirstRun(false);
+            return;
+        }
         //needs bounce adding
         if (searchQuery?.trim()) {
             const newGuiFilters = {...guiFilters, [keywordsFilterName]: searchQuery}

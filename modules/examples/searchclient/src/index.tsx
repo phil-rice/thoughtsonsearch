@@ -31,7 +31,8 @@ import {PeopleDataName, peopleDataPlugin} from "@enterprise_search/people_data_p
 import {OneSearchPagePlugin} from "@enterprise_search/sovereign_search/src/sovereignPages/one.search.sovereign.page";
 import {allRenderers} from "@enterprise_search/all_renderers";
 import {SimpleTranslationProvider} from "@enterprise_search/simple_translation";
-import {TranslationUsedAndNotFoundProvider} from "@enterprise_search/translation";
+import {emptyUsedAndNotFound, TranslationUsedAndNotFoundProvider} from "@enterprise_search/translation";
+import {nowTimeService} from "@enterprise_search/recoil_utils";
 
 
 const debugState = {
@@ -67,7 +68,8 @@ const reactFiltersContextData: ReactFiltersContextData<SearchAppFilters> = {
 }
 
 export const elasticSearchContext: ElasticSearchContext = {
-    knownIndicies: ['jira-prod', 'confluence-prod'],
+    timeService: nowTimeService,
+    knownIndices: ['jira-prod', 'confluence-prod'],
     elasticSearchUrl: process.env['REACT_APP_ELASTIC_SEARCH_URL']!,
     serviceCaller: axiosServiceCaller,
     authentication: basicAuthentication(
@@ -163,7 +165,7 @@ msal.initialize({}).then(() => {
 
     root.render(<React.StrictMode>
             <WindowUrlProvider>
-                <TranslationUsedAndNotFoundProvider usedAndNotFound={{used: [], notFound: [], errors:[]}}>
+                <TranslationUsedAndNotFoundProvider usedAndNotFound={emptyUsedAndNotFound()}>
                     <SimpleTranslationProvider>
                         <AttributeValueProvider renderers={allRenderers} AttributeValueLayout={SimpleAttributeValueLayout} DataLayout={SimpleDataLayout}>
                             <NonFunctionalsProvider debugState={debugState} featureFlags={featureFlags} errorReporter={consoleErrorReporter}>

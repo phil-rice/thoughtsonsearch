@@ -10,8 +10,6 @@ export function SimpleSearchBar({
                                     styles = {},
                                 }: SearchBarProps) {
     const [searchQuery, setSearchQuery] = useGuiSearchQuery();
-    const [guiFilters] = useGuiFilters();
-    const [immediate, setImmediate] = useSearchResultsByStateType("immediate");
 
     const inputRef = useRef<HTMLInputElement>(null);
 

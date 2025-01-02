@@ -1,13 +1,12 @@
 import React from "react";
-import {Render} from "@enterprise_search/renderers";
+import {cleanForRender, CleanHeaders, idFrom, Render} from "@enterprise_search/renderers";
 import DOMPurify from "dompurify";
-import {cleanForRender, CleanHeaders} from "@enterprise_search/renderers";
 
 
-export const SimpleHtmlRenderer: Render = ({id, value}) => {
+export const SimpleHtmlRenderer: Render = ({rootId, attribute, value}) => {
+    const id = idFrom(rootId, attribute);
     const sanitizedHtml = DOMPurify.sanitize(cleanForRender(value || ''));
-    const thisId = `${id}-value`;
     return <CleanHeaders>
-        <span id={thisId} data-testid={thisId} dangerouslySetInnerHTML={{__html: sanitizedHtml}}/>;
+        <span id={id} data-testid={id} dangerouslySetInnerHTML={{__html: sanitizedHtml}}/>;
     </CleanHeaders>
 };

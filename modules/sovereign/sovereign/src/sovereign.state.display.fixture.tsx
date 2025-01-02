@@ -35,7 +35,7 @@ export type MockSovereignStateProviderProps = {
 export const MockSovereignStateProvider = ({children, url, plugins = mockPlugins, remember = []}: MockSovereignStateProviderProps) => {
     return (
         <DebugStateProvider debugState={{}}>
-            <TranslationProvider value={mockTranslation}>
+            <TranslationProvider translationFn={mockTranslation}>
                 <WindowUrlProviderForTests initialUrl={url} changed={(url) => {remember.push(url)}}>
                     <SovereignStatePluginsProvider plugins={mockPlugins}>
                         <SovereignStateProvider updateWindowsState={false}>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Render } from "../renderers";
+import {idFrom, Render} from "../renderers";
 
 function formatJson(value: string): string {
     try {
@@ -10,15 +10,17 @@ function formatJson(value: string): string {
     }
 }
 
-export const SimpleJsonRenderer: Render = ({ id, value }) => {
+export const SimpleJsonRenderer: Render = ({rootId, attribute, value}) => {
+    const id = idFrom(rootId, attribute);
+
     const formattedValue = formatJson(value);
     const isError = formattedValue.startsWith("invalid json");
 
-    const thisId = `${id}-value`;
+
     return (
         <pre
-            id={thisId}
-            data-testid={thisId}
+            id={id}
+            data-testid={id}
             aria-label={isError ? "Invalid JSON data" : "Formatted JSON"}
             aria-live={isError ? "polite" : undefined} // Announce errors dynamically
             role="code"

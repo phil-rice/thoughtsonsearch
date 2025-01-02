@@ -7,18 +7,18 @@ import {SimpleWidget} from "@enterprise_search/react_data/src/simple.widget";
 
 export const SimpleConfluenceDisplay: DisplayData<ConfluenceData> =
     ({id, data}: DisplayDataProps<ConfluenceData>) => {
-        const { Html, Url} = useRenderers()
+        const {Text: JustText, Html, Url} = useRenderers()
         const {Text, Date, DataLayout} = useAttributeValueComponents()
 
         return <DataLayout className='jira-data' layout={[1, 1, 3, 1]}>
-            <span>{data.title}</span>
+            <JustText rootId={id} attribute='data.title' value={data.title}/>
             <ClipHeight maxHeight='5rem' force={true}>
-                <Html id={`${id}-description`} value={data.body}/>
+                <Html rootId={id} attribute='data.description' value={data.body}/>
             </ClipHeight>
-            <Text rootId={id} attribute='source' value={`confluence`}/>
-            <Text rootId={id} attribute='space' value={data.space}/>
-            <Date rootId={id} attribute='last updated' value={data.last_updated}/>
-            <Url id={`${id}-url`} value={data.url}/>
+            <Text rootId={id} attribute='data.source' value={`confluence`}/>
+            <Text rootId={id} attribute='data.space' value={data.space}/>
+            <Date rootId={id} attribute='data.confluence.data' value={data.last_updated}/>
+            <Url rootId={id} attribute='data.confluence.url' value={data.url}/>
         </DataLayout>
     };
 

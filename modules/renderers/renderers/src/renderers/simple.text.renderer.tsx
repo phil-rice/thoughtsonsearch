@@ -1,14 +1,13 @@
 import React from "react";
-import { Render } from "../renderers";
+import {idFrom, Render} from "../renderers";
 
-export const SimpleTextRenderer: Render = ({ id, value }) => {
+export const SimpleTextRenderer: Render = ({attribute, rootId, value}) => {
     const isEmpty = !value || value.trim() === "";
-
-    const thisId = `${id}-value`;
+    const id = idFrom(rootId, attribute);
     return (
         <span
-            id={thisId}
-            data-testid={thisId}
+            id={id}
+            data-testid={id}
             aria-label={isEmpty ? "Not available" : undefined}
             aria-live="polite"
         >{isEmpty ? "" : value}</span>

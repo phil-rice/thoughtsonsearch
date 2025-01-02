@@ -23,7 +23,7 @@ describe('Translation Context', () => {
         };
 
         render(
-            <TranslationProvider value={customTranslationFn}>
+            <TranslationProvider translationFn={customTranslationFn}>
                 <TestComponent/>
             </TranslationProvider>
         );

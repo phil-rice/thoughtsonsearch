@@ -22,7 +22,7 @@ const renderWithProviders = (filterData: DataViewFilterData) => {
     const filterOps: GetterSetter<DataViewFilterData> = [filterData, setFilterData];
 
     return render(
-        <TranslationProvider value={mockTranslation}>
+        <TranslationProvider translationFn={mockTranslation}>
             <SimpleDataViewFilterDisplay filterOps={filterOps} id="test-filter" />
         </TranslationProvider>
     );

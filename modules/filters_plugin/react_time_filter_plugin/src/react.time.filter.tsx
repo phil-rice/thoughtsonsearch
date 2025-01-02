@@ -3,8 +3,10 @@ import {SimpleTimeDisplay} from "./simple.time.filter";
 
 
 export const timefilterPluginName = 'time';
+export type TimeString = 'yesterday' | 'lastWeek' | 'lastMonth'
+export const timeStrings: TimeString[] = ['yesterday', 'lastWeek', 'lastMonth']
 export type TimeFilters = {
-    [timefilterPluginName]: string
+    [timefilterPluginName]: TimeString | undefined
 }
 export const exampleTimeFilterPlugin: ReactFiltersPlugin<TimeFilters, 'time'> = {
     plugin: 'filter',
@@ -13,8 +15,9 @@ export const exampleTimeFilterPlugin: ReactFiltersPlugin<TimeFilters, 'time'> = 
     PurposeToDisplay: {}, //happy with defaults
     fromUrl: (debug, urlData, def) => {
         const time = urlData.url.searchParams.get(timefilterPluginName)
+        if (!timeStrings.includes(time as TimeString)) return def
         debug('timeFilter fromUrl', 'time=', time)
-        return time || def
+        return time as TimeString || def
     },
     addToUrl: (debug, sp, time) => {
         debug('timeFilter addToUrl', 'time=', time)

@@ -11,7 +11,7 @@ const TestNavBar = () => {
     const NavItem = SimpleNavItem('test',DefaultNavItemStyles);
 
     return (
-        <TranslationProvider value={(key) => `${key}-trans`}>
+        <TranslationProvider translationFn={(key) => `${key}-trans`}>
             <div>
                 <NavItem value="home" selectedOps={[selected, setSelected]} />
                 <NavItem value="profile" selectedOps={[selected, setSelected]} />

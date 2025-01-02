@@ -1,7 +1,8 @@
-import {Render} from "../renderers";
+import {idFrom, Render} from "../renderers";
 import React from "react";
 
-export const SimpleDateRenderer: Render = ({id, value}) => {
+export const SimpleDateRenderer: Render = ({attribute,rootId, value}) => {
+    const id =idFrom(rootId, attribute);
     function asDate(value: string): string {
         if (!value) return "Invalid date";
 
@@ -17,11 +18,11 @@ export const SimpleDateRenderer: Render = ({id, value}) => {
 
     const formattedDate = asDate(value);
 
-    const thisId = `${id}-value`;
+
     return (
         <time
-            id={thisId}
-            data-testid={thisId}
+            id={id}
+            data-testid={id}
             dateTime={value}
             aria-label={`Formatted date: ${formattedDate}`}
             title={formattedDate}

@@ -6,13 +6,20 @@ export const translationEn = {
         graphApiPeople: "People",
         sharepoint: "Files"
     },
-    devmode:{
-        GuiState:"Gui State",
-        SearchState:"Search State",
-        UserData:"User Data",
-        FeatureFlags:"Feature Flags",
-        Sovereign:"Sovereign State",
-        Translate:{
+    data: {
+        "lastUpdated": "Last Updated",
+        "status": "Status",
+        "source": "Source",
+        "space": "Space",
+    },
+    devmode: {
+        Debug: "Debug",
+        GuiState: "Gui State",
+        SearchState: "Search State",
+        UserData: "User Data",
+        FeatureFlags: "Feature Flags",
+        Sovereign: "Sovereign State",
+        Translate: {
             used: "Used",
             notFound: "Not Found"
         }
