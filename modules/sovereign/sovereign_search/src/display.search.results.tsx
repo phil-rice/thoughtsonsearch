@@ -76,6 +76,7 @@ export const SearchResults = <Filters extends any>({
     const dataViews = useDataViews()
     const dataView = dataViews[dataViewName]
     const throwError = useThrowError()
+
     if (!dataView) throwError('s/w', `No data view found for ${dataViewName}`)
     const dataTypeToData = searchResultsToDataAndDataSource(dataSourceToSearchResult);
     const errors = searchResultsToErrors(dataSourceToSearchResult);

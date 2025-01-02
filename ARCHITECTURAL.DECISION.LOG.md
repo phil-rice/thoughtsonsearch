@@ -169,6 +169,8 @@ export const SearchInfoProviderUsingUseState = <Filters, >({
 
 However, optics are not used in most of the code because with the custom hooks we have hidden them.
 
+They are useful when we have complex state to mutate. So mostly in the search state management.
+
 ## Comment on the useCallback in the state management
 
 Note the heavy use of useCallback. Without them, we would be probably re-rendering the whole application every time the
@@ -184,13 +186,17 @@ We have a number of types of state
     * It reads good when debugging
     * It works well with re-rendering: react knows how to handle these and there are no pains around useCallback or
       useMemo
-* The state of selection. Again simple json primitives.
-    * Selection state can be done globally with custom hooks, or just locally with useState.
-    * It should be global if many things use it in different parts of the app
-    * It should be local if it is only used in one place with only a small amount of local prop drilling
+* The state of selection that we want to be able to bookmark
+      * This is kept in sync with the windows url. At the moment the code to do this is messy, and needs some thought 
+      * This is accessed via custom hooks
+* The state of selection locally in the app
+      * This is mostly done with useState. 
+      * It's OK to do a single level of prop drilling, although that should be avoided if possible
+      * More than a single level and we should consider our options. This hasn't happened yet
 * How do I display this component
-    * This is handled through custom hooks NOT the explicit implementation. See below for why and how
-    * It is typically handled through the context api
+    * This is handled through custom hooks NOT the explicit implementation.
+    * We program against interfaces not implementations
+    * This is handled through the context api.
 * Context such as 'what are my plugins'
     * This is handled through the context api.
 
@@ -201,11 +207,15 @@ We have a number of types of state
 * We want to be able to white label this. This means that we need to be able to change the display of the components
     * Some of this can be css, but that is often painful to get right. The css grows and becomes too hard for humans to
       understand
+    * Not all of it is css. We might have different components and the logic might change in minor ways
 * We want to be able to change the framework we use to display the components
     * For example, we might want to use 'react native' for mobile.
     * Companies change their 'preferred library' constantly (say every 5 years). We want this to be easy for us
     * Versions have breaking changes. This layer makes it much easier to swap in the old and new to compare the
       differences (it can be a feature flag, and that is almost impossible with this)
+* We want to have feature flags and have the 'old' and 'new' running at the same time. Even for high impacting changes
+    * This is a very common use case. We want to be able to compare the two easily
+    * We want to be able to switch between the two easily
 * We want A/B testing
 * We want to be able to add in higher order things such as profiling and metrics easily without changing the code
 
@@ -217,12 +227,14 @@ important is the 'important components'. This is an extra layer and the decision
 
 ## How
 
-There are four moving parts
+There are three or four moving parts
 
 * We declare the component interface / context and custom hooks
 * We implement the component
 * We use the component
-* We 'dependency inject' the component using 'important components'
+* We 'dependency inject' the component using 'important components'.
+  * At the moment we only have 'search important components'
+  * We probably want to look at this and make it a 'sovereign provider'
 
 ### Declare the component interface / context and custom hooks
 
@@ -366,6 +378,8 @@ We have four basic kinds of errors
 We should have zero errors in the log in normal usage no matter what the environment is doing. However, we can have
 debugging levels and when they are on, we can display things like validation results.
 
+Actually in normal usage, we should have zero anything in the log. As a dev we can use the devmode to enable logging at the right level
+
 ## User doing something wrong / validation
 
 We use this type:
@@ -376,19 +390,21 @@ export type Errors = { errors: string[] }
 export type ErrorsOr<T> = Errors | Value<T>
 ```
 
-There are helpful 'map' functions that allow us to work with these.
+There are helpful 'map' functions that help us to work with these.
 
 ## Other errors
 
 When in react we have
 
 ```typescript jsx
-import {useReportError} from "@enterprise_search/react_error";
+import {useThrowError} from "@enterprise_search/react_error";
 
-const reportErrors = useReportError()
-if (somethingBad) reportError('theType', 'Something bad happened')
+const throwError = useThrowError()
+if (somethingBad) return reportError('theType', 'Something bad happened')
 ```
 The default implementation simply throws the message. However, we can change this to send it to a server, or display it
+
+Note this is saying 'never write new Error()' in the code. We should always use this function
 
 # Asynchronicity and LoadingOr / useKleisli
 

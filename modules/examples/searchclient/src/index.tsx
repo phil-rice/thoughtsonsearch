@@ -26,11 +26,9 @@ import {axiosServiceCaller} from "@enterprise_search/axios_service_caller";
 import {exampleTimeFilterPlugin, timefilterPluginName, TimeFilters} from "@enterprise_search/react_time_filter_plugin";
 import {ConfluenceDataName, ConfluenceDataPlugin} from "@enterprise_search/confluence_data_plugin";
 import {JiraDataName, JiraDataPlugin} from "@enterprise_search/jira_data_plugin";
-import {AttributeValueProvider, Renderers, SimpleAttributeValueLayout, SimpleDataLayout, SimpleDateRenderer, SimpleH1Renderer, SimpleH2Renderer, SimpleH3Renderer, SimpleJsonRenderer, SimpleTextRenderer, SimpleUrlRenderer} from "@enterprise_search/renderers";
-import {MarkdownRenderer} from "@enterprise_search/markdown_renderers";
-import {SimpleHtmlRenderer} from "@enterprise_search/html_renderers";
+import {AttributeValueProvider, SimpleAttributeValueLayout, SimpleDataLayout} from "@enterprise_search/renderers";
 import {PeopleDataName, peopleDataPlugin} from "@enterprise_search/people_data_plugin";
-import {OneSearchPagePlugin, OneSearchSovereignPage} from "@enterprise_search/sovereign_search/src/sovereignPages/one.search.sovereign.page";
+import {OneSearchPagePlugin} from "@enterprise_search/sovereign_search/src/sovereignPages/one.search.sovereign.page";
 import {allRenderers} from "@enterprise_search/all_renderers";
 import {SimpleTranslationProvider} from "@enterprise_search/simple_translation";
 
@@ -129,7 +127,7 @@ const sovereignStatePlugins: SovereignStatePlugins = {
     plugins: {
         start: InitialSovereignPagePlugin,
         advancedSearch: AdvanceSearchPagePlugin,
-        one: OneSearchPagePlugin
+        one: OneSearchPagePlugin,
     },
     UnknownDisplay: SimpleUnknownDisplay
 }

@@ -38,10 +38,6 @@
         {
           "guard": "${packageDetails.guards.test}",
           "command": "yarn run test --coverage --coverageDirectory=coverage"
-        },
-        {
-          "guard": "${packageDetails.guards.test}",
-          "command": "copy coverage/coverage-final.json ${laobanDirectory}/coverage/${packageDetails.name}.json"
         }
       ]
     },
@@ -51,7 +47,7 @@
       "commands": [
         {
           "guard": "${packageDetails.guards.test}",
-          "command": "copy coverage/coverage-final.json ${laobanDirectory}/coverage/${packageDetails.name}.json"
+          "command": "copy coverage\\coverage-final.json ${laobanDirectory}\\coverage\\${packageDetails.name|forwardSlashToDot}.json"
         }
       ]
     },

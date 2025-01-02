@@ -75,9 +75,6 @@ export function useWindowUrlData(): GetterSetter<WindowUrlData> {
     return result!
 }
 
-export function useWindowsUrl(): URL {
-    return useWindowUrlData()[0].url
-}
 
 export function useWindowsPath() {
     return useWindowUrlData()[0].parts
