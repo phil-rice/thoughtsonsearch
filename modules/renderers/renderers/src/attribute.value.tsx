@@ -1,8 +1,8 @@
-import React, { createContext, ReactElement, useMemo } from "react";
-import { mapRecord } from "@enterprise_search/recoil_utils";
-import { Renderers, RendererType, RenderProvider } from "./renderers";
-import { DataLayout } from "./data.layout";
-import { useTranslation } from "@enterprise_search/translation";
+import React, {createContext, ReactElement, useMemo} from "react";
+import {mapRecord} from "@enterprise_search/recoil_utils";
+import {Renderers, RendererType, RenderProvider} from "./renderers";
+import {DataLayout} from "./data.layout";
+import {useTranslation} from "@enterprise_search/translation";
 
 export type AttributeValueLayoutProps = {
     children: [React.ReactNode, React.ReactNode];
@@ -29,25 +29,24 @@ type AttributeValueComponentsProviderProps = {
 
 export const AttributeValueContext = createContext<AttributeValueComponents | undefined>(undefined);
 
-/**
- * Renders attribute-value pairs using a layout and translation hook.
- * Handles empty values gracefully by displaying an empty string.
- */
-function AttributeValueRenderer({ Renderer, rootId, attribute, value, AttributeValueLayout }: {
+
+type AttributeValueRendererProps = {
     Renderer: React.ComponentType<{ id: string; value: string }>;
     rootId: string;
     attribute: string;
     value: string;
     AttributeValueLayout: AttributeValueLayout;
-}) {
+}
+
+function AttributeValueRenderer({Renderer, rootId, attribute, value, AttributeValueLayout}: AttributeValueRendererProps) {
     const id = `${rootId}-${attribute}`;
     const translation = useTranslation();
-    const label = translation(`${rootId}.${attribute}`);  // Internationalized label
+    const label = translation(`${attribute}`);  // Internationalized label
 
     return (
         <AttributeValueLayout>
             <label htmlFor={id}>{label}:&nbsp;</label>
-            <Renderer id={id} value={value || ""} />
+            <Renderer id={id} value={value || ""}/>
         </AttributeValueLayout>
     );
 }
@@ -63,15 +62,16 @@ export function AttributeValueProvider({
                                            DataLayout,
                                        }: AttributeValueComponentsProviderProps) {
     const components = useMemo(() => {
-        const mappedComponents = mapRecord(renderers, (Renderer) => (props: AttributeValueProps) =>
-            <AttributeValueRenderer
-                Renderer={Renderer}
-                {...props}
-                AttributeValueLayout={AttributeValueLayout}
-            />
+        const mappedComponents = mapRecord(renderers, (Renderer) =>
+            (props: AttributeValueProps) =>
+                <AttributeValueRenderer
+                    Renderer={Renderer}
+                    {...props}
+                    AttributeValueLayout={AttributeValueLayout}
+                />
         );
 
-        return { ...mappedComponents, DataLayout };
+        return {...mappedComponents, DataLayout};
     }, [renderers, AttributeValueLayout]);
 
     return (

@@ -11,6 +11,7 @@ import {useUserData} from "@enterprise_search/react_login_component";
 import {useWindowUrlData} from "@enterprise_search/routing";
 import {DevModeUserData} from "./devMode.user.data";
 import {DevModeGuiState} from "./devmode.gui.state";
+import {DevModeTranslate} from "./devMode.translate";
 
 export type DevModeComponent = () => React.ReactElement;
 export type DevModeNavbarComponent = () => ReactElement;
@@ -30,7 +31,8 @@ const devModeComponents = {
     UserData: DevModeUserData,
     Debug: DevModeDebug,
     FeatureFlags: DevModeFeatureFlags,
-    Sovereign: DevModeSovereignState
+    Sovereign: DevModeSovereignState,
+    Translate: DevModeTranslate,
 };
 export const simpleDevModeComponents: SearchDevModeComponents = {
     DevModeNavBar: makeSimpleNavBar('devmode', Object.keys(devModeComponents)),

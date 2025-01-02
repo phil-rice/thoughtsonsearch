@@ -20,6 +20,6 @@
   },
   "scripts": {
     "example": "cd modules/examples/searchclient && parcel src/index.html --port 8080",
-    "coverage:report": "nyc report --reporter=html --report-dir=coverage --temp-dir=coverage"
+    "coverage:report": "nyc report --reporter=html --report-dir=./coverage --temp-dir=coverage"
   }
 }

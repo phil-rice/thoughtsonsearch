@@ -14,9 +14,9 @@ export const SimpleJiraDisplay: DisplayData<JiraData> =
             <ClipHeight maxHeight='5rem' force={true}>
                 <Markdown id={`${id}-description`} value={data.description}/>
             </ClipHeight>
-            <Text rootId={id} attribute='source' value='jira'/>
-            <Text rootId={id} attribute='status' value={data.status}/>
-            <Date rootId={id} attribute='last updated' value={data.last_updated}/>
+            <Text rootId={id} attribute='jira.source' value='jira'/>
+            <Text rootId={id} attribute='jira.status' value={data.status}/>
+            <Date rootId={id} attribute='jira.lastUpdated' value={data.last_updated}/>
             <Url id={`${id}-url`} value={data.url}/>
         </DataLayout>
     };

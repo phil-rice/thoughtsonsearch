@@ -1,9 +1,7 @@
 import React from "react";
-import {render, screen} from "@testing-library/react";
 import {WindowUrlData} from "@enterprise_search/routing";
 import '@testing-library/jest-dom';
 import {DebugLog} from "@enterprise_search/recoil_utils";
-import {SimpleDataViewFilterDisplay} from "./simple.data.view.filter.display";
 import {dataViewFilter, DataViewFilterData} from "./react.data.view.filter";
 
 const mockDebug: DebugLog = jest.fn() as any;

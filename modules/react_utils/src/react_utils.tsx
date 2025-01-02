@@ -23,7 +23,7 @@ export function makeContextFor<Data, FIELD extends string>(
 
     type ProviderProps = { children: ReactNode } & Record<FIELD, Data>;
 
-    function useField():Data {
+    function useField(): Data {
         const contextValue = useContext(context);
         const reportError = useThrowError();
         if (contextValue === undefined) {
@@ -48,7 +48,7 @@ export type ContextResultsForState<Data, FIELD extends string> = {
     context: Context<GetterSetter<Data> | undefined>
 }
 
-export function makeContextForState<Data, FIELD extends string>(field: FIELD): ContextResultsForState<Data, FIELD> {
+export function makeContextForState<Data, FIELD extends string>(field: FIELD, allowedUndefined?: boolean): ContextResultsForState<Data, FIELD> {
     const Context = React.createContext<GetterSetter<Data> | undefined>(undefined);
 
     type ProviderProps = { children: ReactNode } & Record<FIELD, Data>;
@@ -56,7 +56,7 @@ export function makeContextForState<Data, FIELD extends string>(field: FIELD): C
     function useField() {
         const contextValue = useContext(Context);
         const reportError = useThrowError();
-        if (contextValue === undefined) {
+        if (contextValue === undefined && !allowedUndefined) {
             const fieldWithCap = capitalizeFirstLetter(field);
             reportError('s/w', `use${fieldWithCap} must be used within a ${fieldWithCap}Provider`);
         }

@@ -1,8 +1,8 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { DataViewFilterData } from "./react.data.view.filter";
+import {fireEvent, render, screen} from "@testing-library/react";
+import {DataViewFilterData} from "./react.data.view.filter";
 import '@testing-library/jest-dom';
-import { TranslationProvider, TranslationFn } from "@enterprise_search/translation";
+import {TranslationFn, TranslationProvider} from "@enterprise_search/translation";
 import {SimpleDataViewFilterDisplay} from "./simple.data.view.filter.display";
 import {GetterSetter} from "@enterprise_search/react_utils";
 

@@ -12,6 +12,10 @@ export const translationEn = {
         UserData:"User Data",
         FeatureFlags:"Feature Flags",
         Sovereign:"Sovereign State",
+        Translate:{
+            used: "Used",
+            notFound: "Not Found"
+        }
     },
 
     filter: {
