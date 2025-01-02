@@ -28,6 +28,12 @@ export const translationEn = {
     filter: {
         'data-view': {
             'select-data-sources': "Select data sources",
+        },
+        time: {
+            yesterday: "Yesterday",
+            lastWeek: "Last Week",
+            lastMonth: "Last Month",
+            lastYear: "Last Year",
         }
 
     },

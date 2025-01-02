@@ -50,7 +50,7 @@ export function SimpleTimeDisplay({filterOps, id}: DisplayFilterProps<string>) {
                 </option>
                 {timeStrings.map(timeString => (
                     <option key={timeString} value={timeString}>
-                        {translate(timeString)}
+                            {translate(`filter.time.${timeString}`)}
                     </option>))}
                 <option disabled>
                     ----

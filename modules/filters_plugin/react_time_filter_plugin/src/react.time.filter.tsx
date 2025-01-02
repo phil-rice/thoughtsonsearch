@@ -3,8 +3,8 @@ import {SimpleTimeDisplay} from "./simple.time.filter";
 
 
 export const timefilterPluginName = 'time';
-export type TimeString = 'yesterday' | 'lastWeek' | 'lastMonth'
-export const timeStrings: TimeString[] = ['yesterday', 'lastWeek', 'lastMonth']
+export type TimeString = 'yesterday' | 'lastWeek' | 'lastMonth' | 'lastYear'
+export const timeStrings: TimeString[] = ['yesterday', 'lastWeek', 'lastMonth', 'lastYear']
 export type TimeFilters = {
     [timefilterPluginName]: TimeString | undefined
 }

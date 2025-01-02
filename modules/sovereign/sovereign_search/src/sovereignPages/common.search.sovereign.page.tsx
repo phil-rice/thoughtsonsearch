@@ -9,7 +9,7 @@ import {useSearchDropDownComponents} from "@enterprise_search/search_dropdown";
 import {useTranslation} from "@enterprise_search/translation"
 import {OneSearch} from "@enterprise_search/search_state";
 import {useSelectedSovereign} from "@enterprise_search/sovereign";
-import {useDebug} from "@enterprise_search/react_utils";
+import {useDebug, useEffectAfterFirstTime} from "@enterprise_search/react_utils";
 import {searchDebug} from "@enterprise_search/search";
 
 export type CommonSearchSovereignPageProps = { title: string, onMainSearch?: () => void, children?: ReactNode }
@@ -57,14 +57,10 @@ export function CommonSearchSovereignPage<Filters extends DataViewFilters>({titl
     }, [guiFilters]);
 
     // Trigger immediate search when the search query changes (Note... not when the gui filters change... when they change that will nuke the search results anyway)
-    const [firstRun, setFirstRun] = useState(true);
-    useEffect(() => {
-        if (firstRun) {
-            setFirstRun(false);
-            return;
-        }
+    //it is 'afterFirstTime' because we don't want to trigger the search until the user types something.
+    useEffectAfterFirstTime(() => {
         //needs bounce adding
-        if (searchQuery?.trim()) {
+        if (searchQuery?.trim().length<3) {
             const newGuiFilters = {...guiFilters, [keywordsFilterName]: searchQuery}
             debug('search query has changed so will do immediate search for', searchQuery, newGuiFilters)
             setImmediateFilters(parser(newGuiFilters, immediateFilters))

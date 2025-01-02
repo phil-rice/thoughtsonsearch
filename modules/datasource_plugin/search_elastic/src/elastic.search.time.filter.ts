@@ -38,6 +38,18 @@ export function getTimeRange(timeService: TimeService, timeString: TimeString): 
                 lt: todayString,  // Up to today (current date)
             };
         }
+        case 'lastYear': {
+            const firstOfThisYear = new Date(now);
+            firstOfThisYear.setMonth(0);  // Go to January
+            firstOfThisYear.setDate(1);   // Set to the first day of the year
+            firstOfThisYear.setFullYear(firstOfThisYear.getFullYear() - 1);  // Subtract one year
+
+            const startOfLastYear = firstOfThisYear.toISOString().split('T')[0];  // Start of last year
+            return {
+                gte: startOfLastYear,
+                lt: todayString,
+            };
+        }
         default:
             throw new Error(`Unsupported time string: ${timeString}`);
     }
