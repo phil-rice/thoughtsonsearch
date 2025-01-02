@@ -16,6 +16,6 @@ export function DevModeSearchState<Filters, >() {
 
     return <div className='dev-mode-search-state'>
         <SearchTypeNavBar selectedOps={selectedOps as GetterSetter<string>}/>
-        <Json id={'dev-mode-search-state'} value={JSON.stringify(value, null, 2)}/>
+        <Json rootId='devmode' attribute={'devmode.searchstate'} value={JSON.stringify(value, null, 2)}/>
     </div>
 }
