@@ -37,6 +37,11 @@ export const translationEn = {
         }
 
     },
+    login: {
+        login: "Login",
+        logout: "Logout",
+        loggedIn: "",
+    },
     search: {
         advance: {
             title: "Welcome to your new search experience",

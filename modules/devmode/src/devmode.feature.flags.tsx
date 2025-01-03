@@ -47,10 +47,6 @@ export function DevModeFeatureFlags() {
                 </div>
             ))}
 
-            <div style={debugInfoStyle}>
-                <strong>Raw Featureflags State:</strong>
-                <pre>{JSON.stringify(featureFlags, null, 2)}</pre>
-            </div>
 
         </div>
     );

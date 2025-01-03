@@ -7,6 +7,6 @@ export type SearchBarProps = {
     escapePressed?: () => void
     styles?: Partial<SearchBarStyles>
 }
-export type SearchBar = (props: SearchBarProps) => React.ReactElement
+export type SearchBar = (props: SearchBarProps) => React.ReactNode
 
 export const {Provider: SearchBarProvider, use: useSearchBar} = makeContextFor<SearchBar, 'searchBar'>('searchBar')

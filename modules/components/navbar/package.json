@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@enterprise_search/react_utils": "0.0.1",
+    "@enterprise_search/selectable_button": "0.0.1",
     "@enterprise_search/translation": "0.0.1",
     "@enterprise_search/react_keywords_filter_plugin": "0.0.1",
     "debug": "^4.3.4",

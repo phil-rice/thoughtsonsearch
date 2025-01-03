@@ -1,9 +1,11 @@
 export * from './src/attribute.value'
 export * from './src/clean.headers'
+export * from './src/data.layout'
 export * from './src/layouts/simple.attribute.value.layout'
 export * from './src/layouts/simple.data.layout'
 export * from './src/renderers'
 export * from './src/renderers/simple.date.renderer'
+
 export * from './src/renderers/simple.headers.renderer'
 export * from './src/renderers/simple.json.renderer'
 export * from './src/renderers/simple.text.renderer'

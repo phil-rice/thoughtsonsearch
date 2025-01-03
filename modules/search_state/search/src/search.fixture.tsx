@@ -10,7 +10,7 @@ import {timefilterPluginName, TimeFilters} from "@enterprise_search/react_time_f
 import {SearchInfoProviderUsingUseState, useSearchState} from "@enterprise_search/react_search_state";
 import {SearchState} from "@enterprise_search/search_state";
 import {dataSourceDetailsToDataView, DataViews, DataViewsProvider, SimpleDataViewNavItem} from "@enterprise_search/data_views";
-import {SimpleNavItem} from "@enterprise_search/navbar";
+import {DefaultNavItem} from "@enterprise_search/navbar";
 import {WindowUrlContext, WindowUrlData, WindowUrlProvider, WindowUrlProviderForTests} from "@enterprise_search/routing";
 import {SovereignStateProvider} from "@enterprise_search/sovereign";
 import {GuiSelectedDataViewProvider} from "@enterprise_search/search_gui_state";

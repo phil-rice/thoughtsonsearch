@@ -1,5 +1,5 @@
 {
-  "name": "@enterprise_search/sovereign",
+  "name": "@enterprise_search/sovereign_mui",
   "description": "A sovereign is something that takes up the whole display.",
   "version": "0.0.1",
   "browserslist": {
@@ -15,10 +15,16 @@
     ]
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.3.0",
+    "@mui/material": "^6.3.0",
     "@enterprise_search/optics": "0.0.1",
     "@enterprise_search/react_utils": "0.0.1",
     "@enterprise_search/search_state": "0.0.1",
-    "@enterprise_search/service_caller": "0.0.1",
+    "@enterprise_search/search_dropdown": "0.0.1",
+    "@enterprise_search/search_bar": "0.0.1",
+    "@enterprise_search/selectable_button": "0.0.1",
     "@enterprise_search/routing": "0.0.1",
     "@enterprise_search/translation": "0.0.1",
     "debug": "^4.3.4",

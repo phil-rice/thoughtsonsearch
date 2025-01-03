@@ -47,6 +47,9 @@ export function dataSourceDetailsToDataView<Details extends CommonDataSourceDeta
 export const {Provider: DataViewsProvider, use: useDataViews} = makeContextFor<DataViews<any>, 'dataViews'>('dataViews')
 
 
+
+
+
 export type NavBarItemProps = { name: any, } //really is a key of the data views, but the damage propogating that is too high
 export type NavBarItem = (props: NavBarItemProps) => React.ReactElement;
 export type DataViewNavVarLayoutProps = { children: React.ReactNode }

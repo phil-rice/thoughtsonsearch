@@ -8,7 +8,7 @@ import {Errors} from "@enterprise_search/errors";
 import {SearchDropdownStyles} from "./search.drop.down.styles";
 
 export type SearchBarAndImmediateSearchLayoutProps = { children: [ReactNode, ReactNode] }
-export type SearchBarAndImmediateSearchLayout = (props: SearchBarAndImmediateSearchLayoutProps) => React.ReactElement
+export type SearchBarAndImmediateSearchLayout = (props: SearchBarAndImmediateSearchLayoutProps) =>ReactNode
 
 export type SearchDropDownProps = {
     st: SearchType,
@@ -17,7 +17,7 @@ export type SearchDropDownProps = {
     DisplaySearchDropDownErrors?: DisplaySearchDropDownErrors,
     styles?: Partial<SearchDropdownStyles>;
 }
-export type SearchDropDown = (props: SearchDropDownProps) => React.ReactElement
+export type SearchDropDown = (props: SearchDropDownProps) => React.ReactNode
 
 export type DisplaySearchDropDownResultsProps = {
     dataAndDs: DataAndDataSource<any>[]

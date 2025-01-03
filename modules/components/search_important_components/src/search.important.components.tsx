@@ -1,16 +1,14 @@
 import {SearchBar, SearchBarProvider} from "@enterprise_search/search_bar";
 import {ReactFiltersContextData, ReactFiltersProvider} from "@enterprise_search/react_filters_plugin";
-
-import {LoadingDisplay} from "@enterprise_search/loading";
 import React from "react";
 import {CommonDataSourceDetails, DataSourceDetails, DataSourcePluginProvider, DataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPluginProvider, DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {DisplayLogin, LoginComponentsProvider} from "@enterprise_search/react_login_component";
 import {DisplaySearchResultsLayout, SearchResultsProvider} from "@enterprise_search/sovereign_search";
-import {dataSourceDetailsToDataView, DataViewNavBarLayout, DataViews, DataViewsProvider, NavBarItem} from "@enterprise_search/data_views";
+import {dataSourceDetailsToDataView, DataViews, DataViewsProvider, NavBarItem} from "@enterprise_search/data_views";
 import {emptySearchGuiState, GuiSelectedDataViewProvider, SearchGuiStateProvider} from "@enterprise_search/search_gui_state";
 import {DataViewFilters} from "@enterprise_search/react_data_views_filter_plugin";
-import {DevMode, DevModeStateForSearchProvider} from "@enterprise_search/devmode";
+import {DevModeStateForSearchProvider} from "@enterprise_search/devmode";
 import {emptySearchState} from "@enterprise_search/search_state";
 import {SearchInfoProviderUsingUseState} from "@enterprise_search/react_search_state";
 import {SearchResultsComponents, SearchResultsComponentsProvider} from "@enterprise_search/sovereign_search/src/search.results.components";
@@ -33,7 +31,6 @@ export interface SearchImportantComponents<Context, Details extends CommonDataSo
     SearchBar: SearchBar
     DisplayLogin: DisplayLogin
     NotLoggedIn?: () => React.ReactElement
-
     DisplaySearchResultsLayout: DisplaySearchResultsLayout
     NavBarItem: NavBarItem
     SearchResultsComponents: SearchResultsComponents
@@ -57,7 +54,7 @@ export type SetupStartStateProps<Filters extends DataViewFilters> = {
 export function SearchImportantComponentsProvider<Context, Details extends CommonDataSourceDetails, Filters extends DataViewFilters>({components, children}: SearchImportantComponentsProviderProps<Context, Details, Filters>) {
     const {
         SearchBar, dataPlugins, dataSourcePlugins, reactFiltersContextData, DisplayLogin, DisplaySearchResultsLayout,
-        NotLoggedIn, NavBarItem,  dataViewDetails
+        NotLoggedIn, NavBarItem, dataViewDetails
     } = components
     const dataViews: DataViews<Details> = dataSourceDetailsToDataView(dataViewDetails, NavBarItem)
 
@@ -77,7 +74,6 @@ export function SearchImportantComponentsProvider<Context, Details extends Commo
                                                         <UrlManagementForSearch dataViewDetails={dataViewDetails}>{
                                                             children
                                                         }
-                                                            <DevMode/>
                                                         </UrlManagementForSearch>
                                                     </SearchGuiStateProvider>
                                                 </SearchResultsComponentsProvider>

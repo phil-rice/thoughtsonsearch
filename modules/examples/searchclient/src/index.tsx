@@ -2,21 +2,21 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 import {Configuration, PublicClientApplication} from "@azure/msal-browser";
 import {loginUsingMsal} from "@enterprise_search/msal_authentication";
-import {authenticateDebug, LoginConfig, SimpleDisplayLogin, SimpleNotLoggedIn} from "@enterprise_search/react_login_component";
+import {Authenticate, authenticateDebug, LoginConfig, SimpleDisplayLogin, SimpleNotLoggedIn} from "@enterprise_search/react_login_component";
 import {filtersDisplayPurpose, ReactFiltersContextData} from "@enterprise_search/react_filters_plugin";
 
 import {SearchImportantComponents, SearchImportantComponentsProvider, startStateDebug} from "@enterprise_search/search_important_components";
 import {CommonDataSourceDetails, DataSourceDetails, DataSourcePlugins, validateDataSourcePlugins} from "@enterprise_search/react_datasource_plugin";
 import {DataPlugins} from "@enterprise_search/react_data/src/react.data";
 import {SimpleSearchBar} from "@enterprise_search/search_bar";
-import {SimpleSovereignAppComponents, SimpleUnknownDisplay, SovereignApp, SovereignStatePlugins} from "@enterprise_search/sovereign";
+import {SimpleSovereignAppComponents, SimpleUnknownDisplay, SovereignApp, SovereignAppProvider, SovereignStatePlugins} from "@enterprise_search/sovereign";
 import {dataViewFilter, dataViewFilterName, DataViewFilters, SimpleDataViewFilterDisplay} from "@enterprise_search/react_data_views_filter_plugin";
-import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, SimpleDisplayResultsLayout, simpleSearchResultComponents} from "@enterprise_search/sovereign_search";
+import {AdvanceSearchPagePlugin, InitialSovereignPagePlugin, OneSearchPagePlugin, SimpleDisplayResultsLayout, simpleSearchResultComponents} from "@enterprise_search/sovereign_search";
 import {KeywordsFilter, keywordsFilterName, simpleKeywordsFilterPlugin} from "@enterprise_search/react_keywords_filter_plugin";
 import {DoTheSearching, searchDebug} from "@enterprise_search/search";
 import {dataViewDebug, SimpleDataViewNavItem} from "@enterprise_search/data_views";
 import {ElasticSearchContext, elasticSearchDataSourcePlugin, elasticSearchDsName, ElasticSearchSourceDetails} from "@enterprise_search/search_elastic";
-import {consoleErrorReporter, FeatureFlags} from "@enterprise_search/react_utils";
+import {consoleErrorReporter, FeatureFlags, flagged} from "@enterprise_search/react_utils";
 import {routingDebug} from "@enterprise_search/routing";
 import {simpleSearchDropDownComponents} from "@enterprise_search/search_dropdown";
 import {basicAuthentication} from "@enterprise_search/authentication";
@@ -26,9 +26,11 @@ import {ConfluenceDataName, ConfluenceDataPlugin} from "@enterprise_search/confl
 import {JiraDataName, JiraDataPlugin} from "@enterprise_search/jira_data_plugin";
 import {SimpleDataLayout} from "@enterprise_search/renderers";
 import {PeopleDataName, peopleDataPlugin} from "@enterprise_search/people_data_plugin";
-import {OneSearchPagePlugin} from "@enterprise_search/sovereign_search";
 import {nowTimeService} from "@enterprise_search/recoil_utils";
-import {SovereignAppProvider} from "@enterprise_search/sovereign";
+import {DevMode} from "@enterprise_search/devmode";
+import {muiFF, MuiSearchBar, muiSearchDropDownComponents, MuiSovereignComponents} from "@enterprise_search/sovereign_mui";
+import {MuiDisplayLogin} from "@enterprise_search/sovereign_mui/src/mui.login";
+import {SimpleSelectableButton} from "@enterprise_search/selectable_button";
 
 
 const debugState = {
@@ -99,6 +101,8 @@ const confluenceElasticSearchData: ElasticSearchSourceDetails = {type: elasticSe
 const graphApiPeopleData: CommonDataSourceDetails = {type: 'graphApiPeople', names: ['people']}
 const sharepointData: CommonDataSourceDetails = {type: 'sharepoint', names: ['sharepoint']}
 const allDetails: AllDataSourceDetails[] = [allElasticSearchData, graphApiPeopleData, sharepointData];
+
+
 const dataViewDetails: DataSourceDetails<AllDataSourceDetails> = {
     all: {details: allDetails, displayAsWidget: true, expectedDataTypes: ['jira', 'confluence', 'people']},
     jira: {details: [jiraElasicSearchData], expectedDataTypes: ['jira']},
@@ -112,14 +116,14 @@ const searchImportantComponents: SearchImportantComponents<any, AllDataSourceDet
     dataSourcePlugins,
     dataPlugins,
     reactFiltersContextData,
-    DisplayLogin: SimpleDisplayLogin,
+    DisplayLogin: flagged(muiFF, MuiDisplayLogin, SimpleDisplayLogin),
     NotLoggedIn: SimpleNotLoggedIn,
-    SearchBar: SimpleSearchBar,
+    SearchBar: flagged(muiFF, MuiSearchBar, SimpleSearchBar),
     DisplaySearchResultsLayout: SimpleDisplayResultsLayout,
     NavBarItem: SimpleDataViewNavItem,
     dataViewDetails,
     SearchResultsComponents: simpleSearchResultComponents,
-    SearchDropDownComponents: simpleSearchDropDownComponents
+    SearchDropDownComponents: muiSearchDropDownComponents
 }
 
 const sovereignStatePlugins: SovereignStatePlugins = {
@@ -133,7 +137,7 @@ const sovereignStatePlugins: SovereignStatePlugins = {
 
 
 const featureFlags: FeatureFlags = {
-    flag1: {value: true, description: 'An example feature flag'},
+    [muiFF]: {value: true, description: 'Using Material UI'},
     flag2: {value: false, description: 'Another feature flag'}
 };
 
@@ -149,12 +153,16 @@ msal.initialize({}).then(() => {
                                   sovereignStatePlugins={sovereignStatePlugins}
                                   featureFlags={featureFlags}
                                   dataLayout={SimpleDataLayout}
-                                  sovAppComponents={SimpleSovereignAppComponents}
+                                  SelectableButton={SimpleSelectableButton}
+                                  sovAppComponents={MuiSovereignComponents}
 
             >
                 <SearchImportantComponentsProvider components={searchImportantComponents}>
                     <DoTheSearching resultSize={20}>
-                        <SovereignApp/>
+                        <Authenticate>
+                            <DevMode/>
+                            <SovereignApp/>
+                        </Authenticate>
                     </DoTheSearching>
                 </SearchImportantComponentsProvider>
             </SovereignAppProvider>

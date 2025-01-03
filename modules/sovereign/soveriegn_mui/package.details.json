@@ -1,18 +1,24 @@
 {
   "template": "react_library",
-  "name": "@enterprise_search/sovereign",
+  "name": "@enterprise_search/sovereign_mui",
   "description": "A sovereign is something that takes up the whole display.",
   "links": [
     "@enterprise_search/optics",
     "@enterprise_search/react_utils",
     "@enterprise_search/search_state",
-    "@enterprise_search/service_caller",
+    "@enterprise_search/search_dropdown",
+    "@enterprise_search/search_bar",
+    "@enterprise_search/selectable_button",
     "@enterprise_search/routing",
     "@enterprise_search/translation"
   ],
   "packageJson": {
     "files": ["build/"],
     "dependencies": {
+      "@emotion/react": "^11.14.0",
+      "@emotion/styled": "^11.14.0",
+      "@mui/icons-material": "^6.3.0",
+      "@mui/material": "^6.3.0"
     },
     "devDependencies": {
       "ts-jest": "^29.2.5"

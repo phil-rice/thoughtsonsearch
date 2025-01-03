@@ -1,6 +1,7 @@
 import React, {CSSProperties} from "react";
 import {DataViewNavBarLayout} from "@enterprise_search/data_views";
 import {camelCase} from "@enterprise_search/recoil_utils";
+import {NavBarLayout} from "./navbar";
 
 export const defaultNavBarLayoutStyle: CSSProperties = {
     display: 'flex',

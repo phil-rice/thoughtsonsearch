@@ -1,7 +1,6 @@
 import React, {useEffect, useMemo, useRef} from "react";
-import {useSearchResultsByStateType} from "@enterprise_search/react_search_state";
 import {SearchBarProps} from "./search.bar";
-import {useGuiFilters, useGuiSearchQuery} from "@enterprise_search/search_gui_state";
+import {useGuiSearchQuery} from "@enterprise_search/search_gui_state";
 import {defaultSimpleSearchBarStyles} from "./search.bar.styles";
 
 export function SimpleSearchBar({

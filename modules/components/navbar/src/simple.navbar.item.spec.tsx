@@ -3,12 +3,12 @@ import React, { useState } from "react";
 
 import { TranslationProvider } from "@enterprise_search/translation";
 import '@testing-library/jest-dom';
-import {DefaultNavItemStyles, SimpleNavItem} from "./simple.navbar.item";
+import {DefaultNavItemStyles, DefaultNavItem} from "./simple.navbar.item";
 
 // Test wrapper component to manage selection state
 const TestNavBar = () => {
     const [selected, setSelected] = useState<string>("home");
-    const NavItem = SimpleNavItem('test',DefaultNavItemStyles);
+    const NavItem = DefaultNavItem('test',DefaultNavItemStyles);
 
     return (
         <TranslationProvider translationFn={(key) => `${key}-trans`}>

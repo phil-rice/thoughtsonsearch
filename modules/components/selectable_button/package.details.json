@@ -1,11 +1,9 @@
 {
   "template": "react_library",
-  "name": "@enterprise_search/navbar",
-  "description": "Interface and simple implementation for navbar",
+  "name": "@enterprise_search/selectable_button",
+  "description": "Interface and simple implementation for a selectable button",
   "links": [
-    "@enterprise_search/react_utils",
-    "@enterprise_search/selectable_button",
-    "@enterprise_search/translation",
+    "@enterprise_search/search_state",
     "@enterprise_search/react_keywords_filter_plugin"
   ],
   "packageJson": {

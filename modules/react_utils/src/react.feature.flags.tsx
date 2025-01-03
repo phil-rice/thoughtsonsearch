@@ -1,6 +1,6 @@
 import {NameAnd} from "@enterprise_search/recoil_utils";
 import {makeContextFor, makeContextForState} from "./react_utils";
-import React, {useMemo} from "react";
+import React, {ReactElement, ReactNode, useMemo} from "react";
 import {lensBuilder} from "@enterprise_search/optics";
 import {useWindowUrlData} from "@enterprise_search/routing";
 
@@ -47,4 +47,11 @@ export function FeatureFlagsProvider({children, featureFlags}: { children: React
 export function useFeatureFlag(name: string): boolean {
     const [flags] = useFeatureFlagsState();
     return flags[name]?.value ?? false;
+}
+
+export function flagged<Props>(flag:string, Enabled:(p: Props) => ReactNode, Disabled: (p: Props)=>ReactNode):(p: Props)=>ReactNode {
+    return (props: Props)=> {
+        const f = useFeatureFlag(flag)
+        return f ? <Enabled {...props} /> : <Disabled {...props}/>
+    }
 }

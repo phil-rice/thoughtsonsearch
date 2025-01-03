@@ -45,6 +45,7 @@ export type DevModeState = {
 export const {Provider: DevModeStateForSearchProvider, use: useDevModeState} = makeContextForState<DevModeState, 'devModeState'>('devModeState')
 export const useDevModeSelected = makeUseStateChild(useDevModeState, id => id.focusOn('selected'))
 
+
 export function DevMode() {
     const userData = useUserData()
     const [urlData] = useWindowUrlData()

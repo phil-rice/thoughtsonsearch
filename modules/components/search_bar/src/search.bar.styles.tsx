@@ -13,7 +13,7 @@ export const defaultSimpleSearchBarStyles: SearchBarStyles = {
         display: "flex",
         alignItems: "center",
         width: "100%",
-        maxWidth: "800px",
+        maxWidth: "1400px",
         margin: "0 auto",
         padding: "8px",
         boxSizing: "border-box",
